@@ -4,7 +4,7 @@ import { MessageCircle, ClipboardList, BarChart3, BookOpen } from "lucide-react"
 const tabs = [
   { path: "/", label: "Chat", icon: MessageCircle },
   { path: "/log", label: "Log", icon: ClipboardList },
-  { path: "/weekly", label: "Weekly", icon: BarChart3 },
+  { path: "/weekly", label: "Reports", icon: BarChart3 },
   { path: "/resources", label: "Resources", icon: BookOpen },
 ];
 

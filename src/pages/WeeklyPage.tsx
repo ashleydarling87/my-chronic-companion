@@ -1,52 +1,192 @@
-import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, LineChart, Line, Tooltip } from "recharts";
-import { TrendingDown, TrendingUp, Zap, Heart } from "lucide-react";
+import { useState } from "react";
+import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, Tooltip } from "recharts";
+import { Heart, Zap, FileText, Copy, Check, ChevronDown, ChevronUp, Trash2 } from "lucide-react";
 import Header from "../components/Header";
 import BottomNav from "../components/BottomNav";
 import { mockEntries } from "../lib/data";
-import { format } from "date-fns";
+import { format, subDays, isWithinInterval, startOfDay, endOfDay } from "date-fns";
+import { Button } from "@/components/ui/button";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
+import { Textarea } from "@/components/ui/textarea";
+import { cn } from "@/lib/utils";
+import { CalendarIcon } from "lucide-react";
+
+interface SavedReport {
+  id: string;
+  dateRange: string;
+  content: string;
+  createdAt: Date;
+}
 
 const WeeklyPage = () => {
-  const chartData = [...mockEntries]
-    .reverse()
+  const [startDate, setStartDate] = useState<Date>(subDays(new Date(), 6));
+  const [endDate, setEndDate] = useState<Date>(new Date());
+  const [generatedReport, setGeneratedReport] = useState<string | null>(null);
+  const [editableReport, setEditableReport] = useState("");
+  const [isEditing, setIsEditing] = useState(false);
+  const [savedReports, setSavedReports] = useState<SavedReport[]>([]);
+  const [copied, setCopied] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [expandedReport, setExpandedReport] = useState<string | null>(null);
+
+  // Filter entries by date range
+  const filteredEntries = mockEntries.filter((e) =>
+    isWithinInterval(e.date, { start: startOfDay(startDate), end: endOfDay(endDate) })
+  );
+
+  const chartData = [...filteredEntries]
+    .sort((a, b) => a.date.getTime() - b.date.getTime())
     .map((e) => ({
       day: format(e.date, "EEE"),
       pain: e.painScore,
       energy: e.energyScore,
     }));
 
-  const avgPain = Math.round(mockEntries.reduce((s, e) => s + e.painScore, 0) / mockEntries.length * 10) / 10;
-  const avgEnergy = Math.round(mockEntries.reduce((s, e) => s + e.energyScore, 0) / mockEntries.length * 10) / 10;
+  const avgPain = filteredEntries.length
+    ? Math.round((filteredEntries.reduce((s, e) => s + e.painScore, 0) / filteredEntries.length) * 10) / 10
+    : 0;
+  const avgEnergy = filteredEntries.length
+    ? Math.round((filteredEntries.reduce((s, e) => s + e.energyScore, 0) / filteredEntries.length) * 10) / 10
+    : 0;
 
   // Gather triggers
   const triggerCounts: Record<string, number> = {};
-  mockEntries.forEach((e) => e.triggers.forEach((t) => (triggerCounts[t] = (triggerCounts[t] || 0) + 1)));
+  filteredEntries.forEach((e) => e.triggers.forEach((t) => (triggerCounts[t] = (triggerCounts[t] || 0) + 1)));
   const topTriggers = Object.entries(triggerCounts)
     .sort((a, b) => b[1] - a[1])
     .slice(0, 5);
 
   // Symptom counts
   const symptomCounts: Record<string, number> = {};
-  mockEntries.forEach((e) => e.symptoms.forEach((s) => (symptomCounts[s] = (symptomCounts[s] || 0) + 1)));
+  filteredEntries.forEach((e) => e.symptoms.forEach((s) => (symptomCounts[s] = (symptomCounts[s] || 0) + 1)));
   const topSymptoms = Object.entries(symptomCounts)
     .sort((a, b) => b[1] - a[1])
     .slice(0, 5);
 
+  const dateRangeLabel = `${format(startDate, "MMM d")} – ${format(endDate, "MMM d")}`;
+
+  const generateDoctorReport = () => {
+    setIsGenerating(true);
+    // Simulated AI report generation
+    setTimeout(() => {
+      const report = `SYMPTOM REPORT — ${dateRangeLabel}
+Prepared for: [Patient Name]
+
+SUMMARY
+Over the past ${filteredEntries.length} days of tracking, the patient reported an average pain level of ${avgPain}/10 and average energy level of ${avgEnergy}/10.
+
+PAIN & ENERGY OVERVIEW
+• Average Pain Score: ${avgPain}/10
+• Average Energy Score: ${avgEnergy}/10
+• Highest Pain Day: ${filteredEntries.length ? format(filteredEntries.reduce((max, e) => (e.painScore > max.painScore ? e : max)).date, "EEEE, MMM d") : "N/A"} (${filteredEntries.length ? filteredEntries.reduce((max, e) => (e.painScore > max.painScore ? e : max)).painScore : 0}/10)
+• Best Energy Day: ${filteredEntries.length ? format(filteredEntries.reduce((max, e) => (e.energyScore > max.energyScore ? e : max)).date, "EEEE, MMM d") : "N/A"} (${filteredEntries.length ? filteredEntries.reduce((max, e) => (e.energyScore > max.energyScore ? e : max)).energyScore : 0}/10)
+
+IDENTIFIED TRIGGERS
+${topTriggers.length ? topTriggers.map(([t, c]) => `• ${t} — reported ${c} time(s)`).join("\n") : "• No triggers reported"}
+
+SYMPTOMS REPORTED
+${topSymptoms.length ? topSymptoms.map(([s, c]) => `• ${s} — reported ${c} time(s)`).join("\n") : "• No symptoms reported"}
+
+DAILY NOTES
+${filteredEntries
+  .sort((a, b) => a.date.getTime() - b.date.getTime())
+  .map((e) => `${format(e.date, "MMM d")}: Pain ${e.painScore}/10, Energy ${e.energyScore}/10 — "${e.notes}"`)
+  .join("\n")}
+
+---
+Generated by Buddy • ${format(new Date(), "MMM d, yyyy")}`;
+
+      setGeneratedReport(report);
+      setEditableReport(report);
+      setIsEditing(false);
+      setIsGenerating(false);
+    }, 1500);
+  };
+
+  const handleSaveReport = () => {
+    const newReport: SavedReport = {
+      id: Date.now().toString(),
+      dateRange: dateRangeLabel,
+      content: editableReport,
+      createdAt: new Date(),
+    };
+    setSavedReports((prev) => [newReport, ...prev]);
+    setGeneratedReport(null);
+    setEditableReport("");
+    setIsEditing(false);
+  };
+
+  const handleCopy = async (text: string) => {
+    await navigator.clipboard.writeText(text);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  const handleDeleteReport = (id: string) => {
+    setSavedReports((prev) => prev.filter((r) => r.id !== id));
+  };
+
   return (
     <div className="flex min-h-screen flex-col bg-background">
-      <Header title="Weekly Summary" subtitle="Feb 19 – Feb 25" />
+      <Header title="Reports" subtitle={dateRangeLabel} />
 
       <main className="flex-1 overflow-y-auto px-4 py-4 pb-24">
         <div className="mx-auto max-w-lg space-y-4">
+          {/* Date Range Picker */}
+          <div className="rounded-2xl border bg-card p-4 animate-slide-up">
+            <h3 className="mb-3 text-sm font-bold">Date Range</h3>
+            <div className="flex items-center gap-2">
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button variant="outline" className={cn("flex-1 justify-start text-left text-sm font-normal")}>
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {format(startDate, "MMM d, yyyy")}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={startDate}
+                    onSelect={(d) => d && setStartDate(d)}
+                    disabled={(d) => d > endDate}
+                    initialFocus
+                    className="p-3 pointer-events-auto"
+                  />
+                </PopoverContent>
+              </Popover>
+              <span className="text-sm text-muted-foreground">to</span>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button variant="outline" className={cn("flex-1 justify-start text-left text-sm font-normal")}>
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {format(endDate, "MMM d, yyyy")}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="end">
+                  <Calendar
+                    mode="single"
+                    selected={endDate}
+                    onSelect={(d) => d && setEndDate(d)}
+                    disabled={(d) => d < startDate || d > new Date()}
+                    initialFocus
+                    className="p-3 pointer-events-auto"
+                  />
+                </PopoverContent>
+              </Popover>
+            </div>
+          </div>
+
           {/* AI Summary Card */}
           <div className="rounded-2xl bg-primary/10 p-4 animate-slide-up">
             <div className="flex items-center gap-2 mb-2">
               <span className="text-xl">🐻</span>
-              <h2 className="text-sm font-bold text-primary">Buddy's Weekly Take</h2>
+              <h2 className="text-sm font-bold text-primary">Buddy's Take</h2>
             </div>
             <p className="text-sm leading-relaxed text-foreground">
-              Hey bestie, this week was a bit of a rollercoaster 🎢 Your pain averaged around {avgPain}/10 with your worst day being today. 
-              Weather changes and stress were your biggest triggers. The good news? You had a solid day on Thursday with low pain and high energy! 
-              Try to recreate what made that day work. You're doing amazing by tracking all of this 💛
+              {filteredEntries.length === 0
+                ? "No entries for this date range yet. Try adjusting the dates!"
+                : `Over this period, your pain averaged ${avgPain}/10 and energy averaged ${avgEnergy}/10. ${topTriggers.length ? `Your biggest triggers were ${topTriggers.slice(0, 2).map(([t]) => t).join(" and ")}.` : ""} Keep tracking — you're doing great! 💛`}
             </p>
           </div>
 
@@ -65,59 +205,197 @@ const WeeklyPage = () => {
           </div>
 
           {/* Pain & Energy Chart */}
-          <div className="rounded-2xl border bg-card p-4 animate-slide-up">
-            <h3 className="mb-3 text-sm font-bold">Pain & Energy Trends</h3>
-            <ResponsiveContainer width="100%" height={180}>
-              <LineChart data={chartData}>
-                <XAxis dataKey="day" tick={{ fontSize: 12 }} stroke="hsl(var(--muted-foreground))" />
-                <YAxis domain={[0, 10]} tick={{ fontSize: 12 }} stroke="hsl(var(--muted-foreground))" />
-                <Tooltip
-                  contentStyle={{
-                    background: "hsl(var(--card))",
-                    border: "1px solid hsl(var(--border))",
-                    borderRadius: "12px",
-                    fontSize: "12px",
-                  }}
-                />
-                <Line type="monotone" dataKey="pain" stroke="hsl(var(--pain-high))" strokeWidth={2.5} dot={{ r: 4 }} />
-                <Line type="monotone" dataKey="energy" stroke="hsl(var(--energy-high))" strokeWidth={2.5} dot={{ r: 4 }} />
-              </LineChart>
-            </ResponsiveContainer>
-            <div className="mt-2 flex items-center justify-center gap-4 text-xs">
-              <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-pain-high" /> Pain</span>
-              <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-energy-high" /> Energy</span>
+          {chartData.length > 0 && (
+            <div className="rounded-2xl border bg-card p-4 animate-slide-up">
+              <h3 className="mb-3 text-sm font-bold">Pain & Energy Trends</h3>
+              <ResponsiveContainer width="100%" height={180}>
+                <LineChart data={chartData}>
+                  <XAxis dataKey="day" tick={{ fontSize: 12 }} stroke="hsl(var(--muted-foreground))" />
+                  <YAxis domain={[0, 10]} tick={{ fontSize: 12 }} stroke="hsl(var(--muted-foreground))" />
+                  <Tooltip
+                    contentStyle={{
+                      background: "hsl(var(--card))",
+                      border: "1px solid hsl(var(--border))",
+                      borderRadius: "12px",
+                      fontSize: "12px",
+                    }}
+                  />
+                  <Line type="monotone" dataKey="pain" stroke="hsl(var(--pain-high))" strokeWidth={2.5} dot={{ r: 4 }} />
+                  <Line type="monotone" dataKey="energy" stroke="hsl(var(--energy-high))" strokeWidth={2.5} dot={{ r: 4 }} />
+                </LineChart>
+              </ResponsiveContainer>
+              <div className="mt-2 flex items-center justify-center gap-4 text-xs">
+                <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-pain-high" /> Pain</span>
+                <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-energy-high" /> Energy</span>
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Top Triggers */}
-          <div className="rounded-2xl border bg-card p-4 animate-slide-up">
-            <h3 className="mb-3 text-sm font-bold">Top Triggers</h3>
-            <div className="space-y-2">
-              {topTriggers.map(([trigger, count]) => (
-                <div key={trigger} className="flex items-center justify-between">
-                  <span className="text-sm">{trigger}</span>
-                  <div className="flex items-center gap-2">
-                    <div className="h-2 rounded-full bg-primary/20" style={{ width: `${(count / mockEntries.length) * 100}px` }}>
-                      <div className="h-full rounded-full bg-primary" style={{ width: `${(count / topTriggers[0][1]) * 100}%` }} />
+          {topTriggers.length > 0 && (
+            <div className="rounded-2xl border bg-card p-4 animate-slide-up">
+              <h3 className="mb-3 text-sm font-bold">Top Triggers</h3>
+              <div className="space-y-2">
+                {topTriggers.map(([trigger, count]) => (
+                  <div key={trigger} className="flex items-center justify-between">
+                    <span className="text-sm">{trigger}</span>
+                    <div className="flex items-center gap-2">
+                      <div className="h-2 rounded-full bg-primary/20" style={{ width: `${(count / filteredEntries.length) * 100}px` }}>
+                        <div className="h-full rounded-full bg-primary" style={{ width: `${(count / topTriggers[0][1]) * 100}%` }} />
+                      </div>
+                      <span className="text-xs text-muted-foreground">{count}x</span>
                     </div>
-                    <span className="text-xs text-muted-foreground">{count}x</span>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Top Symptoms */}
-          <div className="rounded-2xl border bg-card p-4 animate-slide-up">
-            <h3 className="mb-3 text-sm font-bold">Most Reported Symptoms</h3>
-            <div className="flex flex-wrap gap-2">
-              {topSymptoms.map(([symptom, count]) => (
-                <span key={symptom} className="rounded-full bg-secondary px-3 py-1 text-xs font-semibold text-secondary-foreground">
-                  {symptom} ({count}x)
-                </span>
-              ))}
+          {topSymptoms.length > 0 && (
+            <div className="rounded-2xl border bg-card p-4 animate-slide-up">
+              <h3 className="mb-3 text-sm font-bold">Most Reported Symptoms</h3>
+              <div className="flex flex-wrap gap-2">
+                {topSymptoms.map(([symptom, count]) => (
+                  <span key={symptom} className="rounded-full bg-secondary px-3 py-1 text-xs font-semibold text-secondary-foreground">
+                    {symptom} ({count}x)
+                  </span>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
+
+          {/* Generate Doctor Report */}
+          {!generatedReport && (
+            <div className="rounded-2xl border bg-card p-4 animate-slide-up">
+              <div className="flex items-center gap-2 mb-2">
+                <FileText size={20} className="text-primary" />
+                <h3 className="text-sm font-bold">Doctor Report</h3>
+              </div>
+              <p className="text-sm text-muted-foreground mb-3">
+                Generate a formatted report you can share with your doctor.
+              </p>
+              <Button
+                onClick={generateDoctorReport}
+                disabled={filteredEntries.length === 0 || isGenerating}
+                className="w-full rounded-xl"
+              >
+                {isGenerating ? "Generating..." : "Generate Report"}
+              </Button>
+            </div>
+          )}
+
+          {/* Generated Report Preview */}
+          {generatedReport && (
+            <div className="rounded-2xl border bg-card p-4 animate-slide-up space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <FileText size={20} className="text-primary" />
+                  <h3 className="text-sm font-bold">Generated Report</h3>
+                </div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => handleCopy(editableReport)}
+                  className="h-8 gap-1 text-xs"
+                >
+                  {copied ? <Check size={14} /> : <Copy size={14} />}
+                  {copied ? "Copied" : "Copy"}
+                </Button>
+              </div>
+
+              {isEditing ? (
+                <Textarea
+                  value={editableReport}
+                  onChange={(e) => setEditableReport(e.target.value)}
+                  className="min-h-[300px] text-xs font-mono leading-relaxed"
+                />
+              ) : (
+                <pre className="whitespace-pre-wrap text-xs leading-relaxed text-foreground bg-secondary/50 rounded-xl p-3 max-h-[400px] overflow-y-auto">
+                  {editableReport}
+                </pre>
+              )}
+
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  onClick={() => setIsEditing(!isEditing)}
+                  className="flex-1 rounded-xl text-sm"
+                >
+                  {isEditing ? "Preview" : "Edit"}
+                </Button>
+                <Button onClick={handleSaveReport} className="flex-1 rounded-xl text-sm">
+                  Save Report
+                </Button>
+              </div>
+              <Button
+                variant="ghost"
+                onClick={() => {
+                  setGeneratedReport(null);
+                  setEditableReport("");
+                }}
+                className="w-full text-xs text-muted-foreground"
+              >
+                Discard
+              </Button>
+            </div>
+          )}
+
+          {/* Saved Reports */}
+          {savedReports.length > 0 && (
+            <div className="rounded-2xl border bg-card p-4 animate-slide-up">
+              <h3 className="mb-3 text-sm font-bold">Saved Reports</h3>
+              <div className="space-y-2">
+                {savedReports.map((report) => (
+                  <div key={report.id} className="rounded-xl border bg-secondary/30 overflow-hidden">
+                    <button
+                      onClick={() => setExpandedReport(expandedReport === report.id ? null : report.id)}
+                      className="flex w-full items-center justify-between p-3 text-left"
+                    >
+                      <div>
+                        <p className="text-sm font-semibold">{report.dateRange}</p>
+                        <p className="text-xs text-muted-foreground">
+                          Saved {format(report.createdAt, "MMM d, yyyy 'at' h:mm a")}
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-7 w-7"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleCopy(report.content);
+                          }}
+                        >
+                          {copied ? <Check size={14} /> : <Copy size={14} />}
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-7 w-7 text-destructive"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDeleteReport(report.id);
+                          }}
+                        >
+                          <Trash2 size={14} />
+                        </Button>
+                        {expandedReport === report.id ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                      </div>
+                    </button>
+                    {expandedReport === report.id && (
+                      <div className="border-t px-3 py-3">
+                        <pre className="whitespace-pre-wrap text-xs leading-relaxed text-foreground max-h-[300px] overflow-y-auto">
+                          {report.content}
+                        </pre>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </main>
 
