@@ -14,7 +14,54 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      entries: {
+        Row: {
+          created_at: string
+          emergency: boolean | null
+          energy_level: number | null
+          follow_up_question: string | null
+          id: string
+          mood: string | null
+          pain_level: number | null
+          raw_text: string | null
+          severity: string | null
+          sleep_hours: number | null
+          summary: string | null
+          symptoms: Json | null
+          triggers: Json | null
+        }
+        Insert: {
+          created_at?: string
+          emergency?: boolean | null
+          energy_level?: number | null
+          follow_up_question?: string | null
+          id?: string
+          mood?: string | null
+          pain_level?: number | null
+          raw_text?: string | null
+          severity?: string | null
+          sleep_hours?: number | null
+          summary?: string | null
+          symptoms?: Json | null
+          triggers?: Json | null
+        }
+        Update: {
+          created_at?: string
+          emergency?: boolean | null
+          energy_level?: number | null
+          follow_up_question?: string | null
+          id?: string
+          mood?: string | null
+          pain_level?: number | null
+          raw_text?: string | null
+          severity?: string | null
+          sleep_hours?: number | null
+          summary?: string | null
+          symptoms?: Json | null
+          triggers?: Json | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
