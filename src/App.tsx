@@ -8,6 +8,7 @@ import LogPage from "./pages/LogPage";
 import WeeklyPage from "./pages/WeeklyPage";
 import ResourcesPage from "./pages/ResourcesPage";
 import ProfilePage from "./pages/ProfilePage";
+import SummaryPage from "./pages/SummaryPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -24,6 +25,7 @@ const App = () => (
           <Route path="/weekly" element={<WeeklyPage />} />
           <Route path="/resources" element={<ResourcesPage />} />
           <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/summary" element={<SummaryPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
