@@ -2,6 +2,7 @@ import { useState } from "react";
 import { ArrowLeft, ChevronRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { buddyAvatars } from "../lib/data";
+import PainPreferencesCard from "../components/PainPreferencesCard";
 
 const ProfilePage = () => {
   const [name, setName] = useState("Alex");
@@ -87,6 +88,9 @@ const ProfilePage = () => {
               </p>
             </div>
           </section>
+
+          {/* Pain & Communication Preferences */}
+          <PainPreferencesCard />
 
           {/* Settings */}
           <section className="rounded-2xl border bg-card divide-y animate-slide-up">

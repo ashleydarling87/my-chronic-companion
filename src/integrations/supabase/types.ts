@@ -14,51 +14,162 @@ export type Database = {
   }
   public: {
     Tables: {
+      doctor_reports: {
+        Row: {
+          average_energy: number | null
+          average_pain: number | null
+          context_note: string | null
+          created_at: string
+          flare_count: number | null
+          functional_impact_summary: Json | null
+          id: string
+          patient_voice_quotes: Json | null
+          pattern_insights: Json | null
+          report_period_end: string
+          report_period_start: string
+          safety_or_red_flags: string | null
+          treatments_tried: Json | null
+          worst_pain: number | null
+        }
+        Insert: {
+          average_energy?: number | null
+          average_pain?: number | null
+          context_note?: string | null
+          created_at?: string
+          flare_count?: number | null
+          functional_impact_summary?: Json | null
+          id?: string
+          patient_voice_quotes?: Json | null
+          pattern_insights?: Json | null
+          report_period_end: string
+          report_period_start: string
+          safety_or_red_flags?: string | null
+          treatments_tried?: Json | null
+          worst_pain?: number | null
+        }
+        Update: {
+          average_energy?: number | null
+          average_pain?: number | null
+          context_note?: string | null
+          created_at?: string
+          flare_count?: number | null
+          functional_impact_summary?: Json | null
+          id?: string
+          patient_voice_quotes?: Json | null
+          pattern_insights?: Json | null
+          report_period_end?: string
+          report_period_start?: string
+          safety_or_red_flags?: string | null
+          treatments_tried?: Json | null
+          worst_pain?: number | null
+        }
+        Relationships: []
+      }
       entries: {
         Row: {
+          body_regions: Json | null
+          context_notes: string | null
           created_at: string
           emergency: boolean | null
           energy_level: number | null
+          experienced_discrimination: boolean | null
+          felt_dismissed_by_provider: boolean | null
           follow_up_question: string | null
           id: string
+          impacts: Json | null
+          journal_text: string | null
           mood: string | null
+          pain_face_id: string | null
           pain_level: number | null
+          pain_verbal: string | null
+          qualities: Json | null
           raw_text: string | null
+          reliefs: Json | null
           severity: string | null
+          share_with_doctor_flags: Json | null
           sleep_hours: number | null
           summary: string | null
           symptoms: Json | null
           triggers: Json | null
         }
         Insert: {
+          body_regions?: Json | null
+          context_notes?: string | null
           created_at?: string
           emergency?: boolean | null
           energy_level?: number | null
+          experienced_discrimination?: boolean | null
+          felt_dismissed_by_provider?: boolean | null
           follow_up_question?: string | null
           id?: string
+          impacts?: Json | null
+          journal_text?: string | null
           mood?: string | null
+          pain_face_id?: string | null
           pain_level?: number | null
+          pain_verbal?: string | null
+          qualities?: Json | null
           raw_text?: string | null
+          reliefs?: Json | null
           severity?: string | null
+          share_with_doctor_flags?: Json | null
           sleep_hours?: number | null
           summary?: string | null
           symptoms?: Json | null
           triggers?: Json | null
         }
         Update: {
+          body_regions?: Json | null
+          context_notes?: string | null
           created_at?: string
           emergency?: boolean | null
           energy_level?: number | null
+          experienced_discrimination?: boolean | null
+          felt_dismissed_by_provider?: boolean | null
           follow_up_question?: string | null
           id?: string
+          impacts?: Json | null
+          journal_text?: string | null
           mood?: string | null
+          pain_face_id?: string | null
           pain_level?: number | null
+          pain_verbal?: string | null
+          qualities?: Json | null
           raw_text?: string | null
+          reliefs?: Json | null
           severity?: string | null
+          share_with_doctor_flags?: Json | null
           sleep_hours?: number | null
           summary?: string | null
           symptoms?: Json | null
           triggers?: Json | null
+        }
+        Relationships: []
+      }
+      user_preferences: {
+        Row: {
+          created_at: string
+          id: string
+          identity_tags: Json | null
+          pain_misunderstanding_note: string | null
+          pain_preference: string
+          report_sharing_defaults: Json | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          identity_tags?: Json | null
+          pain_misunderstanding_note?: string | null
+          pain_preference?: string
+          report_sharing_defaults?: Json | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          identity_tags?: Json | null
+          pain_misunderstanding_note?: string | null
+          pain_preference?: string
+          report_sharing_defaults?: Json | null
         }
         Relationships: []
       }
