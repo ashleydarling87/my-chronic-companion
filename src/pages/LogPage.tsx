@@ -99,9 +99,59 @@ const ScoreSlider = ({ label, value, onChange, type }: { label: string; value: n
 
 const MOOD_OPTIONS = ["😊 Great", "🙂 Good", "😐 Okay", "😔 Low", "😢 Awful"];
 
+const VERBAL_OPTIONS = ["none", "mild", "moderate", "severe", "unbearable"];
+const FACE_OPTIONS = [
+  { emoji: "😊", label: "No pain", value: 0 },
+  { emoji: "😐", label: "Mild", value: 3 },
+  { emoji: "😣", label: "Moderate", value: 5 },
+  { emoji: "😖", label: "Severe", value: 7 },
+  { emoji: "😭", label: "Unbearable", value: 10 },
+];
+
+const PainInput = ({ preference, painLevel, setPainLevel, painVerbal, setPainVerbal }: {
+  preference: string;
+  painLevel: number;
+  setPainLevel: (v: number) => void;
+  painVerbal: string;
+  setPainVerbal: (v: string) => void;
+}) => {
+  if (preference === "verbal") {
+    return (
+      <div className="space-y-1.5">
+        <span className="text-sm font-semibold">Pain Level</span>
+        <div className="flex flex-wrap gap-2">
+          {VERBAL_OPTIONS.map((v) => (
+            <button key={v} onClick={() => setPainVerbal(v)} className={`rounded-full px-3 py-1.5 text-xs font-semibold capitalize transition-all ${painVerbal === v ? "bg-primary text-primary-foreground scale-105" : "bg-secondary text-secondary-foreground hover:bg-primary/10"}`}>{v}</button>
+          ))}
+        </div>
+      </div>
+    );
+  }
+  if (preference === "faces") {
+    return (
+      <div className="space-y-1.5">
+        <span className="text-sm font-semibold">Pain Level</span>
+        <div className="flex flex-wrap gap-2">
+          {FACE_OPTIONS.map((f) => (
+            <button key={f.value} onClick={() => { setPainLevel(f.value); setPainVerbal(f.label.toLowerCase()); }} className={`flex flex-col items-center rounded-xl px-3 py-2 text-xs font-semibold transition-all ${painLevel === f.value ? "bg-primary text-primary-foreground scale-105" : "bg-secondary text-secondary-foreground hover:bg-primary/10"}`}>
+              <span className="text-lg">{f.emoji}</span>
+              <span className="text-[10px] mt-0.5">{f.label}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+    );
+  }
+  // numeric (default) or adaptive
+  return <ScoreSlider label="Pain Level" value={painLevel} onChange={setPainLevel} type="pain" />;
+};
+
 const CheckInForm = ({ onClose, onSaved }: { onClose: () => void; onSaved: () => void }) => {
   const navigate = useNavigate();
+  const { prefs } = useUserPreferences();
+  const painPref = prefs?.pain_preference || "numeric";
   const [painLevel, setPainLevel] = useState(5);
+  const [painVerbal, setPainVerbal] = useState("moderate");
   const [energyLevel, setEnergyLevel] = useState(5);
   const [mood, setMood] = useState("😐 Okay");
   const [sleepHours, setSleepHours] = useState("7");
@@ -111,8 +161,19 @@ const CheckInForm = ({ onClose, onSaved }: { onClose: () => void; onSaved: () =>
   const handleSubmit = async () => {
     setSubmitting(true);
     try {
+      const body: Record<string, unknown> = {
+        raw_text: rawText,
+        energy_level: energyLevel,
+        mood,
+        sleep_hours: parseFloat(sleepHours) || 0,
+      };
+      if (painPref === "verbal") {
+        body.pain_verbal = painVerbal;
+      } else {
+        body.pain_level = painLevel;
+      }
       const { data, error } = await supabase.functions.invoke("processDailyEntry", {
-        body: { raw_text: rawText, pain_level: painLevel, energy_level: energyLevel, mood, sleep_hours: parseFloat(sleepHours) || 0 },
+        body,
       });
       if (error) throw error;
       if (data?.error) throw new Error(data.error);
@@ -132,7 +193,7 @@ const CheckInForm = ({ onClose, onSaved }: { onClose: () => void; onSaved: () =>
         <h2 className="text-sm font-bold">Daily Check-In</h2>
         <button onClick={onClose} className="rounded-full p-1.5 text-muted-foreground hover:bg-secondary"><X size={16} /></button>
       </div>
-      <ScoreSlider label="Pain Level" value={painLevel} onChange={setPainLevel} type="pain" />
+      <PainInput preference={painPref} painLevel={painLevel} setPainLevel={setPainLevel} painVerbal={painVerbal} setPainVerbal={setPainVerbal} />
       <ScoreSlider label="Energy Level" value={energyLevel} onChange={setEnergyLevel} type="energy" />
       <div className="space-y-1.5">
         <span className="text-sm font-semibold">Mood</span>
