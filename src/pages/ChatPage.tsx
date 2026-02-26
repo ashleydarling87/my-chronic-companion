@@ -1,69 +1,205 @@
 import { useState, useRef, useEffect } from "react";
 import { Send, Mic } from "lucide-react";
+import { toast } from "sonner";
 import Header from "../components/Header";
 import BottomNav from "../components/BottomNav";
-import { mockMessages, type ChatMessage } from "../lib/data";
+import { supabase } from "@/integrations/supabase/client";
+import { useUserPreferences } from "@/hooks/useUserPreferences";
+import { streamChat, parseAIResponse, type ChatMsg } from "@/lib/chatStream";
+
+interface DisplayMessage {
+  id: string;
+  role: "user" | "assistant";
+  content: string;
+  chips?: string[];
+  timestamp: Date;
+  saved?: boolean;
+}
 
 const TypingIndicator = () => (
   <div className="flex items-center gap-1 chat-bubble-ai w-fit">
-    <div className="h-2 w-2 rounded-full bg-muted-foreground animate-typing-dot-1" />
-    <div className="h-2 w-2 rounded-full bg-muted-foreground animate-typing-dot-2" />
-    <div className="h-2 w-2 rounded-full bg-muted-foreground animate-typing-dot-3" />
+    <div className="h-2 w-2 rounded-full bg-muted-foreground animate-bounce [animation-delay:0ms]" />
+    <div className="h-2 w-2 rounded-full bg-muted-foreground animate-bounce [animation-delay:150ms]" />
+    <div className="h-2 w-2 rounded-full bg-muted-foreground animate-bounce [animation-delay:300ms]" />
   </div>
 );
 
-const ChatBubble = ({ message }: { message: ChatMessage }) => {
+const QuickChips = ({ chips, onSelect, disabled }: { chips: string[]; onSelect: (c: string) => void; disabled: boolean }) => (
+  <div className="flex flex-wrap gap-1.5 mt-2 animate-slide-up">
+    {chips.map((chip) => (
+      <button
+        key={chip}
+        onClick={() => onSelect(chip)}
+        disabled={disabled}
+        className="rounded-full border border-primary/30 bg-primary/5 px-3 py-1.5 text-xs font-medium text-foreground transition-all hover:bg-primary/15 hover:border-primary/50 disabled:opacity-40"
+      >
+        {chip}
+      </button>
+    ))}
+  </div>
+);
+
+const ChatBubble = ({ message, onChipSelect, isLatest, isLoading }: {
+  message: DisplayMessage;
+  onChipSelect: (c: string) => void;
+  isLatest: boolean;
+  isLoading: boolean;
+}) => {
   const isUser = message.role === "user";
 
   return (
     <div className={`flex ${isUser ? "justify-end" : "justify-start"} animate-slide-up`}>
       {!isUser && <span className="mr-2 mt-1 text-xl">🐻</span>}
-      <div className={`max-w-[78%] ${isUser ? "chat-bubble-user" : "chat-bubble-ai"}`}>
-        <p className="text-[15px] leading-relaxed">{message.content}</p>
-        <p className={`mt-1 text-[10px] ${isUser ? "text-primary-foreground/60" : "text-muted-foreground"}`}>
-          {message.timestamp.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}
-        </p>
+      <div className="max-w-[78%] space-y-1">
+        <div className={isUser ? "chat-bubble-user" : "chat-bubble-ai"}>
+          <p className="text-[15px] leading-relaxed whitespace-pre-wrap">{message.content}</p>
+          <p className={`mt-1 text-[10px] ${isUser ? "text-primary-foreground/60" : "text-muted-foreground"}`}>
+            {message.timestamp.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}
+          </p>
+        </div>
+        {message.saved && (
+          <p className="text-[11px] text-accent font-medium ml-1">
+            📝 Saved to your log for {message.timestamp.toLocaleDateString([], { weekday: "short", month: "short", day: "numeric" })}
+          </p>
+        )}
+        {!isUser && isLatest && message.chips && message.chips.length > 0 && (
+          <QuickChips chips={message.chips} onSelect={onChipSelect} disabled={isLoading} />
+        )}
       </div>
     </div>
   );
 };
 
+const INITIAL_MESSAGE: DisplayMessage = {
+  id: "initial",
+  role: "assistant",
+  content: "Hey bestie! 💛 How are you feeling today? Tell me everything — the good, the bad, the ugh.",
+  chips: ["Not great today", "Pretty good actually", "Pain is really bad", "I just want to vent"],
+  timestamp: new Date(),
+};
+
 const ChatPage = () => {
-  const [messages, setMessages] = useState<ChatMessage[]>(mockMessages);
+  const [messages, setMessages] = useState<DisplayMessage[]>([INITIAL_MESSAGE]);
   const [input, setInput] = useState("");
-  const [isTyping, setIsTyping] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
+  const { prefs } = useUserPreferences();
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, isTyping]);
+  }, [messages, isLoading]);
 
-  const handleSend = () => {
-    if (!input.trim()) return;
+  const saveEntryToDb = async (entryData: Record<string, unknown>) => {
+    const row: Record<string, unknown> = {
+      pain_level: entryData.pain_level ?? null,
+      pain_verbal: entryData.pain_verbal ?? null,
+      energy_level: entryData.energy_level ?? null,
+      mood: entryData.mood ?? null,
+      body_regions: entryData.body_regions ?? [],
+      qualities: entryData.qualities ?? [],
+      impacts: entryData.impacts ?? {},
+      triggers: entryData.triggers ?? [],
+      reliefs: entryData.reliefs ?? [],
+      journal_text: entryData.journal_text ?? null,
+      summary: entryData.summary ?? null,
+      symptoms: entryData.symptoms ?? [],
+      severity: entryData.severity ?? null,
+      raw_text: entryData.journal_text ?? null,
+      felt_dismissed_by_provider: entryData.felt_dismissed_by_provider ?? false,
+      experienced_discrimination: entryData.experienced_discrimination ?? false,
+      context_notes: entryData.context_notes ?? null,
+      emergency: entryData.emergency ?? false,
+    };
 
-    const userMsg: ChatMessage = {
+    const { error } = await supabase.from("entries").insert(row);
+    if (error) {
+      console.error("Failed to save entry:", error);
+      toast.error("Couldn't save entry to your log");
+      return false;
+    }
+    return true;
+  };
+
+  const sendMessage = async (text: string) => {
+    if (!text.trim() || isLoading) return;
+
+    const userMsg: DisplayMessage = {
       id: Date.now().toString(),
       role: "user",
-      content: input.trim(),
+      content: text.trim(),
       timestamp: new Date(),
     };
 
     setMessages((prev) => [...prev, userMsg]);
     setInput("");
-    setIsTyping(true);
+    setIsLoading(true);
 
-    // Simulate AI response
-    setTimeout(() => {
-      const aiMsg: ChatMessage = {
-        id: (Date.now() + 1).toString(),
-        role: "ai",
-        content: "I hear you! 💛 Thanks for sharing that with me. I've logged everything. Remember, you're doing your best and that's enough. Want to tell me more or should we call it for today?",
-        timestamp: new Date(),
-      };
-      setMessages((prev) => [...prev, aiMsg]);
-      setIsTyping(false);
-    }, 1500);
+    // Build message history for AI (exclude initial mock message if it's the system greeting)
+    const allMessages = [...messages, userMsg];
+    const chatHistory: ChatMsg[] = allMessages
+      .filter((m) => m.id !== "initial")
+      .map((m) => ({ role: m.role, content: m.content }));
+
+    // If this is the first user message, include the greeting as assistant context
+    if (allMessages[0].id === "initial") {
+      chatHistory.unshift({ role: "assistant", content: allMessages[0].content });
+    }
+
+    let assistantText = "";
+    const assistantId = (Date.now() + 1).toString();
+
+    const upsertAssistant = (nextChunk: string) => {
+      assistantText += nextChunk;
+      setMessages((prev) => {
+        const last = prev[prev.length - 1];
+        if (last?.role === "assistant" && last.id === assistantId) {
+          return prev.map((m) => (m.id === assistantId ? { ...m, content: assistantText } : m));
+        }
+        return [...prev, { id: assistantId, role: "assistant", content: assistantText, timestamp: new Date() }];
+      });
+    };
+
+    try {
+      await streamChat({
+        messages: chatHistory,
+        preferences: prefs ? {
+          pain_preference: prefs.pain_preference,
+          identity_tags: prefs.identity_tags,
+        } : undefined,
+        onDelta: (chunk) => upsertAssistant(chunk),
+        onDone: async () => {
+          // Parse the final text for chips and entry data
+          const { displayText, chips, entryData } = parseAIResponse(assistantText);
+
+          let saved = false;
+          if (entryData) {
+            saved = await saveEntryToDb(entryData);
+            if (saved) {
+              toast.success("Check-in saved to your log! 📝");
+            }
+          }
+
+          setMessages((prev) =>
+            prev.map((m) =>
+              m.id === assistantId
+                ? { ...m, content: displayText, chips, saved }
+                : m
+            )
+          );
+          setIsLoading(false);
+        },
+      });
+    } catch (e) {
+      console.error("Chat error:", e);
+      toast.error(e instanceof Error ? e.message : "Something went wrong");
+      setIsLoading(false);
+    }
   };
+
+  const handleSend = () => sendMessage(input);
+  const handleChipSelect = (chip: string) => sendMessage(chip);
+
+  const latestAssistantId = [...messages].reverse().find((m) => m.role === "assistant")?.id;
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
@@ -72,9 +208,15 @@ const ChatPage = () => {
       <main className="flex-1 overflow-y-auto px-4 py-4 pb-36">
         <div className="mx-auto max-w-lg space-y-3">
           {messages.map((msg) => (
-            <ChatBubble key={msg.id} message={msg} />
+            <ChatBubble
+              key={msg.id}
+              message={msg}
+              onChipSelect={handleChipSelect}
+              isLatest={msg.id === latestAssistantId}
+              isLoading={isLoading}
+            />
           ))}
-          {isTyping && (
+          {isLoading && !messages.some((m) => m.id === (Date.now() + 1).toString()) && (
             <div className="flex items-center">
               <span className="mr-2 text-xl">🐻</span>
               <TypingIndicator />
@@ -95,11 +237,12 @@ const ChatPage = () => {
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleSend()}
             placeholder="Tell me how you're feeling..."
-            className="flex-1 rounded-full border bg-background px-4 py-2.5 text-sm outline-none placeholder:text-muted-foreground focus:ring-2 focus:ring-primary/30"
+            disabled={isLoading}
+            className="flex-1 rounded-full border bg-background px-4 py-2.5 text-sm outline-none placeholder:text-muted-foreground focus:ring-2 focus:ring-primary/30 disabled:opacity-50"
           />
           <button
             onClick={handleSend}
-            disabled={!input.trim()}
+            disabled={!input.trim() || isLoading}
             className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground transition-all disabled:opacity-40"
           >
             <Send size={18} />
