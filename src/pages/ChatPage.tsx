@@ -70,16 +70,51 @@ const ChatBubble = ({ message, onChipSelect, isLatest, isLoading }: {
   );
 };
 
-const INITIAL_MESSAGE: DisplayMessage = {
+const makeInitialMessage = (): DisplayMessage => ({
   id: "initial",
   role: "assistant",
   content: "Hey bestie! 💛 How are you feeling today? Tell me everything — the good, the bad, the ugh.",
   chips: ["Not great today", "Pretty good actually", "Pain is really bad", "I just want to vent"],
   timestamp: new Date(),
+});
+
+/** Returns the "chat day" string (YYYY-MM-DD) where the day flips at 3 AM local time. */
+const getChatDay = (): string => {
+  const now = new Date();
+  // If before 3 AM, it's still "yesterday's" chat day
+  if (now.getHours() < 3) {
+    const yesterday = new Date(now);
+    yesterday.setDate(yesterday.getDate() - 1);
+    return yesterday.toISOString().slice(0, 10);
+  }
+  return now.toISOString().slice(0, 10);
+};
+
+const STORAGE_KEY = "buddy_chat_session";
+
+const loadSession = (): DisplayMessage[] => {
+  try {
+    const raw = sessionStorage.getItem(STORAGE_KEY);
+    if (!raw) return [];
+    const { day, messages } = JSON.parse(raw);
+    if (day !== getChatDay()) return []; // reset at 3am boundary
+    return messages.map((m: DisplayMessage) => ({ ...m, timestamp: new Date(m.timestamp) }));
+  } catch {
+    return [];
+  }
+};
+
+const saveSession = (msgs: DisplayMessage[]) => {
+  try {
+    sessionStorage.setItem(STORAGE_KEY, JSON.stringify({ day: getChatDay(), messages: msgs }));
+  } catch { /* quota exceeded — non-critical */ }
 };
 
 const ChatPage = () => {
-  const [messages, setMessages] = useState<DisplayMessage[]>([INITIAL_MESSAGE]);
+  const [messages, setMessages] = useState<DisplayMessage[]>(() => {
+    const restored = loadSession();
+    return restored.length > 0 ? restored : [makeInitialMessage()];
+  });
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
@@ -88,6 +123,11 @@ const ChatPage = () => {
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isLoading]);
+
+  // Persist messages to sessionStorage
+  useEffect(() => {
+    saveSession(messages);
+  }, [messages]);
 
   const saveEntryToDb = async (entryData: Record<string, unknown>) => {
     const row: Record<string, unknown> = {
