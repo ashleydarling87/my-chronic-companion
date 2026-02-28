@@ -22,7 +22,19 @@ serve(async (req) => {
     const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
-    const { raw_text, pain_level, energy_level, mood, sleep_hours } = await req.json();
+    // Get user from auth header
+    const authHeader = req.headers.get("Authorization");
+    let userId: string | null = null;
+    if (authHeader) {
+      const anonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
+      const userClient = createClient(SUPABASE_URL, anonKey, {
+        global: { headers: { Authorization: authHeader } },
+      });
+      const { data: { user } } = await userClient.auth.getUser();
+      userId = user?.id ?? null;
+    }
+
+    const { raw_text, pain_level, pain_verbal, energy_level, mood, sleep_hours } = await req.json();
 
     const systemPrompt = `You are a compassionate health-tracking AI assistant for people with chronic illness. 
 Analyze the user's daily check-in and return structured JSON using the tool provided.
