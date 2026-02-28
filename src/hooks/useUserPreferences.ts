@@ -33,6 +33,7 @@ export interface UserPreferences {
   communication_style: CommunicationStyle;
   display_name: string | null;
   my_symptoms: string[];
+  usage_mode: string;
 }
 
 const DEFAULT_PREFS: Omit<UserPreferences, "id"> = {
