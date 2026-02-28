@@ -414,9 +414,11 @@ const EntryCard = ({ entry, onExpand }: { entry: DbEntry; onExpand: () => void }
 
 const LogPage = () => {
   const [showForm, setShowForm] = useState(false);
+  const [showPHQ4, setShowPHQ4] = useState(false);
   const [entries, setEntries] = useState<DbEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const { latest: latestMH, needsWeeklyPrompt, saveScore, refetch: refetchMH } = useMentalHealthScores();
 
   const fetchEntries = async () => {
     setLoading(true);
