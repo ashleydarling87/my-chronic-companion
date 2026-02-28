@@ -24,6 +24,13 @@ serve(async (req) => {
     const buddyName = preferences?.buddy_name || "Buddy";
     const buddyAvatar = preferences?.buddy_avatar || "bear";
 
+    // Intake data for personalization
+    const intakeCondition: string = preferences?.intake_condition || "";
+    const intakeDuration: string = preferences?.intake_duration || "";
+    const intakeBodyRegions: string[] = preferences?.intake_body_regions || [];
+    const intakeTreatments: string[] = preferences?.intake_treatments || [];
+    const intakeGoals: string = preferences?.intake_goals || "";
+
     let painFormatInstruction = "";
     switch (painPref) {
       case "numeric":
@@ -87,6 +94,18 @@ Then say something encouraging like "I've got a great picture of what you're dea
 
 ${identityContext}`;
     } else {
+      // Build personalization context from intake data
+      let intakeContext = "";
+      if (intakeCondition) {
+        intakeContext += `\n\nWHAT YOU KNOW ABOUT THIS PERSON (from their intake — use naturally, don't recite back):`;
+        intakeContext += `\n- Condition: ${intakeCondition}`;
+        if (intakeDuration) intakeContext += `\n- Living with it for: ${intakeDuration}`;
+        if (intakeBodyRegions.length > 0) intakeContext += `\n- Most affected areas: ${intakeBodyRegions.join(", ")}`;
+        if (intakeTreatments.length > 0) intakeContext += `\n- Treatments/strategies they've tried: ${intakeTreatments.join(", ")}`;
+        if (intakeGoals) intakeContext += `\n- What they hope to get from this app: ${intakeGoals}`;
+        intakeContext += `\n\nUse this knowledge to ask smarter follow-ups (e.g. "How's your ${intakeBodyRegions[0] || 'pain'} today?" instead of generic questions). Reference their treatments naturally (e.g. "Did the ${intakeTreatments[0] || 'usual remedies'} help today?"). Never dump all this info at once — weave it in conversationally.`;
+      }
+
       systemPrompt = `You are ${buddyName}, a warm, supportive AI companion for someone living with chronic pain or illness. You speak like a caring best friend — casual, empathetic, sometimes funny, always validating.
 
 CORE RULES:
@@ -98,6 +117,7 @@ CORE RULES:
 
 ${painFormatInstruction}
 ${identityContext}
+${intakeContext}
 
 YOUR CONVERSATION GOAL:
 You're having a check-in conversation. Naturally gather:

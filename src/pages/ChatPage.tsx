@@ -208,6 +208,13 @@ const ChatPage = () => {
         preferences: prefs ? {
           pain_preference: prefs.pain_preference,
           identity_tags: prefs.identity_tags,
+          buddy_name: prefs.buddy_name,
+          buddy_avatar: prefs.buddy_avatar,
+          intake_condition: prefs.intake_condition,
+          intake_duration: prefs.intake_duration,
+          intake_body_regions: prefs.intake_body_regions,
+          intake_treatments: prefs.intake_treatments,
+          intake_goals: prefs.intake_goals,
         } : undefined,
         onDelta: (chunk) => upsertAssistant(chunk),
         onDone: async () => {

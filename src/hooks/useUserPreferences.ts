@@ -16,6 +16,11 @@ export interface UserPreferences {
   buddy_avatar: string;
   age_range: string;
   onboarding_complete: boolean;
+  intake_condition: string | null;
+  intake_duration: string | null;
+  intake_body_regions: string[];
+  intake_treatments: string[];
+  intake_goals: string | null;
 }
 
 const DEFAULT_PREFS: Omit<UserPreferences, "id"> = {
@@ -30,6 +35,11 @@ const DEFAULT_PREFS: Omit<UserPreferences, "id"> = {
   buddy_avatar: "bear",
   age_range: "",
   onboarding_complete: false,
+  intake_condition: null,
+  intake_duration: null,
+  intake_body_regions: [],
+  intake_treatments: [],
+  intake_goals: null,
 };
 
 export function useUserPreferences() {
@@ -71,6 +81,11 @@ export function useUserPreferences() {
         buddy_avatar: (data as any).buddy_avatar ?? "bear",
         age_range: (data as any).age_range ?? "",
         onboarding_complete: (data as any).onboarding_complete ?? false,
+        intake_condition: (data as any).intake_condition ?? null,
+        intake_duration: (data as any).intake_duration ?? null,
+        intake_body_regions: (data as any).intake_body_regions ?? [],
+        intake_treatments: (data as any).intake_treatments ?? [],
+        intake_goals: (data as any).intake_goals ?? null,
       });
     }
     setLoading(false);
@@ -127,6 +142,11 @@ export function useUserPreferences() {
         buddy_avatar: (data as any).buddy_avatar ?? "bear",
         age_range: (data as any).age_range ?? "",
         onboarding_complete: (data as any).onboarding_complete ?? false,
+        intake_condition: (data as any).intake_condition ?? null,
+        intake_duration: (data as any).intake_duration ?? null,
+        intake_body_regions: (data as any).intake_body_regions ?? [],
+        intake_treatments: (data as any).intake_treatments ?? [],
+        intake_goals: (data as any).intake_goals ?? null,
       });
       toast.success("Preferences saved");
     }
