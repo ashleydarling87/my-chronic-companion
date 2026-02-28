@@ -154,6 +154,7 @@ CORE RULES:
 ${painFormatInstruction}
 ${identityContext}
 ${intakeContext}
+${symptomsContext}
 ${styleInstruction}
 
 YOUR CONVERSATION GOAL:
