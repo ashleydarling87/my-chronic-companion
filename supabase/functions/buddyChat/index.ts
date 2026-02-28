@@ -139,6 +139,7 @@ When you've gathered enough info (at minimum: condition + duration + what helps 
 Then say something encouraging like "I've got a great picture of what you're dealing with! I'm here for you every day. Let's do this together 💛"
 
 ${identityContext}
+${caretakerContext}
 ${styleInstruction}`;
     } else {
       // Build personalization context from intake data
