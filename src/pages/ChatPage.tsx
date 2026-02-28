@@ -149,12 +149,22 @@ const saveSession = (msgs: DisplayMessage[]) => {
 const ChatPage = () => {
   const [messages, setMessages] = useState<DisplayMessage[]>(() => {
     const restored = loadSession();
-    return restored.length > 0 ? restored : [makeInitialMessage()];
+    return restored.length > 0 ? restored : [makeInitialMessage(prefs?.pain_preference)];
   });
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
   const { prefs } = useUserPreferences();
+
+  // Update initial message chips when preferences load
+  useEffect(() => {
+    setMessages((prev) => {
+      if (prev.length === 1 && prev[0].id === "initial") {
+        return [makeInitialMessage(prefs?.pain_preference)];
+      }
+      return prev;
+    });
+  }, [prefs?.pain_preference]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
