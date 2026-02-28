@@ -2,10 +2,11 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 import BottomNav from "../components/BottomNav";
-import { BookOpen, Heart, Brain, Phone, MessageCircle, Star } from "lucide-react";
+import { BookOpen, Heart, Brain, Phone, MessageCircle, Star, HelpCircle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import EncouragementSheet from "@/components/EncouragementSheet";
 import CrisisSheet from "@/components/CrisisSheet";
+import HowToUseSheet from "@/components/HowToUseSheet";
 
 const categories = [
   {
@@ -48,6 +49,14 @@ const categories = [
     color: "bg-ring/12 text-ring",
     description: "Advocate for yourself",
   },
+  {
+    id: "how-to-use",
+    label: "How to Use",
+    emoji: "❓",
+    icon: HelpCircle,
+    color: "bg-secondary text-foreground",
+    description: "Get the most out of this app",
+  },
 ];
 
 const ADVOCACY_RESOURCES = [
@@ -88,6 +97,7 @@ const ResourcesPage = () => {
   const [showAdvocacy, setShowAdvocacy] = useState(false);
   const [showEncouragement, setShowEncouragement] = useState(false);
   const [showCrisis, setShowCrisis] = useState(false);
+  const [showHowToUse, setShowHowToUse] = useState(false);
   const [suggestedForYou, setSuggestedForYou] = useState(false);
 
   // Check if user has logged discrimination/dismissal recently
@@ -138,6 +148,8 @@ const ResourcesPage = () => {
                       setShowEncouragement(true);
                     } else if (cat.id === "crisis") {
                       setShowCrisis(true);
+                    } else if (cat.id === "how-to-use") {
+                      setShowHowToUse(true);
                     } else {
                       navigate(`/resources/${cat.id}`);
                     }
@@ -197,6 +209,7 @@ const ResourcesPage = () => {
 
       <EncouragementSheet open={showEncouragement} onClose={() => setShowEncouragement(false)} />
       <CrisisSheet open={showCrisis} onClose={() => setShowCrisis(false)} />
+      <HowToUseSheet open={showHowToUse} onClose={() => setShowHowToUse(false)} />
       <BottomNav />
     </div>
   );
