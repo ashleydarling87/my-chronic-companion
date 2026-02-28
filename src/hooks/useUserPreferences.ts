@@ -21,6 +21,7 @@ export interface UserPreferences {
   intake_body_regions: string[];
   intake_treatments: string[];
   intake_goals: string | null;
+  profile_picture_url: string | null;
 }
 
 const DEFAULT_PREFS: Omit<UserPreferences, "id"> = {
