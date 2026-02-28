@@ -237,6 +237,7 @@ const OnboardingPage = () => {
       buddy_name: buddyName.trim() || "Buddy",
       onboarding_complete: complete,
       usage_mode: usageMode,
+    };
 
     if (intakeData) {
       row.intake_condition = intakeData.condition || intakeData.primary_condition || null;
