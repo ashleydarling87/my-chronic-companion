@@ -211,6 +211,24 @@ export const SUGGESTED_SYMPTOMS = [
   "Swelling",
   "Chest tightness",
   "Hot flashes",
+  // Mental health
+  "Low mood",
+  "Panic attacks",
+  "Racing thoughts",
+  "Difficulty concentrating",
+  "Hopelessness",
+  "Social withdrawal",
+  "Emotional dysregulation",
+  "Loss of appetite",
+  "Flashbacks",
+  "Nightmares",
+  "Hypervigilance",
+  "Emotional numbness",
+  "Muscle tension",
+  "Restlessness",
+  "Forgetfulness",
+  "Intrusive thoughts",
+  "Compulsive behaviors",
 ];
 
 /** @deprecated Use BUDDY_AVATARS instead */
