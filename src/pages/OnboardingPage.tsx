@@ -295,7 +295,7 @@ const OnboardingPage = () => {
   };
 
   // Intake chat step — full screen
-  if (step === 3) {
+  if (step === 5) {
     return (
       <div className="flex min-h-screen flex-col bg-background">
         {/* Header */}
