@@ -116,7 +116,7 @@ export function useUserPreferences() {
           pain_misunderstanding_note: updated.pain_misunderstanding_note ?? prefs.pain_misunderstanding_note,
           identity_tags: updated.identity_tags ?? prefs.identity_tags,
           report_sharing_defaults: updated.report_sharing_defaults ?? prefs.report_sharing_defaults,
-          communication_style: updated.communication_style ?? prefs.communication_style,
+          communication_style: (updated.communication_style ?? prefs.communication_style) as unknown as Record<string, string>,
         })
         .eq("id", prefs.id);
 
