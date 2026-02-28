@@ -6,6 +6,7 @@ import { BookOpen, Heart, Brain, Phone, MessageCircle, Star, HelpCircle } from "
 import { supabase } from "@/integrations/supabase/client";
 import EncouragementSheet from "@/components/EncouragementSheet";
 import CrisisSheet from "@/components/CrisisSheet";
+import HowToUseSheet from "@/components/HowToUseSheet";
 
 const categories = [
   {
