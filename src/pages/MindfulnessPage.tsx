@@ -214,7 +214,12 @@ const BreathingTimer = () => {
           <Button
             size="icon"
             className="h-14 w-14 rounded-full"
-            onClick={() => setIsActive(!isActive)}
+            onClick={() => {
+              if (!isActive) {
+                triggerPhaseFeedback("inhale");
+              }
+              setIsActive(!isActive);
+            }}
           >
             {isActive ? <Pause className="h-6 w-6" /> : <Play className="h-6 w-6 ml-0.5" />}
           </Button>
