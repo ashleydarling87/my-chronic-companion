@@ -439,8 +439,12 @@ const OnboardingPage = () => {
             <div className="space-y-6 animate-slide-up">
               <div className="text-center space-y-2">
                 <span className="text-4xl">👋</span>
-                <h2 className="text-xl font-extrabold">Welcome! Let's get started</h2>
-                <p className="text-sm text-muted-foreground">What's your age range?</p>
+                <h2 className="text-xl font-extrabold">
+                  {usageMode === "caretaker" ? "About the person you're caring for" : "Welcome! Let's get started"}
+                </h2>
+                <p className="text-sm text-muted-foreground">
+                  {usageMode === "caretaker" ? "What's their age range?" : "What's your age range?"}
+                </p>
               </div>
               <div className="grid grid-cols-2 gap-2">
                 {AGE_RANGES.map((r) => (
