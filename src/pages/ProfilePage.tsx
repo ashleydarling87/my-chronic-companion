@@ -60,8 +60,8 @@ const ProfilePage = () => {
             <div className="space-y-1">
               <label className="text-xs font-semibold text-muted-foreground">Age Range</label>
               <select
-                value={ageRange}
-                onChange={(e) => setAgeRange(e.target.value)}
+                value={prefs?.age_range || ""}
+                onChange={(e) => savePrefs({ age_range: e.target.value } as any)}
                 className="w-full rounded-xl border bg-background px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary/30"
               >
                 <option value="">Select age range</option>
