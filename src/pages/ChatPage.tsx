@@ -88,7 +88,7 @@ const makeInitialMessage = (): DisplayMessage => ({
   id: "initial",
   role: "assistant",
   content: "Hey bestie! 💛 How are you feeling today? Tell me everything — the good, the bad, the ugh.",
-  chips: ["Not great today", "Pretty good actually", "Pain is really bad", "I just want to vent"],
+  chips: ["Not great today", "Pretty good actually", "Symptoms are really bad", "I just want to vent"],
   timestamp: new Date(),
 });
 
