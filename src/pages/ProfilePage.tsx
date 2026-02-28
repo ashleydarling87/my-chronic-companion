@@ -25,6 +25,7 @@ const ProfilePage = () => {
 
   useEffect(() => {
     if (prefs) {
+      setName(prefs.display_name || "");
       setBuddyName(prefs.buddy_name);
       setSelectedAvatarId(prefs.buddy_avatar);
       setProfilePicUrl(prefs.profile_picture_url || null);
