@@ -31,6 +31,7 @@ export interface UserPreferences {
   intake_goals: string | null;
   profile_picture_url: string | null;
   communication_style: CommunicationStyle;
+  display_name: string | null;
 }
 
 const DEFAULT_PREFS: Omit<UserPreferences, "id"> = {
