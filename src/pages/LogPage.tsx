@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { format } from "date-fns";
-import { Plus, Edit2, Check, X, Loader2, ChevronDown, ChevronUp, AlertTriangle, Eye } from "lucide-react";
+import { Plus, Edit2, Check, X, Loader2, ChevronDown, ChevronUp, AlertTriangle, Eye, Trash2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 import BottomNav from "../components/BottomNav";
