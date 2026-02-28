@@ -8,6 +8,21 @@ import { BUDDY_AVATARS, getBuddyEmoji } from "@/lib/data";
 
 const AGE_RANGES = ["17–24", "25–30", "31–36", "37–42", "43–50", "51–60", "60+"];
 
+const BELONG_OPTIONS = [
+  { label: "Chronic pain", emoji: "🩹" },
+  { label: "Fibromyalgia", emoji: "🦋" },
+  { label: "Autoimmune condition", emoji: "🔬" },
+  { label: "Migraines / headaches", emoji: "🤕" },
+  { label: "Post-surgical recovery", emoji: "🏥" },
+  { label: "Undiagnosed symptoms", emoji: "❓" },
+  { label: "Other / not sure yet", emoji: "🌱" },
+];
+
+const USAGE_MODES = [
+  { value: "self", label: "For myself", desc: "I'm tracking my own symptoms", emoji: "🙋" },
+  { value: "caretaker", label: "As a caretaker", desc: "I'm helping someone else track theirs", emoji: "🤝" },
+];
+
 const PAIN_PREFS = [
   { value: "numeric", label: "0–10 Scale", desc: "Classic slider from 0 to 10", emoji: "🔢" },
   { value: "verbal", label: "Word Scale", desc: "None, mild, moderate, severe", emoji: "💬" },
@@ -191,18 +206,22 @@ const IntakeChat = ({
 const OnboardingPage = () => {
   const navigate = useNavigate();
   const [step, setStep] = useState(0);
+  const [belongSelection, setBelongSelection] = useState<string[]>([]);
+  const [usageMode, setUsageMode] = useState("self");
   const [ageRange, setAgeRange] = useState("");
   const [painPref, setPainPref] = useState("numeric");
   const [buddyAvatar, setBuddyAvatar] = useState("bear");
   const [buddyName, setBuddyName] = useState("Buddy");
   const [saving, setSaving] = useState(false);
 
-  const totalSteps = 4; // age → pain pref → buddy setup → intake chat
+  const totalSteps = 6; // belong → usage mode → age → pain pref → buddy setup → intake chat
 
   const canAdvance = () => {
-    if (step === 0) return !!ageRange;
-    if (step === 1) return !!painPref;
-    if (step === 2) return buddyName.trim().length > 0;
+    if (step === 0) return belongSelection.length > 0;
+    if (step === 1) return !!usageMode;
+    if (step === 2) return !!ageRange;
+    if (step === 3) return !!painPref;
+    if (step === 4) return buddyName.trim().length > 0;
     return true;
   };
 
@@ -217,6 +236,7 @@ const OnboardingPage = () => {
       buddy_avatar: buddyAvatar,
       buddy_name: buddyName.trim() || "Buddy",
       onboarding_complete: complete,
+      usage_mode: usageMode,
     };
 
     if (intakeData) {
@@ -244,14 +264,14 @@ const OnboardingPage = () => {
   };
 
   const handleNext = async () => {
-    if (step < 2) {
+    if (step < 4) {
       setStep(step + 1);
-    } else if (step === 2) {
+    } else if (step === 4) {
       // Save buddy setup then enter intake chat
       setSaving(true);
       try {
         await saveProgress(false);
-        setStep(3);
+        setStep(5);
       } catch (e: any) {
         toast.error(e.message || "Failed to save");
       } finally {
@@ -275,7 +295,7 @@ const OnboardingPage = () => {
   };
 
   // Intake chat step — full screen
-  if (step === 3) {
+  if (step === 5) {
     return (
       <div className="flex min-h-screen flex-col bg-background">
         {/* Header */}
@@ -322,13 +342,78 @@ const OnboardingPage = () => {
 
       <main className="flex-1 flex flex-col justify-center px-6 py-8">
         <div className="mx-auto w-full max-w-sm space-y-6">
-          {/* Step 0: Age Range */}
+          {/* Step 0: Do I belong here? */}
           {step === 0 && (
+            <div className="space-y-6 animate-slide-up">
+              <div className="text-center space-y-2">
+                <span className="text-4xl">💛</span>
+                <h2 className="text-xl font-extrabold">You're in the right place</h2>
+                <p className="text-sm text-muted-foreground">This app helps people living with ongoing health challenges. What resonates with you?</p>
+              </div>
+              <div className="space-y-2">
+                {BELONG_OPTIONS.map((opt) => {
+                  const selected = belongSelection.includes(opt.label);
+                  return (
+                    <button
+                      key={opt.label}
+                      onClick={() =>
+                        setBelongSelection((prev) =>
+                          selected ? prev.filter((s) => s !== opt.label) : [...prev, opt.label]
+                        )
+                      }
+                      className={`flex w-full items-center gap-3 rounded-xl px-4 py-3.5 text-left transition-all ${
+                        selected
+                          ? "bg-primary text-primary-foreground scale-[1.02]"
+                          : "bg-card border text-foreground hover:bg-primary/10"
+                      }`}
+                    >
+                      <span className="text-2xl">{opt.emoji}</span>
+                      <span className="text-sm font-bold">{opt.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
+              <p className="text-xs text-muted-foreground text-center">Select all that apply</p>
+            </div>
+          )}
+
+          {/* Step 1: Self or caretaker */}
+          {step === 1 && (
+            <div className="space-y-6 animate-slide-up">
+              <div className="text-center space-y-2">
+                <span className="text-4xl">🤗</span>
+                <h2 className="text-xl font-extrabold">Who is this for?</h2>
+                <p className="text-sm text-muted-foreground">Are you tracking for yourself or helping someone else?</p>
+              </div>
+              <div className="space-y-2">
+                {USAGE_MODES.map((m) => (
+                  <button
+                    key={m.value}
+                    onClick={() => setUsageMode(m.value)}
+                    className={`flex w-full items-center gap-3 rounded-xl px-4 py-3.5 text-left transition-all ${
+                      usageMode === m.value
+                        ? "bg-primary text-primary-foreground scale-[1.02]"
+                        : "bg-card border text-foreground hover:bg-primary/10"
+                    }`}
+                  >
+                    <span className="text-2xl">{m.emoji}</span>
+                    <div>
+                      <span className="text-sm font-bold">{m.label}</span>
+                      <p className={`text-xs ${usageMode === m.value ? "text-primary-foreground/70" : "text-muted-foreground"}`}>{m.desc}</p>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Step 2: Age Range */}
+          {step === 2 && (
             <div className="space-y-6 animate-slide-up">
               <div className="text-center space-y-2">
                 <span className="text-4xl">👋</span>
                 <h2 className="text-xl font-extrabold">Welcome! Let's get started</h2>
-                <p className="text-sm text-muted-foreground">First, what's your age range?</p>
+                <p className="text-sm text-muted-foreground">What's your age range?</p>
               </div>
               <div className="grid grid-cols-2 gap-2">
                 {AGE_RANGES.map((r) => (
@@ -348,8 +433,8 @@ const OnboardingPage = () => {
             </div>
           )}
 
-          {/* Step 1: Pain Preference */}
-          {step === 1 && (
+          {/* Step 3: Pain Preference */}
+          {step === 3 && (
             <div className="space-y-6 animate-slide-up">
               <div className="text-center space-y-2">
                 <span className="text-4xl">📊</span>
@@ -378,8 +463,8 @@ const OnboardingPage = () => {
             </div>
           )}
 
-          {/* Step 2: Buddy Setup */}
-          {step === 2 && (
+          {/* Step 4: Buddy Setup */}
+          {step === 4 && (
             <div className="space-y-6 animate-slide-up">
               <div className="text-center space-y-2">
                 <span className="text-4xl">✨</span>
@@ -446,7 +531,7 @@ const OnboardingPage = () => {
           >
             {saving ? (
               <><Loader2 size={16} className="animate-spin" /> Setting up...</>
-            ) : step === 2 ? (
+            ) : step === 4 ? (
               <>Chat with {buddyName} <ChevronRight size={16} /></>
             ) : (
               <>Continue <ChevronRight size={16} /></>
