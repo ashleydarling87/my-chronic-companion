@@ -267,6 +267,7 @@ const ChatPage = () => {
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
+      <OnboardingCompleteDialog />
       <Header title={`${prefs?.buddy_name || "Buddy"} ${getBuddyEmoji(prefs?.buddy_avatar || "bear")}`} subtitle="Always here for you" />
 
       <main className="flex-1 overflow-y-auto px-4 py-4 pb-36">
