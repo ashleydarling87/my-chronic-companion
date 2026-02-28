@@ -182,6 +182,42 @@ export type Database = {
         }
         Relationships: []
       }
+      mental_health_scores: {
+        Row: {
+          answers: Json | null
+          anxiety_score: number | null
+          created_at: string
+          depression_score: number | null
+          id: string
+          scale_type: string
+          severity: string | null
+          total_score: number
+          user_id: string
+        }
+        Insert: {
+          answers?: Json | null
+          anxiety_score?: number | null
+          created_at?: string
+          depression_score?: number | null
+          id?: string
+          scale_type?: string
+          severity?: string | null
+          total_score: number
+          user_id: string
+        }
+        Update: {
+          answers?: Json | null
+          anxiety_score?: number | null
+          created_at?: string
+          depression_score?: number | null
+          id?: string
+          scale_type?: string
+          severity?: string | null
+          total_score?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
       saved_reports: {
         Row: {
           content: string

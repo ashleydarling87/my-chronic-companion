@@ -9,6 +9,9 @@ import { toast } from "sonner";
 import { useUserPreferences } from "@/hooks/useUserPreferences";
 import EntryEditForm from "@/components/log/EntryEditForm";
 import type { DbEntry } from "@/components/log/EntryEditForm";
+import { useMentalHealthScores } from "@/hooks/useMentalHealthScores";
+import PHQ4CheckIn from "@/components/mental-health/PHQ4CheckIn";
+import PHQ4ScoreCard from "@/components/mental-health/PHQ4ScoreCard";
 
 const IMPACT_LABELS: Record<string, string> = {
   sleep: "Sleep",
@@ -411,9 +414,11 @@ const EntryCard = ({ entry, onExpand }: { entry: DbEntry; onExpand: () => void }
 
 const LogPage = () => {
   const [showForm, setShowForm] = useState(false);
+  const [showPHQ4, setShowPHQ4] = useState(false);
   const [entries, setEntries] = useState<DbEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const { latest: latestMH, needsWeeklyPrompt, saveScore, refetch: refetchMH } = useMentalHealthScores();
 
   const fetchEntries = async () => {
     setLoading(true);
@@ -464,6 +469,13 @@ const LogPage = () => {
             >
               <Plus size={18} /> Add New Entry
             </button>
+          )}
+
+          {/* Mental Health Check-In */}
+          {showPHQ4 ? (
+            <PHQ4CheckIn onClose={() => setShowPHQ4(false)} onSaved={refetchMH} saveScore={saveScore} />
+          ) : (
+            <PHQ4ScoreCard latest={latestMH} needsWeeklyPrompt={needsWeeklyPrompt} onStartCheckIn={() => setShowPHQ4(true)} />
           )}
 
           {expandedEntry ? (
