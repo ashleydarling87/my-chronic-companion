@@ -62,21 +62,10 @@ const CommunicationStyleCard = () => {
   const updateStyle = async (key: keyof CommunicationStyle, value: string) => {
     if (!prefs?.id) return;
     const updated = { ...style, [key]: value };
-    // Remove empty values
     Object.keys(updated).forEach((k) => {
       if (!updated[k as keyof CommunicationStyle]) delete updated[k as keyof CommunicationStyle];
     });
-    const { error } = await supabase
-      .from("user_preferences")
-      .update({ communication_style: updated })
-      .eq("id", prefs.id);
-    if (error) {
-      toast.error("Failed to save style preference");
-    } else {
-      toast.success("Style preference saved");
-      // Force reload — we can't easily call savePrefs here without refactoring
-      window.location.reload();
-    }
+    await savePrefs({ communication_style: updated } as any);
   };
 
   return (
