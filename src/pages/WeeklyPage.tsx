@@ -104,6 +104,7 @@ const WeeklyPage = () => {
   const [discriminationDetails, setDiscriminationDetails] = useState<DiscriminationDetails>({ ...DEFAULT_DISCRIMINATION });
   const [emotionalDetails, setEmotionalDetails] = useState<EmotionalDetails>({ ...DEFAULT_EMOTIONAL });
   const { prefs } = useUserPreferences();
+  const { scores: mhScores } = useMentalHealthScores();
 
   // Sync sharing defaults from preferences
   useEffect(() => {
