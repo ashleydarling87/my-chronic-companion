@@ -198,7 +198,7 @@ const AuthPage = () => {
           <SheetHeader className="text-left">
             <SheetTitle className="text-lg">Before you get started</SheetTitle>
             <SheetDescription className="text-sm leading-relaxed text-muted-foreground">
-              This app is <span className="font-semibold text-foreground">not medical advice</span> and should not be used to diagnose or treat any health condition. It is a journal and logbook with resources to help you track symptoms, identify patterns, and present information to your doctors in an efficient and clear way so that you can receive the best care.
+              This app is <span className="font-semibold text-foreground">not medical or mental health advice</span> and should not be used to diagnose or treat any condition. It is a journal and logbook with resources to help you track symptoms, identify patterns, and present information to your healthcare providers in an efficient and clear way so that you can receive the best care.
             </SheetDescription>
           </SheetHeader>
           <button
