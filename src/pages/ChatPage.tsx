@@ -63,6 +63,7 @@ const ChatBubble = ({ message, onChipSelect, isLatest, isLoading, buddyEmoji, us
           <AvatarFallback className="bg-primary/10 text-[10px] font-semibold text-primary">You</AvatarFallback>
         </Avatar>
       )}
+      <div className="max-w-[78%] space-y-1">
         <div className={isUser ? "chat-bubble-user" : "chat-bubble-ai"}>
           <p className="text-[15px] leading-relaxed whitespace-pre-wrap">{message.content}</p>
           <p className={`mt-1 text-[10px] ${isUser ? "text-primary-foreground/60" : "text-muted-foreground"}`}>
