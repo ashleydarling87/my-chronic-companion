@@ -182,6 +182,30 @@ export type Database = {
         }
         Relationships: []
       }
+      saved_reports: {
+        Row: {
+          content: string
+          created_at: string
+          date_range: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          date_range: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          date_range?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_preferences: {
         Row: {
           age_range: string | null
