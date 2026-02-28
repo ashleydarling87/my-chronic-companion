@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 
 import { ArrowLeft, ChevronRight, LogOut, Camera, Loader2 } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { BUDDY_AVATARS, getBuddyEmoji } from "../lib/data";
 import PainPreferencesCard from "../components/PainPreferencesCard";
 import CommunicationStyleCard from "../components/CommunicationStyleCard";
@@ -98,9 +98,9 @@ const ProfilePage = () => {
     <div className="flex min-h-screen flex-col bg-background">
       {/* Header */}
       <header className="sticky top-0 z-40 flex items-center gap-3 border-b bg-card/95 px-4 py-3 backdrop-blur-md">
-        <Link to="/" className="flex h-9 w-9 items-center justify-center rounded-full bg-secondary">
+        <button onClick={() => navigate(-1)} className="flex h-9 w-9 items-center justify-center rounded-full bg-secondary">
           <ArrowLeft size={18} />
-        </Link>
+        </button>
         <h1 className="text-lg font-bold">Profile & Settings</h1>
       </header>
 
