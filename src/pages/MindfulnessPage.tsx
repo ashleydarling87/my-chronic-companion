@@ -144,9 +144,18 @@ const BreathingTimer = () => {
       <div className="flex items-center gap-2 mb-4">
         <Wind className="h-5 w-5 text-primary" />
         <h2 className="text-sm font-bold">4-7-8 Breathing</h2>
-        <Badge variant="outline" className="text-[10px] ml-auto bg-muted/50 text-muted-foreground">
-          Guided
-        </Badge>
+        <div className="flex items-center gap-1.5 ml-auto">
+          <button
+            onClick={() => setSoundEnabled(!soundEnabled)}
+            className="flex items-center gap-1 rounded-full bg-muted/50 px-2 py-0.5 text-[10px] text-muted-foreground hover:bg-muted transition-colors"
+          >
+            {soundEnabled ? <Volume2 className="h-3 w-3" /> : <VolumeX className="h-3 w-3" />}
+            {soundEnabled ? "Sound on" : "Sound off"}
+          </button>
+          <Badge variant="outline" className="text-[10px] bg-muted/50 text-muted-foreground">
+            Guided
+          </Badge>
+        </div>
       </div>
       <p className="text-xs text-muted-foreground mb-4 leading-relaxed">
         A calming technique that activates your parasympathetic nervous system, helping reduce pain perception and anxiety.
