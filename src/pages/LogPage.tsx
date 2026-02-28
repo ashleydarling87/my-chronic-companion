@@ -435,7 +435,7 @@ const LogPage = () => {
           )}
 
           {expandedEntry ? (
-            <EntryDetailView entry={expandedEntry} onClose={() => setExpandedId(null)} />
+            <EntryDetailView entry={expandedEntry} onClose={() => setExpandedId(null)} onUpdated={() => { setExpandedId(null); fetchEntries(); }} />
           ) : (
             <>
               {loading ? (
