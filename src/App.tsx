@@ -9,6 +9,7 @@ import ChatPage from "./pages/ChatPage";
 import LogPage from "./pages/LogPage";
 import WeeklyPage from "./pages/WeeklyPage";
 import ResourcesPage from "./pages/ResourcesPage";
+import ArticlesPage from "./pages/ArticlesPage";
 import ProfilePage from "./pages/ProfilePage";
 import SummaryPage from "./pages/SummaryPage";
 import AuthPage from "./pages/AuthPage";
@@ -65,6 +66,7 @@ const AppRoutes = () => (
     <Route path="/log" element={<ProtectedRoute><LogPage /></ProtectedRoute>} />
     <Route path="/weekly" element={<ProtectedRoute><WeeklyPage /></ProtectedRoute>} />
     <Route path="/resources" element={<ProtectedRoute><ResourcesPage /></ProtectedRoute>} />
+    <Route path="/resources/articles" element={<ProtectedRoute><ArticlesPage /></ProtectedRoute>} />
     <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
     <Route path="/summary" element={<ProtectedRoute><SummaryPage /></ProtectedRoute>} />
     <Route path="*" element={<NotFound />} />
