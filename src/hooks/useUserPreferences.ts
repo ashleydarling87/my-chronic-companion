@@ -34,6 +34,8 @@ export interface UserPreferences {
   display_name: string | null;
   my_symptoms: string[];
   usage_mode: string;
+  care_recipient_name: string | null;
+  care_recipient_age_range: string | null;
 }
 
 const DEFAULT_PREFS: Omit<UserPreferences, "id"> = {
