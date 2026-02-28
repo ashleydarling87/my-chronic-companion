@@ -206,18 +206,22 @@ const IntakeChat = ({
 const OnboardingPage = () => {
   const navigate = useNavigate();
   const [step, setStep] = useState(0);
+  const [belongSelection, setBelongSelection] = useState<string[]>([]);
+  const [usageMode, setUsageMode] = useState("self");
   const [ageRange, setAgeRange] = useState("");
   const [painPref, setPainPref] = useState("numeric");
   const [buddyAvatar, setBuddyAvatar] = useState("bear");
   const [buddyName, setBuddyName] = useState("Buddy");
   const [saving, setSaving] = useState(false);
 
-  const totalSteps = 4; // age → pain pref → buddy setup → intake chat
+  const totalSteps = 6; // belong → usage mode → age → pain pref → buddy setup → intake chat
 
   const canAdvance = () => {
-    if (step === 0) return !!ageRange;
-    if (step === 1) return !!painPref;
-    if (step === 2) return buddyName.trim().length > 0;
+    if (step === 0) return belongSelection.length > 0;
+    if (step === 1) return !!usageMode;
+    if (step === 2) return !!ageRange;
+    if (step === 3) return !!painPref;
+    if (step === 4) return buddyName.trim().length > 0;
     return true;
   };
 
