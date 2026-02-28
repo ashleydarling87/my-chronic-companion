@@ -56,6 +56,34 @@ serve(async (req) => {
       }
     }
 
+    // Build communication style adaptation instructions
+    let styleInstruction = "";
+    const styleEntries = Object.entries(commStyle).filter(([_, v]) => v);
+    if (styleEntries.length > 0) {
+      styleInstruction = `\n\nCOMMUNICATION STYLE ADAPTATION — mirror the user's style naturally:`;
+      if (commStyle.message_length) styleInstruction += `\n- Message length preference: ${commStyle.message_length}`;
+      if (commStyle.tone) styleInstruction += `\n- Tone: ${commStyle.tone}`;
+      if (commStyle.emoji_usage) styleInstruction += `\n- Emoji usage: ${commStyle.emoji_usage}`;
+      if (commStyle.vocabulary) styleInstruction += `\n- Vocabulary/slang level: ${commStyle.vocabulary}`;
+      if (commStyle.humor) styleInstruction += `\n- Humor: ${commStyle.humor}`;
+      styleInstruction += `\nAdapt your responses to match these preferences. If the user's actual messages differ from these settings, gradually shift to match their real communication patterns.`;
+    }
+
+    // Analyze recent user messages to detect patterns
+    const userMsgs = messages.filter((m: { role: string }) => m.role === "user");
+    if (userMsgs.length >= 2) {
+      const avgLen = userMsgs.reduce((sum: number, m: { content: string }) => sum + m.content.length, 0) / userMsgs.length;
+      const hasEmoji = userMsgs.some((m: { content: string }) => /[\p{Emoji_Presentation}\p{Extended_Pictographic}]/u.test(m.content));
+      const isShort = avgLen < 40;
+      const isLong = avgLen > 150;
+      
+      styleInstruction += `\n\nLIVE STYLE DETECTION from this conversation:`;
+      if (isShort) styleInstruction += `\n- User sends SHORT messages — keep your replies brief and punchy (1-2 sentences).`;
+      else if (isLong) styleInstruction += `\n- User sends DETAILED messages — you can be more thorough in responses (3-4 sentences).`;
+      if (hasEmoji) styleInstruction += `\n- User uses emoji — feel free to use them naturally.`;
+      else if (userMsgs.length >= 3) styleInstruction += `\n- User doesn't use emoji — minimize your emoji usage.`;
+    }
+
     let systemPrompt: string;
 
     if (mode === "intake") {
