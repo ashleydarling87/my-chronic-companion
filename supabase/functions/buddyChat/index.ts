@@ -137,6 +137,11 @@ ${styleInstruction}`;
         intakeContext += `\n\nUse this knowledge to ask smarter follow-ups (e.g. "How's your ${intakeBodyRegions[0] || 'pain'} today?" instead of generic questions). Reference their treatments naturally (e.g. "Did the ${intakeTreatments[0] || 'usual remedies'} help today?"). Never dump all this info at once — weave it in conversationally.`;
       }
 
+      let symptomsContext = "";
+      if (mySymptoms.length > 0) {
+        symptomsContext = `\n\nTHIS PERSON'S TRACKED SYMPTOMS: ${mySymptoms.join(", ")}
+When checking in, ask about these specific symptoms rather than generic ones. For example, if they track "brain fog" and "fatigue", ask "How's the brain fog today?" instead of "Any symptoms?". You don't need to ask about every symptom every time — focus on 2-3 that seem most relevant to what they share. If they mention something not on their list, that's fine too.`;
+
       systemPrompt = `You are ${buddyName}, a warm, supportive AI companion for someone living with chronic pain or illness. You speak like a caring best friend — casual, empathetic, sometimes funny, always validating.
 
 CORE RULES:
