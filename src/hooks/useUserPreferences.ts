@@ -133,6 +133,8 @@ export function useUserPreferences() {
           report_sharing_defaults: updated.report_sharing_defaults ?? prefs.report_sharing_defaults,
           communication_style: (updated.communication_style ?? prefs.communication_style) as unknown as Record<string, string>,
           display_name: updated.display_name !== undefined ? updated.display_name : prefs.display_name,
+          buddy_name: updated.buddy_name !== undefined ? updated.buddy_name : prefs.buddy_name,
+          buddy_avatar: updated.buddy_avatar !== undefined ? updated.buddy_avatar : prefs.buddy_avatar,
           care_recipient_name: updated.care_recipient_name !== undefined ? updated.care_recipient_name : prefs.care_recipient_name,
           care_recipient_age_range: updated.care_recipient_age_range !== undefined ? updated.care_recipient_age_range : prefs.care_recipient_age_range,
         })
