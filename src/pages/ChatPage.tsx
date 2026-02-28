@@ -131,7 +131,9 @@ const ChatPage = () => {
   }, [messages]);
 
   const saveEntryToDb = async (entryData: Record<string, unknown>) => {
+    const { data: { user: currentUser } } = await supabase.auth.getUser();
     const row: Record<string, unknown> = {
+      user_id: currentUser?.id,
       pain_level: entryData.pain_level ?? null,
       pain_verbal: entryData.pain_verbal ?? null,
       energy_level: entryData.energy_level ?? null,
