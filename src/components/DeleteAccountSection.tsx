@@ -84,6 +84,7 @@ const DeleteAccountSection = () => {
     if (!value) {
       setStep("reason");
       setSelectedReason(null);
+      setConfirmText("");
     }
   };
 
