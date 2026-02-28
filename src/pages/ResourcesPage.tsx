@@ -4,6 +4,7 @@ import Header from "../components/Header";
 import BottomNav from "../components/BottomNav";
 import { BookOpen, Heart, Brain, Phone, MessageCircle, Star } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import EncouragementSheet from "@/components/EncouragementSheet";
 
 const categories = [
   {
@@ -84,6 +85,7 @@ const ADVOCACY_RESOURCES = [
 const ResourcesPage = () => {
   const navigate = useNavigate();
   const [showAdvocacy, setShowAdvocacy] = useState(false);
+  const [showEncouragement, setShowEncouragement] = useState(false);
   const [suggestedForYou, setSuggestedForYou] = useState(false);
 
   // Check if user has logged discrimination/dismissal recently
@@ -130,6 +132,8 @@ const ResourcesPage = () => {
                   onClick={() => {
                     if (isCommunication) {
                       setShowAdvocacy(!showAdvocacy);
+                    } else if (cat.id === "encouragement") {
+                      setShowEncouragement(true);
                     } else {
                       navigate(`/resources/${cat.id}`);
                     }
@@ -187,6 +191,7 @@ const ResourcesPage = () => {
         </div>
       </main>
 
+      <EncouragementSheet open={showEncouragement} onClose={() => setShowEncouragement(false)} />
       <BottomNav />
     </div>
   );
