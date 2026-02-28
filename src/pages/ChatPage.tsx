@@ -270,7 +270,7 @@ const ChatPage = () => {
           ))}
           {isLoading && !messages.some((m) => m.id === (Date.now() + 1).toString()) && (
             <div className="flex items-center">
-              <span className="mr-2 text-xl">🐻</span>
+              <span className="mr-2 text-xl">{getBuddyEmoji(prefs?.buddy_avatar || "bear")}</span>
               <TypingIndicator />
             </div>
           )}
