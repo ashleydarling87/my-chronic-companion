@@ -1,17 +1,25 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ArrowLeft, ChevronRight, LogOut } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
-import { buddyAvatars } from "../lib/data";
+import { BUDDY_AVATARS, getBuddyEmoji } from "../lib/data";
 import PainPreferencesCard from "../components/PainPreferencesCard";
 import { useAuth } from "@/contexts/AuthContext";
+import { useUserPreferences } from "@/hooks/useUserPreferences";
 
 const ProfilePage = () => {
   const { signOut } = useAuth();
   const navigate = useNavigate();
+  const { prefs, savePrefs } = useUserPreferences();
   const [name, setName] = useState("Alex");
-  const [ageRange, setAgeRange] = useState("");
   const [buddyName, setBuddyName] = useState("Buddy");
-  const [selectedAvatar, setSelectedAvatar] = useState("🐻");
+  const [selectedAvatarId, setSelectedAvatarId] = useState("bear");
+
+  useEffect(() => {
+    if (prefs) {
+      setBuddyName(prefs.buddy_name);
+      setSelectedAvatarId(prefs.buddy_avatar);
+    }
+  }, [prefs]);
 
   const handleSignOut = async () => {
     await signOut();
