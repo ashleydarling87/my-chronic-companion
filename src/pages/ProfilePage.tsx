@@ -6,6 +6,7 @@ import { BUDDY_AVATARS, getBuddyEmoji } from "../lib/data";
 import PainPreferencesCard from "../components/PainPreferencesCard";
 import CommunicationStyleCard from "../components/CommunicationStyleCard";
 import SymptomsCard from "../components/SymptomsCard";
+import DeleteAccountSection from "../components/DeleteAccountSection";
 import CropSheet from "../components/CropSheet";
 import { useAuth } from "@/contexts/AuthContext";
 import { useUserPreferences } from "@/hooks/useUserPreferences";
@@ -238,6 +239,9 @@ const ProfilePage = () => {
               <LogOut size={16} /> Sign Out
             </button>
           </section>
+
+          {/* Delete Account */}
+          <DeleteAccountSection />
         </div>
       </main>
     </div>
