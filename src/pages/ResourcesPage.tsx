@@ -85,6 +85,7 @@ const ADVOCACY_RESOURCES = [
 const ResourcesPage = () => {
   const navigate = useNavigate();
   const [showAdvocacy, setShowAdvocacy] = useState(false);
+  const [showEncouragement, setShowEncouragement] = useState(false);
   const [suggestedForYou, setSuggestedForYou] = useState(false);
 
   // Check if user has logged discrimination/dismissal recently
