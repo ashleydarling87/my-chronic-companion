@@ -254,7 +254,7 @@ const ChatPage = () => {
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
-      <Header title={`${prefs?.buddy_name || "Buddy"} ${prefs?.buddy_avatar === "cat" ? "🐱" : prefs?.buddy_avatar === "dog" ? "🐶" : prefs?.buddy_avatar === "owl" ? "🦉" : prefs?.buddy_avatar === "fox" ? "🦊" : prefs?.buddy_avatar === "rabbit" ? "🐰" : "🐻"}`} subtitle="Always here for you" />
+      <Header title={`${prefs?.buddy_name || "Buddy"} ${getBuddyEmoji(prefs?.buddy_avatar || "bear")}`} subtitle="Always here for you" />
 
       <main className="flex-1 overflow-y-auto px-4 py-4 pb-36">
         <div className="mx-auto max-w-lg space-y-3">
