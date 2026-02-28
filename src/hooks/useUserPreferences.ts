@@ -137,6 +137,11 @@ export function useUserPreferences() {
         buddy_avatar: (data as any).buddy_avatar ?? "bear",
         age_range: (data as any).age_range ?? "",
         onboarding_complete: (data as any).onboarding_complete ?? false,
+        intake_condition: (data as any).intake_condition ?? null,
+        intake_duration: (data as any).intake_duration ?? null,
+        intake_body_regions: (data as any).intake_body_regions ?? [],
+        intake_treatments: (data as any).intake_treatments ?? [],
+        intake_goals: (data as any).intake_goals ?? null,
       });
       toast.success("Preferences saved");
     }
