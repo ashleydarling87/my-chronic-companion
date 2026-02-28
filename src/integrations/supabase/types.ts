@@ -68,6 +68,27 @@ export type Database = {
         }
         Relationships: []
       }
+      encouragement_notes: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       entries: {
         Row: {
           body_regions: Json | null
