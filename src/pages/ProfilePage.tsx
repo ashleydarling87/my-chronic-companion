@@ -1,17 +1,25 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ArrowLeft, ChevronRight, LogOut } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
-import { buddyAvatars } from "../lib/data";
+import { BUDDY_AVATARS, getBuddyEmoji } from "../lib/data";
 import PainPreferencesCard from "../components/PainPreferencesCard";
 import { useAuth } from "@/contexts/AuthContext";
+import { useUserPreferences } from "@/hooks/useUserPreferences";
 
 const ProfilePage = () => {
   const { signOut } = useAuth();
   const navigate = useNavigate();
+  const { prefs, savePrefs } = useUserPreferences();
   const [name, setName] = useState("Alex");
-  const [ageRange, setAgeRange] = useState("");
   const [buddyName, setBuddyName] = useState("Buddy");
-  const [selectedAvatar, setSelectedAvatar] = useState("🐻");
+  const [selectedAvatarId, setSelectedAvatarId] = useState("bear");
+
+  useEffect(() => {
+    if (prefs) {
+      setBuddyName(prefs.buddy_name);
+      setSelectedAvatarId(prefs.buddy_avatar);
+    }
+  }, [prefs]);
 
   const handleSignOut = async () => {
     await signOut();
@@ -33,7 +41,7 @@ const ProfilePage = () => {
           {/* Avatar */}
           <div className="flex flex-col items-center gap-2 animate-slide-up">
             <div className="flex h-20 w-20 items-center justify-center rounded-full bg-primary/10 text-4xl">
-              {selectedAvatar}
+              {getBuddyEmoji(selectedAvatarId)}
             </div>
             <p className="text-sm text-muted-foreground">Your AI buddy</p>
           </div>
@@ -52,8 +60,8 @@ const ProfilePage = () => {
             <div className="space-y-1">
               <label className="text-xs font-semibold text-muted-foreground">Age Range</label>
               <select
-                value={ageRange}
-                onChange={(e) => setAgeRange(e.target.value)}
+                value={prefs?.age_range || ""}
+                onChange={(e) => savePrefs({ age_range: e.target.value } as any)}
                 className="w-full rounded-xl border bg-background px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary/30"
               >
                 <option value="">Select age range</option>
@@ -72,23 +80,28 @@ const ProfilePage = () => {
               <input
                 value={buddyName}
                 onChange={(e) => setBuddyName(e.target.value)}
+                onBlur={() => savePrefs({ buddy_name: buddyName.trim() || "Buddy" })}
                 className="w-full rounded-xl border bg-background px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary/30"
               />
             </div>
             <div className="space-y-1">
               <label className="text-xs font-semibold text-muted-foreground">Choose Avatar</label>
-              <div className="flex flex-wrap gap-2 mt-1">
-                {buddyAvatars.map((av) => (
+              <div className="grid grid-cols-3 gap-2 mt-1">
+                {BUDDY_AVATARS.map((av) => (
                   <button
-                    key={av}
-                    onClick={() => setSelectedAvatar(av)}
-                    className={`flex h-12 w-12 items-center justify-center rounded-full text-xl transition-all ${
-                      selectedAvatar === av
-                        ? "bg-primary/20 ring-2 ring-primary scale-110"
-                        : "bg-secondary hover:bg-primary/10"
+                    key={av.id}
+                    onClick={() => {
+                      setSelectedAvatarId(av.id);
+                      savePrefs({ buddy_avatar: av.id });
+                    }}
+                    className={`flex flex-col items-center gap-1 rounded-2xl py-3 transition-all ${
+                      selectedAvatarId === av.id
+                        ? "bg-primary/15 border-2 border-primary scale-105"
+                        : "bg-secondary hover:bg-primary/10 border border-transparent"
                     }`}
                   >
-                    {av}
+                    <span className="text-2xl">{av.emoji}</span>
+                    <span className="text-xs font-medium">{av.name}</span>
                   </button>
                 ))}
               </div>

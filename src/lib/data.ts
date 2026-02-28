@@ -178,4 +178,17 @@ export const mockResources: Resource[] = [
   },
 ];
 
-export const buddyAvatars = ["🐻", "🌸", "🦋", "🌈", "☀️", "🍀", "🐱", "🦊"];
+export const BUDDY_AVATARS = [
+  { id: "bear", emoji: "🐻", name: "Bear" },
+  { id: "cat", emoji: "🐱", name: "Cat" },
+  { id: "dog", emoji: "🐶", name: "Dog" },
+  { id: "owl", emoji: "🦉", name: "Owl" },
+  { id: "fox", emoji: "🦊", name: "Fox" },
+  { id: "rabbit", emoji: "🐰", name: "Rabbit" },
+];
+
+export const getBuddyEmoji = (id: string) =>
+  BUDDY_AVATARS.find((a) => a.id === id)?.emoji || "🐻";
+
+/** @deprecated Use BUDDY_AVATARS instead */
+export const buddyAvatars = BUDDY_AVATARS.map((a) => a.emoji);

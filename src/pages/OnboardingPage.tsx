@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { ChevronRight, ChevronLeft, Loader2, Send } from "lucide-react";
 import { streamChat, parseIntakeResponse, type ChatMsg } from "@/lib/chatStream";
+import { BUDDY_AVATARS, getBuddyEmoji } from "@/lib/data";
 
 const AGE_RANGES = ["17–24", "25–30", "31–36", "37–42", "43–50", "51–60", "60+"];
 
@@ -12,17 +13,6 @@ const PAIN_PREFS = [
   { value: "verbal", label: "Word Scale", desc: "None, mild, moderate, severe", emoji: "💬" },
   { value: "faces", label: "Faces", desc: "Emoji faces to express pain", emoji: "😊" },
 ];
-
-const BUDDY_AVATARS = [
-  { id: "bear", emoji: "🐻", name: "Bear" },
-  { id: "cat", emoji: "🐱", name: "Cat" },
-  { id: "dog", emoji: "🐶", name: "Dog" },
-  { id: "owl", emoji: "🦉", name: "Owl" },
-  { id: "fox", emoji: "🦊", name: "Fox" },
-  { id: "rabbit", emoji: "🐰", name: "Rabbit" },
-];
-
-const getBuddyEmoji = (id: string) => BUDDY_AVATARS.find((a) => a.id === id)?.emoji || "🐻";
 
 interface IntakeMessage {
   id: string;
