@@ -122,21 +122,25 @@ Analyze this entry and extract structured health data.`;
 
     const aiResult = JSON.parse(toolCall.function.arguments);
 
+    const insertRow: Record<string, unknown> = {
+      raw_text,
+      pain_level,
+      pain_verbal: pain_verbal ?? null,
+      energy_level,
+      mood,
+      sleep_hours,
+      symptoms: aiResult.symptoms,
+      severity: aiResult.severity,
+      triggers: aiResult.triggers,
+      summary: aiResult.summary,
+      follow_up_question: aiResult.follow_up_question,
+      emergency: aiResult.emergency,
+    };
+    if (userId) insertRow.user_id = userId;
+
     const { data, error } = await supabase
       .from("entries")
-      .insert({
-        raw_text,
-        pain_level,
-        energy_level,
-        mood,
-        sleep_hours,
-        symptoms: aiResult.symptoms,
-        severity: aiResult.severity,
-        triggers: aiResult.triggers,
-        summary: aiResult.summary,
-        follow_up_question: aiResult.follow_up_question,
-        emergency: aiResult.emergency,
-      })
+      .insert(insertRow)
       .select()
       .single();
 
