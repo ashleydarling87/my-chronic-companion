@@ -189,6 +189,7 @@ export type Database = {
           buddy_name: string | null
           communication_style: Json | null
           created_at: string
+          display_name: string | null
           id: string
           identity_tags: Json | null
           intake_body_regions: Json | null
@@ -210,6 +211,7 @@ export type Database = {
           buddy_name?: string | null
           communication_style?: Json | null
           created_at?: string
+          display_name?: string | null
           id?: string
           identity_tags?: Json | null
           intake_body_regions?: Json | null
@@ -231,6 +233,7 @@ export type Database = {
           buddy_name?: string | null
           communication_style?: Json | null
           created_at?: string
+          display_name?: string | null
           id?: string
           identity_tags?: Json | null
           intake_body_regions?: Json | null

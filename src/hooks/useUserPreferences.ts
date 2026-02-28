@@ -31,6 +31,7 @@ export interface UserPreferences {
   intake_goals: string | null;
   profile_picture_url: string | null;
   communication_style: CommunicationStyle;
+  display_name: string | null;
 }
 
 const DEFAULT_PREFS: Omit<UserPreferences, "id"> = {
@@ -52,6 +53,7 @@ const DEFAULT_PREFS: Omit<UserPreferences, "id"> = {
   intake_goals: null,
   profile_picture_url: null,
   communication_style: {},
+  display_name: null,
 };
 
 export function useUserPreferences() {
@@ -100,6 +102,7 @@ export function useUserPreferences() {
         intake_goals: (data as any).intake_goals ?? null,
         profile_picture_url: (data as any).profile_picture_url ?? null,
         communication_style: (data as any).communication_style ?? {},
+        display_name: (data as any).display_name ?? null,
       });
     }
     setLoading(false);
@@ -117,6 +120,7 @@ export function useUserPreferences() {
           identity_tags: updated.identity_tags ?? prefs.identity_tags,
           report_sharing_defaults: updated.report_sharing_defaults ?? prefs.report_sharing_defaults,
           communication_style: (updated.communication_style ?? prefs.communication_style) as unknown as Record<string, string>,
+          display_name: updated.display_name !== undefined ? updated.display_name : prefs.display_name,
         })
         .eq("id", prefs.id);
 
@@ -164,6 +168,7 @@ export function useUserPreferences() {
         intake_goals: (data as any).intake_goals ?? null,
         profile_picture_url: (data as any).profile_picture_url ?? null,
         communication_style: (data as any).communication_style ?? {},
+        display_name: (data as any).display_name ?? null,
       });
       toast.success("Preferences saved");
     }
