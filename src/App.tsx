@@ -13,6 +13,7 @@ import ProfilePage from "./pages/ProfilePage";
 import SummaryPage from "./pages/SummaryPage";
 import AuthPage from "./pages/AuthPage";
 import OnboardingPage from "./pages/OnboardingPage";
+import ResetPasswordPage from "./pages/ResetPasswordPage";
 import NotFound from "./pages/NotFound";
 import { Loader2 } from "lucide-react";
 
@@ -58,6 +59,7 @@ const AuthRoute = () => {
 const AppRoutes = () => (
   <Routes>
     <Route path="/auth" element={<AuthRoute />} />
+    <Route path="/reset-password" element={<ResetPasswordPage />} />
     <Route path="/onboarding" element={<OnboardingRoute />} />
     <Route path="/" element={<ProtectedRoute><ChatPage /></ProtectedRoute>} />
     <Route path="/log" element={<ProtectedRoute><LogPage /></ProtectedRoute>} />
