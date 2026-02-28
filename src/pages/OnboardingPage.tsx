@@ -6,7 +6,8 @@ import { ChevronRight, ChevronLeft, Loader2, Send } from "lucide-react";
 import { streamChat, parseIntakeResponse, type ChatMsg } from "@/lib/chatStream";
 import { BUDDY_AVATARS, getBuddyEmoji, SUGGESTED_SYMPTOMS } from "@/lib/data";
 
-const AGE_RANGES = ["17–24", "25–30", "31–36", "37–42", "43–50", "51–60", "60+"];
+const AGE_RANGES_SELF = ["17–24", "25–30", "31–36", "37–42", "43–50", "51–60", "60+"];
+const AGE_RANGES_CARETAKER = ["0–4", "5–9", "10–13", "14–17", "17–24", "25–30", "31–36", "37–42", "43–50", "51–60", "60+"];
 
 const BELONG_OPTIONS = [
   { label: "Chronic pain", emoji: "🩹" },
