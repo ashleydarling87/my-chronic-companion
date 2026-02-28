@@ -191,6 +191,7 @@ const ResourcesPage = () => {
         </div>
       </main>
 
+      <EncouragementSheet open={showEncouragement} onClose={() => setShowEncouragement(false)} />
       <BottomNav />
     </div>
   );
