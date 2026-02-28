@@ -162,6 +162,7 @@ export function useUserPreferences() {
         intake_treatments: (data as any).intake_treatments ?? [],
         intake_goals: (data as any).intake_goals ?? null,
         profile_picture_url: (data as any).profile_picture_url ?? null,
+        communication_style: (data as any).communication_style ?? {},
       });
       toast.success("Preferences saved");
     }
