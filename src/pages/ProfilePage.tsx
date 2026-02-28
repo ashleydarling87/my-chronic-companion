@@ -6,7 +6,7 @@ import PainPreferencesCard from "../components/PainPreferencesCard";
 
 const ProfilePage = () => {
   const [name, setName] = useState("Alex");
-  const [dob, setDob] = useState("1995-06-15");
+  const [ageRange, setAgeRange] = useState("");
   const [buddyName, setBuddyName] = useState("Buddy");
   const [selectedAvatar, setSelectedAvatar] = useState("🐻");
 
