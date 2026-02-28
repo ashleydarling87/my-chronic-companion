@@ -172,6 +172,7 @@ export function useUserPreferences() {
         profile_picture_url: (data as any).profile_picture_url ?? null,
         communication_style: (data as any).communication_style ?? {},
         display_name: (data as any).display_name ?? null,
+        my_symptoms: (data as any).my_symptoms ?? [],
       });
       toast.success("Preferences saved");
     }
