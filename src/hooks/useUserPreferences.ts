@@ -35,6 +35,11 @@ const DEFAULT_PREFS: Omit<UserPreferences, "id"> = {
   buddy_avatar: "bear",
   age_range: "",
   onboarding_complete: false,
+  intake_condition: null,
+  intake_duration: null,
+  intake_body_regions: [],
+  intake_treatments: [],
+  intake_goals: null,
 };
 
 export function useUserPreferences() {
