@@ -60,6 +60,8 @@ const DEFAULT_PREFS: Omit<UserPreferences, "id"> = {
   display_name: null,
   my_symptoms: [],
   usage_mode: "self",
+  care_recipient_name: null,
+  care_recipient_age_range: null,
 };
 
 export function useUserPreferences() {
