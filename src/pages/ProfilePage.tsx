@@ -15,7 +15,7 @@ const ProfilePage = () => {
   const { signOut, user } = useAuth();
   const navigate = useNavigate();
   const { prefs, savePrefs } = useUserPreferences();
-  const [name, setName] = useState("Alex");
+  const [name, setName] = useState("");
   const [buddyName, setBuddyName] = useState("Buddy");
   const [selectedAvatarId, setSelectedAvatarId] = useState("bear");
   const [profilePicUrl, setProfilePicUrl] = useState<string | null>(null);
