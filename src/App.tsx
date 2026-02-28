@@ -59,6 +59,7 @@ const AuthRoute = () => {
 const AppRoutes = () => (
   <Routes>
     <Route path="/auth" element={<AuthRoute />} />
+    <Route path="/reset-password" element={<ResetPasswordPage />} />
     <Route path="/onboarding" element={<OnboardingRoute />} />
     <Route path="/" element={<ProtectedRoute><ChatPage /></ProtectedRoute>} />
     <Route path="/log" element={<ProtectedRoute><LogPage /></ProtectedRoute>} />
