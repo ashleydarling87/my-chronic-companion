@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { BUDDY_AVATARS, getBuddyEmoji } from "../lib/data";
 import PainPreferencesCard from "../components/PainPreferencesCard";
 import CommunicationStyleCard from "../components/CommunicationStyleCard";
+import SymptomsCard from "../components/SymptomsCard";
 import CropSheet from "../components/CropSheet";
 import { useAuth } from "@/contexts/AuthContext";
 import { useUserPreferences } from "@/hooks/useUserPreferences";
@@ -210,6 +211,9 @@ const ProfilePage = () => {
 
           {/* Pain & Communication Preferences */}
           <PainPreferencesCard />
+
+          {/* Symptoms */}
+          <SymptomsCard />
 
           {/* Communication Style */}
           <CommunicationStyleCard />
