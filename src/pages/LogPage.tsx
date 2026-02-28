@@ -195,8 +195,9 @@ const CheckInForm = ({ onClose, onSaved }: { onClose: () => void; onSaved: () =>
   );
 };
 
-const EntryDetailView = ({ entry, onClose }: { entry: DbEntry; onClose: () => void }) => {
+const EntryDetailView = ({ entry, onClose, onUpdated }: { entry: DbEntry; onClose: () => void; onUpdated: () => void }) => {
   const [flags, setFlags] = useState(entry.share_with_doctor_flags);
+  const [editing, setEditing] = useState(false);
 
   const handleToggleFlag = async (key: "includeContextNotes" | "includeDiscriminationNotes") => {
     const updated = { ...flags, [key]: !flags[key] };
@@ -207,11 +208,27 @@ const EntryDetailView = ({ entry, onClose }: { entry: DbEntry; onClose: () => vo
 
   const impactEntries = Object.entries(entry.impacts || {}).filter(([, v]) => v > 0);
 
+  if (editing) {
+    return (
+      <EntryEditForm
+        entry={entry}
+        onClose={() => setEditing(false)}
+        onSaved={() => {
+          setEditing(false);
+          onUpdated();
+        }}
+      />
+    );
+  }
+
   return (
     <div className="rounded-2xl border bg-card p-4 space-y-4 animate-slide-up">
       <div className="flex items-center justify-between">
         <span className="text-sm font-bold">{format(new Date(entry.created_at), "EEEE, MMM d")}</span>
-        <button onClick={onClose} className="rounded-full p-1.5 text-muted-foreground hover:bg-secondary"><X size={16} /></button>
+        <div className="flex items-center gap-1">
+          <button onClick={() => setEditing(true)} className="rounded-full p-1.5 text-muted-foreground hover:bg-secondary"><Edit2 size={16} /></button>
+          <button onClick={onClose} className="rounded-full p-1.5 text-muted-foreground hover:bg-secondary"><X size={16} /></button>
+        </div>
       </div>
 
       {/* Scores */}
