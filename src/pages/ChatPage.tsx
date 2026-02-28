@@ -8,6 +8,7 @@ import { useUserPreferences } from "@/hooks/useUserPreferences";
 import { useAuth } from "@/contexts/AuthContext";
 import { streamChat, parseAIResponse, type ChatMsg } from "@/lib/chatStream";
 import { getBuddyEmoji } from "@/lib/data";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 interface DisplayMessage {
   id: string;
@@ -41,18 +42,27 @@ const QuickChips = ({ chips, onSelect, disabled }: { chips: string[]; onSelect: 
   </div>
 );
 
-const ChatBubble = ({ message, onChipSelect, isLatest, isLoading, buddyEmoji }: {
+const ChatBubble = ({ message, onChipSelect, isLatest, isLoading, buddyEmoji, userProfilePic }: {
   message: DisplayMessage;
   onChipSelect: (c: string) => void;
   isLatest: boolean;
   isLoading: boolean;
   buddyEmoji: string;
+  userProfilePic: string | null;
 }) => {
   const isUser = message.role === "user";
 
   return (
     <div className={`flex ${isUser ? "justify-end" : "justify-start"} animate-slide-up`}>
       {!isUser && <span className="mr-2 mt-1 text-xl">{buddyEmoji}</span>}
+      {isUser && (
+        <Avatar className="h-7 w-7 mr-2 mt-1 order-last ml-2">
+          {userProfilePic ? (
+            <AvatarImage src={userProfilePic} alt="You" />
+          ) : null}
+          <AvatarFallback className="bg-primary/10 text-[10px] font-semibold text-primary">You</AvatarFallback>
+        </Avatar>
+      )}
       <div className="max-w-[78%] space-y-1">
         <div className={isUser ? "chat-bubble-user" : "chat-bubble-ai"}>
           <p className="text-[15px] leading-relaxed whitespace-pre-wrap">{message.content}</p>
@@ -267,6 +277,7 @@ const ChatPage = () => {
               isLatest={msg.id === latestAssistantId}
               isLoading={isLoading}
               buddyEmoji={getBuddyEmoji(prefs?.buddy_avatar || "bear")}
+              userProfilePic={prefs?.profile_picture_url || null}
             />
           ))}
           {isLoading && !messages.some((m) => m.id === (Date.now() + 1).toString()) && (
