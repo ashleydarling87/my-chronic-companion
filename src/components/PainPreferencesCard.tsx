@@ -71,10 +71,22 @@ const PainScalePreview = ({ type }: { type: UserPreferences["pain_preference"] }
 };
 
 const IDENTITY_OPTIONS = [
-  { value: "black", label: "I identify as Black" },
-  { value: "indigenous", label: "I identify as Indigenous" },
-  { value: "disabled", label: "I'm disabled" },
-  { value: "chronic_illness", label: "I'm living with chronic illness" },
+  // Healthcare standard race/ethnicity
+  { value: "white", label: "I'm White" },
+  { value: "black", label: "I'm Black or African American" },
+  { value: "hispanic_latino", label: "I'm Hispanic or Latino/a" },
+  { value: "asian", label: "I'm Asian" },
+  { value: "native_american", label: "I'm American Indian or Alaska Native" },
+  { value: "pacific_islander", label: "I'm Native Hawaiian or Pacific Islander" },
+  { value: "middle_eastern", label: "I'm Middle Eastern or North African" },
+  { value: "multiracial", label: "I'm Multiracial" },
+  // Gender & sexuality
+  { value: "lgbtq", label: "I'm LGBTQ+" },
+  { value: "trans_ftm", label: "I'm Trans FTM" },
+  { value: "trans_mtf", label: "I'm Trans MTF" },
+  { value: "man", label: "I'm a Man" },
+  { value: "woman", label: "I'm a Woman" },
+  { value: "gender_fluid", label: "I'm Gender Fluid" },
 ];
 
 export default function PainPreferencesCard() {
@@ -189,9 +201,12 @@ export default function PainPreferencesCard() {
         <label className="text-xs font-semibold text-muted-foreground">
           Optional identity & context
         </label>
-        <p className="text-[11px] text-muted-foreground leading-relaxed">
-          This is only used to tailor Buddy's language and your reports. You can change this anytime.
-        </p>
+        <div className="rounded-xl bg-destructive/10 p-3 flex gap-2 items-start">
+          <span className="text-base mt-0.5">❤️</span>
+          <p className="text-xs text-muted-foreground leading-relaxed">
+            <strong>This is completely optional.</strong> Your identity information is never shared outside this app. We ask because different folks often receive different care in healthcare, and we want to empower everyone to be their own #1 advocate. This simply helps us tailor your experience.
+          </p>
+        </div>
         <div className="flex flex-wrap gap-2">
           {IDENTITY_OPTIONS.map((opt) => (
             <button
