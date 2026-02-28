@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 
 export interface UserPreferences {
@@ -11,6 +12,10 @@ export interface UserPreferences {
     includeDiscrimination: boolean;
     includeEmotionalImpact: boolean;
   };
+  buddy_name: string;
+  buddy_avatar: string;
+  age_range: string;
+  onboarding_complete: boolean;
 }
 
 const DEFAULT_PREFS: Omit<UserPreferences, "id"> = {
@@ -21,21 +26,32 @@ const DEFAULT_PREFS: Omit<UserPreferences, "id"> = {
     includeDiscrimination: false,
     includeEmotionalImpact: false,
   },
+  buddy_name: "Buddy",
+  buddy_avatar: "bear",
+  age_range: "",
+  onboarding_complete: false,
 };
 
 export function useUserPreferences() {
+  const { user } = useAuth();
   const [prefs, setPrefs] = useState<UserPreferences | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (!user) {
+      setPrefs(null);
+      setLoading(false);
+      return;
+    }
     fetchPrefs();
-  }, []);
+  }, [user]);
 
   const fetchPrefs = async () => {
+    if (!user) return;
     const { data, error } = await supabase
       .from("user_preferences")
       .select("*")
-      .limit(1)
+      .eq("user_id", user.id)
       .maybeSingle();
 
     if (error) {
@@ -51,14 +67,19 @@ export function useUserPreferences() {
         pain_misunderstanding_note: (data.pain_misunderstanding_note as string) ?? "",
         identity_tags: (data.identity_tags as string[]) ?? [],
         report_sharing_defaults: (data.report_sharing_defaults as UserPreferences["report_sharing_defaults"]) ?? DEFAULT_PREFS.report_sharing_defaults,
+        buddy_name: (data as any).buddy_name ?? "Buddy",
+        buddy_avatar: (data as any).buddy_avatar ?? "bear",
+        age_range: (data as any).age_range ?? "",
+        onboarding_complete: (data as any).onboarding_complete ?? false,
       });
     }
     setLoading(false);
   };
 
   const savePrefs = useCallback(async (updated: Partial<Omit<UserPreferences, "id">>) => {
+    if (!user) return;
+
     if (prefs?.id) {
-      // Update
       const { error } = await supabase
         .from("user_preferences")
         .update({
@@ -77,8 +98,8 @@ export function useUserPreferences() {
       setPrefs((p) => (p ? { ...p, ...updated } : p));
       toast.success("Preferences saved");
     } else {
-      // Insert
       const row = {
+        user_id: user.id,
         pain_preference: updated.pain_preference ?? DEFAULT_PREFS.pain_preference,
         pain_misunderstanding_note: updated.pain_misunderstanding_note ?? DEFAULT_PREFS.pain_misunderstanding_note,
         identity_tags: updated.identity_tags ?? DEFAULT_PREFS.identity_tags,
@@ -102,10 +123,14 @@ export function useUserPreferences() {
         pain_misunderstanding_note: (data.pain_misunderstanding_note as string) ?? "",
         identity_tags: (data.identity_tags as string[]) ?? [],
         report_sharing_defaults: (data.report_sharing_defaults as UserPreferences["report_sharing_defaults"]) ?? DEFAULT_PREFS.report_sharing_defaults,
+        buddy_name: (data as any).buddy_name ?? "Buddy",
+        buddy_avatar: (data as any).buddy_avatar ?? "bear",
+        age_range: (data as any).age_range ?? "",
+        onboarding_complete: (data as any).onboarding_complete ?? false,
       });
       toast.success("Preferences saved");
     }
-  }, [prefs]);
+  }, [prefs, user]);
 
   return { prefs, loading, savePrefs };
 }
