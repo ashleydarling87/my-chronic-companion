@@ -81,12 +81,6 @@ const ProfilePage = () => {
                 ))}
               </div>
             </div>
-            <div className="rounded-xl bg-primary/10 p-3">
-              <p className="text-xs text-muted-foreground leading-relaxed">
-                💡 <strong>Personalize your buddy!</strong> Chat with {buddyName} for 5-10 minutes and they'll learn how you talk, 
-                your humor, and your vibe. The more you chat, the more they sound like your real bestie.
-              </p>
-            </div>
           </section>
 
           {/* Pain & Communication Preferences */}
