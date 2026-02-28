@@ -57,6 +57,7 @@ const DEFAULT_PREFS: Omit<UserPreferences, "id"> = {
   communication_style: {},
   display_name: null,
   my_symptoms: [],
+  usage_mode: "self",
 };
 
 export function useUserPreferences() {
