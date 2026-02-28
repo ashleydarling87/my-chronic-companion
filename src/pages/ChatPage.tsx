@@ -42,12 +42,13 @@ const QuickChips = ({ chips, onSelect, disabled }: { chips: string[]; onSelect: 
   </div>
 );
 
-const ChatBubble = ({ message, onChipSelect, isLatest, isLoading, buddyEmoji }: {
+const ChatBubble = ({ message, onChipSelect, isLatest, isLoading, buddyEmoji, userProfilePic }: {
   message: DisplayMessage;
   onChipSelect: (c: string) => void;
   isLatest: boolean;
   isLoading: boolean;
   buddyEmoji: string;
+  userProfilePic: string | null;
 }) => {
   const isUser = message.role === "user";
 
