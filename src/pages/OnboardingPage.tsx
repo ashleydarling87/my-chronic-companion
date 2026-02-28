@@ -241,6 +241,7 @@ const OnboardingPage = () => {
       onboarding_complete: complete,
       usage_mode: usageMode,
       my_symptoms: selectedSymptoms,
+    };
 
     if (intakeData) {
       row.intake_condition = intakeData.condition || intakeData.primary_condition || null;
