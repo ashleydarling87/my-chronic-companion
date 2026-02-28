@@ -5,11 +5,13 @@ const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/buddyChat`;
 export async function streamChat({
   messages,
   preferences,
+  mode,
   onDelta,
   onDone,
 }: {
   messages: ChatMsg[];
   preferences?: Record<string, unknown>;
+  mode?: "intake" | "chat";
   onDelta: (chunk: string) => void;
   onDone: () => void;
 }) {
@@ -19,7 +21,7 @@ export async function streamChat({
       "Content-Type": "application/json",
       Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
     },
-    body: JSON.stringify({ messages, preferences }),
+    body: JSON.stringify({ messages, preferences, mode }),
   });
 
   if (!resp.ok || !resp.body) {
@@ -122,4 +124,35 @@ export function parseAIResponse(fullText: string): {
   }
 
   return { displayText, chips, entryData };
+}
+
+/**
+ * Parse intake chat response for completion signal and chip suggestions.
+ */
+export function parseIntakeResponse(fullText: string): {
+  displayText: string;
+  chips: string[];
+  intakeData: Record<string, unknown> | null;
+} {
+  let displayText = fullText;
+  let intakeData: Record<string, unknown> | null = null;
+
+  const intakeMatch = fullText.match(/\[INTAKE_COMPLETE\]\s*([\s\S]*?)\s*\[\/INTAKE_COMPLETE\]/);
+  if (intakeMatch) {
+    try {
+      intakeData = JSON.parse(intakeMatch[1]);
+    } catch {
+      console.warn("Failed to parse intake data");
+    }
+    displayText = displayText.replace(/\[INTAKE_COMPLETE\][\s\S]*?\[\/INTAKE_COMPLETE\]/, "").trim();
+  }
+
+  const chips: string[] = [];
+  const chipsMatch = displayText.match(/CHIPS:\s*(.+)/);
+  if (chipsMatch) {
+    chips.push(...chipsMatch[1].split("|").map((c) => c.trim()).filter(Boolean));
+    displayText = displayText.replace(/CHIPS:\s*.+/, "").trim();
+  }
+
+  return { displayText, chips, intakeData };
 }
