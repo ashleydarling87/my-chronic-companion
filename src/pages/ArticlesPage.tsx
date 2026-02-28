@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { ArrowLeft, ExternalLink, RefreshCw } from "lucide-react";
-import Header from "@/components/Header";
+
 import BottomNav from "@/components/BottomNav";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
