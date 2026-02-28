@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { ChevronRight, ChevronLeft, Loader2, Send } from "lucide-react";
 import { streamChat, parseIntakeResponse, type ChatMsg } from "@/lib/chatStream";
-import { BUDDY_AVATARS, getBuddyEmoji } from "@/lib/data";
+import { BUDDY_AVATARS, getBuddyEmoji, SUGGESTED_SYMPTOMS } from "@/lib/data";
 
 const AGE_RANGES = ["17–24", "25–30", "31–36", "37–42", "43–50", "51–60", "60+"];
 
