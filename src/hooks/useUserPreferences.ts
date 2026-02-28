@@ -34,6 +34,8 @@ export interface UserPreferences {
   display_name: string | null;
   my_symptoms: string[];
   usage_mode: string;
+  care_recipient_name: string | null;
+  care_recipient_age_range: string | null;
 }
 
 const DEFAULT_PREFS: Omit<UserPreferences, "id"> = {
@@ -58,6 +60,8 @@ const DEFAULT_PREFS: Omit<UserPreferences, "id"> = {
   display_name: null,
   my_symptoms: [],
   usage_mode: "self",
+  care_recipient_name: null,
+  care_recipient_age_range: null,
 };
 
 export function useUserPreferences() {
@@ -109,6 +113,8 @@ export function useUserPreferences() {
         display_name: (data as any).display_name ?? null,
         my_symptoms: (data as any).my_symptoms ?? [],
         usage_mode: (data as any).usage_mode ?? "self",
+        care_recipient_name: (data as any).care_recipient_name ?? null,
+        care_recipient_age_range: (data as any).care_recipient_age_range ?? null,
       });
     }
     setLoading(false);
@@ -127,6 +133,8 @@ export function useUserPreferences() {
           report_sharing_defaults: updated.report_sharing_defaults ?? prefs.report_sharing_defaults,
           communication_style: (updated.communication_style ?? prefs.communication_style) as unknown as Record<string, string>,
           display_name: updated.display_name !== undefined ? updated.display_name : prefs.display_name,
+          care_recipient_name: updated.care_recipient_name !== undefined ? updated.care_recipient_name : prefs.care_recipient_name,
+          care_recipient_age_range: updated.care_recipient_age_range !== undefined ? updated.care_recipient_age_range : prefs.care_recipient_age_range,
         })
         .eq("id", prefs.id);
 
@@ -177,6 +185,8 @@ export function useUserPreferences() {
         display_name: (data as any).display_name ?? null,
         my_symptoms: (data as any).my_symptoms ?? [],
         usage_mode: (data as any).usage_mode ?? "self",
+        care_recipient_name: (data as any).care_recipient_name ?? null,
+        care_recipient_age_range: (data as any).care_recipient_age_range ?? null,
       });
       toast.success("Preferences saved");
     }

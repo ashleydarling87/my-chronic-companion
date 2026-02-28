@@ -23,6 +23,8 @@ const ProfilePage = () => {
   const [profilePicUrl, setProfilePicUrl] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const [cropSrc, setCropSrc] = useState<string | null>(null);
+  const [careRecipientName, setCareRecipientName] = useState("");
+  const [careRecipientAgeRange, setCareRecipientAgeRange] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -31,6 +33,8 @@ const ProfilePage = () => {
       setBuddyName(prefs.buddy_name);
       setSelectedAvatarId(prefs.buddy_avatar);
       setProfilePicUrl(prefs.profile_picture_url || null);
+      setCareRecipientName(prefs.care_recipient_name || "");
+      setCareRecipientAgeRange(prefs.care_recipient_age_range || "");
     }
   }, [prefs]);
 
@@ -173,6 +177,40 @@ const ProfilePage = () => {
               </select>
             </div>
           </section>
+
+          {/* Care Recipient Info — only visible for caretakers */}
+          {prefs?.usage_mode === "caretaker" && (
+            <section className="rounded-2xl border bg-card p-4 space-y-4 animate-slide-up">
+              <h2 className="text-sm font-bold text-muted-foreground uppercase tracking-wider">Person You Care For</h2>
+              <div className="space-y-1">
+                <label className="text-xs font-semibold text-muted-foreground">Their Name</label>
+                <input
+                  value={careRecipientName}
+                  onChange={(e) => setCareRecipientName(e.target.value)}
+                  onBlur={() => savePrefs({ care_recipient_name: careRecipientName.trim() || null } as any)}
+                  placeholder="e.g. Alex"
+                  className="w-full rounded-xl border bg-background px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary/30"
+                />
+              </div>
+              <div className="space-y-1">
+                <label className="text-xs font-semibold text-muted-foreground">Their Age Range</label>
+                <select
+                  value={careRecipientAgeRange}
+                  onChange={(e) => {
+                    setCareRecipientAgeRange(e.target.value);
+                    savePrefs({ care_recipient_age_range: e.target.value || null } as any);
+                  }}
+                  className="w-full rounded-xl border bg-background px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary/30"
+                >
+                  <option value="">Select age range</option>
+                  {["0–4", "5–9", "10–13", "14–17", "17–24", "25–30", "31–36", "37–42", "43–50", "51–60", "60+"].map((r) => (
+                    <option key={r} value={r}>{r}</option>
+                  ))}
+                </select>
+              </div>
+              <p className="text-xs text-muted-foreground">This helps your buddy ask about them by name.</p>
+            </section>
+          )}
 
           {/* Buddy Customization */}
           <section className="rounded-2xl border bg-card p-4 space-y-4 animate-slide-up">
