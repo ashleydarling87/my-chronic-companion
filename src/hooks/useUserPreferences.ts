@@ -16,6 +16,11 @@ export interface UserPreferences {
   buddy_avatar: string;
   age_range: string;
   onboarding_complete: boolean;
+  intake_condition: string | null;
+  intake_duration: string | null;
+  intake_body_regions: string[];
+  intake_treatments: string[];
+  intake_goals: string | null;
 }
 
 const DEFAULT_PREFS: Omit<UserPreferences, "id"> = {
