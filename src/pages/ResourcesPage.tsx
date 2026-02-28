@@ -48,6 +48,14 @@ const categories = [
     color: "bg-ring/12 text-ring",
     description: "Advocate for yourself",
   },
+  {
+    id: "how-to-use",
+    label: "How to Use",
+    emoji: "❓",
+    icon: HelpCircle,
+    color: "bg-secondary text-foreground",
+    description: "Get the most out of this app",
+  },
 ];
 
 const ADVOCACY_RESOURCES = [
