@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, Tooltip } from "recharts";
-import { Heart, Zap, FileText, Copy, Check, ChevronDown, ChevronUp, Trash2, Loader2 } from "lucide-react";
+import { Heart, Zap, FileText, Copy, Check, ChevronDown, ChevronUp, Trash2, Loader2, X } from "lucide-react";
 import Header from "../components/Header";
 import BottomNav from "../components/BottomNav";
 import { supabase } from "@/integrations/supabase/client";
