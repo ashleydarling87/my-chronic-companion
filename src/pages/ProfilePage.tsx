@@ -208,6 +208,9 @@ const ProfilePage = () => {
           {/* Pain & Communication Preferences */}
           <PainPreferencesCard />
 
+          {/* Communication Style */}
+          <CommunicationStyleCard />
+
           {/* Settings */}
           <section className="rounded-2xl border bg-card divide-y animate-slide-up">
             <h2 className="text-sm font-bold text-muted-foreground uppercase tracking-wider px-4 pt-4 pb-2">Settings</h2>
