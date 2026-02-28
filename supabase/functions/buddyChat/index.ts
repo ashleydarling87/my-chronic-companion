@@ -24,6 +24,13 @@ serve(async (req) => {
     const buddyName = preferences?.buddy_name || "Buddy";
     const buddyAvatar = preferences?.buddy_avatar || "bear";
 
+    // Intake data for personalization
+    const intakeCondition: string = preferences?.intake_condition || "";
+    const intakeDuration: string = preferences?.intake_duration || "";
+    const intakeBodyRegions: string[] = preferences?.intake_body_regions || [];
+    const intakeTreatments: string[] = preferences?.intake_treatments || [];
+    const intakeGoals: string = preferences?.intake_goals || "";
+
     let painFormatInstruction = "";
     switch (painPref) {
       case "numeric":
