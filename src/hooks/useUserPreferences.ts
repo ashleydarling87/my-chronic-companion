@@ -55,6 +55,7 @@ const DEFAULT_PREFS: Omit<UserPreferences, "id"> = {
   profile_picture_url: null,
   communication_style: {},
   display_name: null,
+  my_symptoms: [],
 };
 
 export function useUserPreferences() {
