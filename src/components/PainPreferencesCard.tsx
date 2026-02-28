@@ -257,6 +257,35 @@ export default function PainPreferencesCard() {
           and ensure your reports reflect your story — on your terms.
         </p>
       </div>
+
+      {/* Pain scale preview sheet */}
+      <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
+        <SheetContent side="bottom" className="rounded-t-2xl px-5 pb-6 pt-0">
+          <SheetHeader className="relative pt-5 pb-2">
+            <button
+              onClick={() => setSheetOpen(false)}
+              className="absolute right-0 top-4 flex h-8 w-8 items-center justify-center rounded-full bg-secondary text-muted-foreground hover:bg-secondary/80 transition-colors"
+              aria-label="Close"
+            >
+              <X size={16} />
+            </button>
+            <SheetTitle className="text-base">
+              {PAIN_OPTIONS.find((o) => o.value === previewPref)?.label}
+            </SheetTitle>
+          </SheetHeader>
+
+          <div className="py-4">
+            <PainScalePreview type={previewPref} />
+          </div>
+
+          <button
+            onClick={confirmSelection}
+            className="w-full rounded-xl bg-primary py-3 text-sm font-bold text-primary-foreground transition-all hover:opacity-90"
+          >
+            Select
+          </button>
+        </SheetContent>
+      </Sheet>
     </section>
   );
 }
