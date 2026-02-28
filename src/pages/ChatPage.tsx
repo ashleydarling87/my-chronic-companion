@@ -55,7 +55,14 @@ const ChatBubble = ({ message, onChipSelect, isLatest, isLoading, buddyEmoji, us
   return (
     <div className={`flex ${isUser ? "justify-end" : "justify-start"} animate-slide-up`}>
       {!isUser && <span className="mr-2 mt-1 text-xl">{buddyEmoji}</span>}
-      <div className="max-w-[78%] space-y-1">
+      {isUser && (
+        <Avatar className="h-7 w-7 mr-2 mt-1 order-last ml-2">
+          {userProfilePic ? (
+            <AvatarImage src={userProfilePic} alt="You" />
+          ) : null}
+          <AvatarFallback className="bg-primary/10 text-[10px] font-semibold text-primary">You</AvatarFallback>
+        </Avatar>
+      )}
         <div className={isUser ? "chat-bubble-user" : "chat-bubble-ai"}>
           <p className="text-[15px] leading-relaxed whitespace-pre-wrap">{message.content}</p>
           <p className={`mt-1 text-[10px] ${isUser ? "text-primary-foreground/60" : "text-muted-foreground"}`}>
