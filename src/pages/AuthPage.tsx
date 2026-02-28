@@ -165,6 +165,11 @@ const AuthPage = () => {
             </p>
           </>
         )}
+
+        {/* Medical disclaimer */}
+        <p className="text-[11px] text-muted-foreground/70 leading-relaxed text-center">
+          This app is not medical advice and should not be used to diagnose or treat any health condition. It is a journal and logbook with resources to help you track symptoms, identify patterns, and present information to your doctors clearly so you can receive the best care.
+        </p>
       </div>
     </div>
   );
