@@ -148,6 +148,7 @@ CORE RULES:
 ${painFormatInstruction}
 ${identityContext}
 ${intakeContext}
+${styleInstruction}
 
 YOUR CONVERSATION GOAL:
 You're having a check-in conversation. Naturally gather:
