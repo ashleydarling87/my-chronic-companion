@@ -342,13 +342,78 @@ const OnboardingPage = () => {
 
       <main className="flex-1 flex flex-col justify-center px-6 py-8">
         <div className="mx-auto w-full max-w-sm space-y-6">
-          {/* Step 0: Age Range */}
+          {/* Step 0: Do I belong here? */}
           {step === 0 && (
+            <div className="space-y-6 animate-slide-up">
+              <div className="text-center space-y-2">
+                <span className="text-4xl">💛</span>
+                <h2 className="text-xl font-extrabold">You're in the right place</h2>
+                <p className="text-sm text-muted-foreground">This app helps people living with ongoing health challenges. What resonates with you?</p>
+              </div>
+              <div className="space-y-2">
+                {BELONG_OPTIONS.map((opt) => {
+                  const selected = belongSelection.includes(opt.label);
+                  return (
+                    <button
+                      key={opt.label}
+                      onClick={() =>
+                        setBelongSelection((prev) =>
+                          selected ? prev.filter((s) => s !== opt.label) : [...prev, opt.label]
+                        )
+                      }
+                      className={`flex w-full items-center gap-3 rounded-xl px-4 py-3.5 text-left transition-all ${
+                        selected
+                          ? "bg-primary text-primary-foreground scale-[1.02]"
+                          : "bg-card border text-foreground hover:bg-primary/10"
+                      }`}
+                    >
+                      <span className="text-2xl">{opt.emoji}</span>
+                      <span className="text-sm font-bold">{opt.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
+              <p className="text-xs text-muted-foreground text-center">Select all that apply</p>
+            </div>
+          )}
+
+          {/* Step 1: Self or caretaker */}
+          {step === 1 && (
+            <div className="space-y-6 animate-slide-up">
+              <div className="text-center space-y-2">
+                <span className="text-4xl">🤗</span>
+                <h2 className="text-xl font-extrabold">Who is this for?</h2>
+                <p className="text-sm text-muted-foreground">Are you tracking for yourself or helping someone else?</p>
+              </div>
+              <div className="space-y-2">
+                {USAGE_MODES.map((m) => (
+                  <button
+                    key={m.value}
+                    onClick={() => setUsageMode(m.value)}
+                    className={`flex w-full items-center gap-3 rounded-xl px-4 py-3.5 text-left transition-all ${
+                      usageMode === m.value
+                        ? "bg-primary text-primary-foreground scale-[1.02]"
+                        : "bg-card border text-foreground hover:bg-primary/10"
+                    }`}
+                  >
+                    <span className="text-2xl">{m.emoji}</span>
+                    <div>
+                      <span className="text-sm font-bold">{m.label}</span>
+                      <p className={`text-xs ${usageMode === m.value ? "text-primary-foreground/70" : "text-muted-foreground"}`}>{m.desc}</p>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Step 2: Age Range */}
+          {step === 2 && (
             <div className="space-y-6 animate-slide-up">
               <div className="text-center space-y-2">
                 <span className="text-4xl">👋</span>
                 <h2 className="text-xl font-extrabold">Welcome! Let's get started</h2>
-                <p className="text-sm text-muted-foreground">First, what's your age range?</p>
+                <p className="text-sm text-muted-foreground">What's your age range?</p>
               </div>
               <div className="grid grid-cols-2 gap-2">
                 {AGE_RANGES.map((r) => (
@@ -368,8 +433,8 @@ const OnboardingPage = () => {
             </div>
           )}
 
-          {/* Step 1: Pain Preference */}
-          {step === 1 && (
+          {/* Step 3: Pain Preference */}
+          {step === 3 && (
             <div className="space-y-6 animate-slide-up">
               <div className="text-center space-y-2">
                 <span className="text-4xl">📊</span>
@@ -398,8 +463,8 @@ const OnboardingPage = () => {
             </div>
           )}
 
-          {/* Step 2: Buddy Setup */}
-          {step === 2 && (
+          {/* Step 4: Buddy Setup */}
+          {step === 4 && (
             <div className="space-y-6 animate-slide-up">
               <div className="text-center space-y-2">
                 <span className="text-4xl">✨</span>
