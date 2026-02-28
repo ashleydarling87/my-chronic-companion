@@ -471,6 +471,13 @@ const LogPage = () => {
             </button>
           )}
 
+          {/* Mental Health Check-In */}
+          {showPHQ4 ? (
+            <PHQ4CheckIn onClose={() => setShowPHQ4(false)} onSaved={refetchMH} saveScore={saveScore} />
+          ) : (
+            <PHQ4ScoreCard latest={latestMH} needsWeeklyPrompt={needsWeeklyPrompt} onStartCheckIn={() => setShowPHQ4(true)} />
+          )}
+
           {expandedEntry ? (
             <EntryDetailView entry={expandedEntry} onClose={() => setExpandedId(null)} onUpdated={() => { setExpandedId(null); fetchEntries(); }} onDeleted={() => { setExpandedId(null); fetchEntries(); }} />
           ) : (
