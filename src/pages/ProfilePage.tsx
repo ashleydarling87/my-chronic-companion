@@ -80,6 +80,7 @@ const ProfilePage = () => {
               <input
                 value={buddyName}
                 onChange={(e) => setBuddyName(e.target.value)}
+                onBlur={() => savePrefs({ buddy_name: buddyName.trim() || "Buddy" })}
                 className="w-full rounded-xl border bg-background px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary/30"
               />
             </div>
