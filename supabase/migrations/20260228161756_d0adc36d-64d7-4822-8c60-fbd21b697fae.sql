@@ -1,0 +1,1 @@
+CREATE POLICY "Allow public update on entries" ON public.entries FOR UPDATE USING (true) WITH CHECK (true);
