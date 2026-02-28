@@ -237,17 +237,31 @@ ${topSymptoms.length ? topSymptoms.map(([s, c]) => `• ${s} — reported ${c} t
         report += `\n\nEMOTIONAL & SPIRITUAL IMPACT
 • Mood was affected on ${impactCounts["mood"] || 0} days
 • Family/community was affected on ${impactCounts["family"] || 0} days`;
+        const emotionalPrompts: string[] = [];
+        if (emotionalDetails.hopelessness) emotionalPrompts.push("Patient experiences feelings of hopelessness related to their condition");
+        if (emotionalDetails.senseOfPurpose) emotionalPrompts.push("Condition affects patient's sense of purpose or meaning");
+        if (emotionalDetails.isolation) emotionalPrompts.push("Patient feels isolated because of their symptoms");
+        if (emotionalDetails.faithAffected) emotionalPrompts.push("Patient's faith or spiritual practices have been affected");
+        if (emotionalPrompts.length > 0) report += `\n${emotionalPrompts.map(p => `• ${p}`).join("\n")}`;
+        if (emotionalDetails.freeText.trim()) report += `\n• Additional context: ${emotionalDetails.freeText.trim()}`;
       }
 
       if (includeDiscrimination) {
         const dismissedCount = filteredEntries.filter((e) => e.felt_dismissed_by_provider).length;
         const discrimCount = filteredEntries.filter((e) => e.experienced_discrimination).length;
         if (dismissedCount > 0 || discrimCount > 0) {
-          report += `\n\nPATIENT CONTEXT (shared with consent)`;
-          if (dismissedCount > 0) report += `\n• Reported feeling dismissed by a healthcare provider on ${dismissedCount} occasion(s)`;
-          if (discrimCount > 0) report += `\n• Reported experiencing discrimination on ${discrimCount} occasion(s)`;
+          report += `\n\nPATIENT HISTORY & CONTEXT (shared with consent)`;
+          if (dismissedCount > 0) report += `\n• Patient has a history of feeling dismissed by healthcare providers (noted on ${dismissedCount} occasion(s) during this period)`;
+          if (discrimCount > 0) report += `\n• Patient has a history of experiencing discrimination in healthcare settings (noted on ${discrimCount} occasion(s) during this period)`;
           const contextNotes = filteredEntries.filter((e) => e.context_notes).map((e) => e.context_notes);
           if (contextNotes.length > 0) report += `\n• Context notes: ${contextNotes.join("; ")}`;
+          const discrimPrompts: string[] = [];
+          if (discriminationDetails.painNotReal) discrimPrompts.push("Has been told their pain isn't real");
+          if (discriminationDetails.attributedToAnxiety) discrimPrompts.push("Symptoms were attributed to anxiety or stress without investigation");
+          if (discriminationDetails.notTakenSeriously) discrimPrompts.push("Felt concerns were not taken seriously");
+          if (discriminationDetails.identityBias) discrimPrompts.push("Experienced bias related to identity");
+          if (discrimPrompts.length > 0) report += `\n${discrimPrompts.map(p => `• ${p}`).join("\n")}`;
+          if (discriminationDetails.freeText.trim()) report += `\n• Additional context: ${discriminationDetails.freeText.trim()}`;
         }
       }
 
