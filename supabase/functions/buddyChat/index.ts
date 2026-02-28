@@ -172,6 +172,7 @@ CORE RULES:
 
 ${painFormatInstruction}
 ${identityContext}
+${caretakerContext}
 ${intakeContext}
 ${symptomsContext}
 ${styleInstruction}
