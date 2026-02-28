@@ -8,6 +8,21 @@ import { BUDDY_AVATARS, getBuddyEmoji } from "@/lib/data";
 
 const AGE_RANGES = ["17–24", "25–30", "31–36", "37–42", "43–50", "51–60", "60+"];
 
+const BELONG_OPTIONS = [
+  { label: "Chronic pain", emoji: "🩹" },
+  { label: "Fibromyalgia", emoji: "🦋" },
+  { label: "Autoimmune condition", emoji: "🔬" },
+  { label: "Migraines / headaches", emoji: "🤕" },
+  { label: "Post-surgical recovery", emoji: "🏥" },
+  { label: "Undiagnosed symptoms", emoji: "❓" },
+  { label: "Other / not sure yet", emoji: "🌱" },
+];
+
+const USAGE_MODES = [
+  { value: "self", label: "For myself", desc: "I'm tracking my own symptoms", emoji: "🙋" },
+  { value: "caretaker", label: "As a caretaker", desc: "I'm helping someone else track theirs", emoji: "🤝" },
+];
+
 const PAIN_PREFS = [
   { value: "numeric", label: "0–10 Scale", desc: "Classic slider from 0 to 10", emoji: "🔢" },
   { value: "verbal", label: "Word Scale", desc: "None, mild, moderate, severe", emoji: "💬" },
