@@ -87,6 +87,10 @@ export default function PainPreferencesCard() {
   const [includeEmotional, setIncludeEmotional] = useState(false);
   const [dirty, setDirty] = useState(false);
 
+  // Sheet state
+  const [sheetOpen, setSheetOpen] = useState(false);
+  const [previewPref, setPreviewPref] = useState<UserPreferences["pain_preference"]>("numeric");
+
   useEffect(() => {
     if (prefs) {
       setPainPref(prefs.pain_preference);
@@ -96,6 +100,17 @@ export default function PainPreferencesCard() {
       setIncludeEmotional(prefs.report_sharing_defaults.includeEmotionalImpact);
     }
   }, [prefs]);
+
+  const openPreview = (value: UserPreferences["pain_preference"]) => {
+    setPreviewPref(value);
+    setSheetOpen(true);
+  };
+
+  const confirmSelection = () => {
+    setPainPref(previewPref);
+    setDirty(true);
+    setSheetOpen(false);
+  };
 
   const handleSave = () => {
     savePrefs({
