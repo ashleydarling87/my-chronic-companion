@@ -5,6 +5,7 @@ import Header from "../components/Header";
 import BottomNav from "../components/BottomNav";
 import { supabase } from "@/integrations/supabase/client";
 import { useUserPreferences } from "@/hooks/useUserPreferences";
+import { useAuth } from "@/contexts/AuthContext";
 import { streamChat, parseAIResponse, type ChatMsg } from "@/lib/chatStream";
 
 interface DisplayMessage {
@@ -130,7 +131,9 @@ const ChatPage = () => {
   }, [messages]);
 
   const saveEntryToDb = async (entryData: Record<string, unknown>) => {
+    const { data: { user: currentUser } } = await supabase.auth.getUser();
     const row: Record<string, unknown> = {
+      user_id: currentUser?.id,
       pain_level: entryData.pain_level ?? null,
       pain_verbal: entryData.pain_verbal ?? null,
       energy_level: entryData.energy_level ?? null,
@@ -243,7 +246,7 @@ const ChatPage = () => {
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
-      <Header title="Buddy 🐻" subtitle="Always here for you" />
+      <Header title={`${prefs?.buddy_name || "Buddy"} ${prefs?.buddy_avatar === "cat" ? "🐱" : prefs?.buddy_avatar === "dog" ? "🐶" : prefs?.buddy_avatar === "owl" ? "🦉" : prefs?.buddy_avatar === "fox" ? "🦊" : prefs?.buddy_avatar === "rabbit" ? "🐰" : "🐻"}`} subtitle="Always here for you" />
 
       <main className="flex-1 overflow-y-auto px-4 py-4 pb-36">
         <div className="mx-auto max-w-lg space-y-3">

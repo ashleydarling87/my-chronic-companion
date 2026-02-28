@@ -22,7 +22,19 @@ serve(async (req) => {
     const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
-    const { raw_text, pain_level, energy_level, mood, sleep_hours } = await req.json();
+    // Get user from auth header
+    const authHeader = req.headers.get("Authorization");
+    let userId: string | null = null;
+    if (authHeader) {
+      const anonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
+      const userClient = createClient(SUPABASE_URL, anonKey, {
+        global: { headers: { Authorization: authHeader } },
+      });
+      const { data: { user } } = await userClient.auth.getUser();
+      userId = user?.id ?? null;
+    }
+
+    const { raw_text, pain_level, pain_verbal, energy_level, mood, sleep_hours } = await req.json();
 
     const systemPrompt = `You are a compassionate health-tracking AI assistant for people with chronic illness. 
 Analyze the user's daily check-in and return structured JSON using the tool provided.
@@ -110,21 +122,25 @@ Analyze this entry and extract structured health data.`;
 
     const aiResult = JSON.parse(toolCall.function.arguments);
 
+    const insertRow: Record<string, unknown> = {
+      raw_text,
+      pain_level,
+      pain_verbal: pain_verbal ?? null,
+      energy_level,
+      mood,
+      sleep_hours,
+      symptoms: aiResult.symptoms,
+      severity: aiResult.severity,
+      triggers: aiResult.triggers,
+      summary: aiResult.summary,
+      follow_up_question: aiResult.follow_up_question,
+      emergency: aiResult.emergency,
+    };
+    if (userId) insertRow.user_id = userId;
+
     const { data, error } = await supabase
       .from("entries")
-      .insert({
-        raw_text,
-        pain_level,
-        energy_level,
-        mood,
-        sleep_hours,
-        symptoms: aiResult.symptoms,
-        severity: aiResult.severity,
-        triggers: aiResult.triggers,
-        summary: aiResult.summary,
-        follow_up_question: aiResult.follow_up_question,
-        emergency: aiResult.emergency,
-      })
+      .insert(insertRow)
       .select()
       .single();
 

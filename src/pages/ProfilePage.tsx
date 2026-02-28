@@ -1,14 +1,22 @@
 import { useState } from "react";
-import { ArrowLeft, ChevronRight } from "lucide-react";
-import { Link } from "react-router-dom";
+import { ArrowLeft, ChevronRight, LogOut } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
 import { buddyAvatars } from "../lib/data";
 import PainPreferencesCard from "../components/PainPreferencesCard";
+import { useAuth } from "@/contexts/AuthContext";
 
 const ProfilePage = () => {
+  const { signOut } = useAuth();
+  const navigate = useNavigate();
   const [name, setName] = useState("Alex");
   const [ageRange, setAgeRange] = useState("");
   const [buddyName, setBuddyName] = useState("Buddy");
   const [selectedAvatar, setSelectedAvatar] = useState("🐻");
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate("/auth");
+  };
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
@@ -99,6 +107,16 @@ const ProfilePage = () => {
                 <ChevronRight size={16} className="text-muted-foreground" />
               </button>
             ))}
+          </section>
+
+          {/* Sign Out */}
+          <section className="rounded-2xl border bg-card overflow-hidden">
+            <button
+              onClick={handleSignOut}
+              className="flex w-full items-center justify-center gap-2 px-4 py-3.5 text-sm font-semibold text-destructive hover:bg-destructive/5 transition-colors"
+            >
+              <LogOut size={16} /> Sign Out
+            </button>
           </section>
         </div>
       </main>

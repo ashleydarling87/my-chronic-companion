@@ -29,6 +29,7 @@ export type Database = {
           report_period_start: string
           safety_or_red_flags: string | null
           treatments_tried: Json | null
+          user_id: string | null
           worst_pain: number | null
         }
         Insert: {
@@ -45,6 +46,7 @@ export type Database = {
           report_period_start: string
           safety_or_red_flags?: string | null
           treatments_tried?: Json | null
+          user_id?: string | null
           worst_pain?: number | null
         }
         Update: {
@@ -61,6 +63,7 @@ export type Database = {
           report_period_start?: string
           safety_or_red_flags?: string | null
           treatments_tried?: Json | null
+          user_id?: string | null
           worst_pain?: number | null
         }
         Relationships: []
@@ -91,6 +94,7 @@ export type Database = {
           summary: string | null
           symptoms: Json | null
           triggers: Json | null
+          user_id: string | null
         }
         Insert: {
           body_regions?: Json | null
@@ -117,6 +121,7 @@ export type Database = {
           summary?: string | null
           symptoms?: Json | null
           triggers?: Json | null
+          user_id?: string | null
         }
         Update: {
           body_regions?: Json | null
@@ -143,33 +148,49 @@ export type Database = {
           summary?: string | null
           symptoms?: Json | null
           triggers?: Json | null
+          user_id?: string | null
         }
         Relationships: []
       }
       user_preferences: {
         Row: {
+          age_range: string | null
+          buddy_avatar: string | null
+          buddy_name: string | null
           created_at: string
           id: string
           identity_tags: Json | null
+          onboarding_complete: boolean | null
           pain_misunderstanding_note: string | null
           pain_preference: string
           report_sharing_defaults: Json | null
+          user_id: string | null
         }
         Insert: {
+          age_range?: string | null
+          buddy_avatar?: string | null
+          buddy_name?: string | null
           created_at?: string
           id?: string
           identity_tags?: Json | null
+          onboarding_complete?: boolean | null
           pain_misunderstanding_note?: string | null
           pain_preference?: string
           report_sharing_defaults?: Json | null
+          user_id?: string | null
         }
         Update: {
+          age_range?: string | null
+          buddy_avatar?: string | null
+          buddy_name?: string | null
           created_at?: string
           id?: string
           identity_tags?: Json | null
+          onboarding_complete?: boolean | null
           pain_misunderstanding_note?: string | null
           pain_preference?: string
           report_sharing_defaults?: Json | null
+          user_id?: string | null
         }
         Relationships: []
       }
