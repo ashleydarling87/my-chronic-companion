@@ -18,6 +18,16 @@ const BELONG_OPTIONS = [
   { label: "Other / not sure yet", emoji: "🌱" },
 ];
 
+const CONDITION_SYMPTOMS: Record<string, string[]> = {
+  "Chronic pain": ["Fatigue", "Joint pain", "Muscle aches", "Stiffness", "Back pain", "Insomnia", "Numbness / tingling"],
+  "Fibromyalgia": ["Fatigue", "Brain fog", "Muscle aches", "Insomnia", "Sensitivity to light", "Sensitivity to sound", "Anxiety", "Stiffness"],
+  "Autoimmune condition": ["Fatigue", "Joint pain", "Swelling", "Brain fog", "Nausea", "Muscle aches", "Hot flashes"],
+  "Migraines / headaches": ["Headache", "Sensitivity to light", "Sensitivity to sound", "Nausea", "Dizziness", "Brain fog", "Fatigue"],
+  "Post-surgical recovery": ["Fatigue", "Stiffness", "Muscle aches", "Insomnia", "Swelling", "Numbness / tingling", "Anxiety"],
+  "Undiagnosed symptoms": ["Fatigue", "Brain fog", "Dizziness", "Nausea", "Headache", "Anxiety", "Muscle aches"],
+  "Other / not sure yet": [],
+};
+
 const USAGE_MODES = [
   { value: "self", label: "For myself", desc: "I'm tracking my own symptoms", emoji: "🙋" },
   { value: "caretaker", label: "As a caretaker", desc: "I'm helping someone else track theirs", emoji: "🤝" },
