@@ -129,10 +129,17 @@ const ProfilePage = () => {
               type="file"
               accept="image/*"
               capture="environment"
-              onChange={handleProfilePicUpload}
+              onChange={handleFileSelect}
               className="hidden"
             />
           </div>
+
+          <CropSheet
+            open={!!cropSrc}
+            imageSrc={cropSrc || ""}
+            onClose={() => setCropSrc(null)}
+            onCropComplete={handleCroppedUpload}
+          />
 
           {/* User Info */}
           <section className="rounded-2xl border bg-card p-4 space-y-4 animate-slide-up">
