@@ -293,7 +293,7 @@ const ChatPage = () => {
         </div>
       </main>
 
-      <div className="fixed bottom-[60px] left-0 right-0 border-t bg-card/95 px-4 py-3 backdrop-blur-md">
+      <div className="fixed left-0 right-0 border-t bg-card/95 px-4 py-3 backdrop-blur-md" style={{ bottom: 'calc(60px + env(safe-area-inset-bottom))' }}>
         <div className="mx-auto flex max-w-lg items-center gap-2">
           <button className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-secondary text-muted-foreground transition-colors hover:bg-primary hover:text-primary-foreground">
             <Mic size={20} />

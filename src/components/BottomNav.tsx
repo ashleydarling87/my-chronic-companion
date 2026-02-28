@@ -12,7 +12,7 @@ const BottomNav = () => {
   const location = useLocation();
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 border-t bg-card/95 backdrop-blur-md safe-area-bottom">
+    <nav className="fixed bottom-0 left-0 right-0 z-50 border-t bg-card/95 backdrop-blur-md" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
       <div className="mx-auto flex max-w-lg items-center justify-around py-2">
         {tabs.map(({ path, label, icon: Icon }) => {
           const active = location.pathname === path;
