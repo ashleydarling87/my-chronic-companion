@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowLeft, Play, Pause, RotateCcw, Clock, ChevronDown, ChevronUp, RefreshCw, Wind } from "lucide-react";
+import { ArrowLeft, Play, Pause, RotateCcw, Clock, ChevronDown, ChevronUp, RefreshCw, Wind, Volume2, VolumeX } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
