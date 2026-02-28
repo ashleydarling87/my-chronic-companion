@@ -41,7 +41,7 @@ const IntakeChat = ({
   buddyName: string;
   buddyAvatar: string;
   painPref: string;
-  onComplete: () => void;
+  onComplete: (intakeData: Record<string, unknown> | null) => void;
 }) => {
   const emoji = getBuddyEmoji(buddyAvatar);
   const [messages, setMessages] = useState<IntakeMessage[]>([
