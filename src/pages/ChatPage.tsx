@@ -52,7 +52,7 @@ const ChatBubble = ({ message, onChipSelect, isLatest, isLoading, buddyEmoji }: 
 
   return (
     <div className={`flex ${isUser ? "justify-end" : "justify-start"} animate-slide-up`}>
-      {!isUser && <span className="mr-2 mt-1 text-xl">🐻</span>}
+      {!isUser && <span className="mr-2 mt-1 text-xl">{buddyEmoji}</span>}
       <div className="max-w-[78%] space-y-1">
         <div className={isUser ? "chat-bubble-user" : "chat-bubble-ai"}>
           <p className="text-[15px] leading-relaxed whitespace-pre-wrap">{message.content}</p>
