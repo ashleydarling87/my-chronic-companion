@@ -29,7 +29,7 @@ const ProfilePage = () => {
     }
   }, [prefs]);
 
-  const handleProfilePicUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file || !user) return;
 
@@ -42,16 +42,25 @@ const ProfilePage = () => {
       return;
     }
 
-    setUploading(true);
-    const fileExt = file.name.split(".").pop();
-    const filePath = `${user.id}/profile.${fileExt}`;
+    const reader = new FileReader();
+    reader.onload = () => setCropSrc(reader.result as string);
+    reader.readAsDataURL(file);
+    // Reset input so re-selecting same file works
+    e.target.value = "";
+  };
 
-    // Remove old file if exists
+  const handleCroppedUpload = async (blob: Blob) => {
+    if (!user) return;
+    setCropSrc(null);
+    setUploading(true);
+
+    const filePath = `${user.id}/profile.jpg`;
+
     await supabase.storage.from("profile-pictures").remove([filePath]);
 
     const { error: uploadError } = await supabase.storage
       .from("profile-pictures")
-      .upload(filePath, file, { upsert: true });
+      .upload(filePath, blob, { upsert: true, contentType: "image/jpeg" });
 
     if (uploadError) {
       toast.error("Failed to upload photo");
@@ -66,7 +75,6 @@ const ProfilePage = () => {
     const publicUrl = `${urlData.publicUrl}?t=${Date.now()}`;
     setProfilePicUrl(publicUrl);
 
-    // Save URL to preferences
     if (prefs?.id) {
       await supabase
         .from("user_preferences")
