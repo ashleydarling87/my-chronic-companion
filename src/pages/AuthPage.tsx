@@ -88,7 +88,7 @@ const AuthPage = () => {
         <div className="flex items-start gap-2 rounded-2xl bg-primary/5 border border-primary/15 p-4">
           <Heart size={16} className="text-primary mt-0.5 shrink-0" />
           <p className="text-xs text-muted-foreground leading-relaxed">
-            We're here to help you track, understand, and advocate for your health. 
+            We're here to help you track, understand, and advocate for your physical and mental health. 
             Your data stays private and secure — always.
           </p>
         </div>
