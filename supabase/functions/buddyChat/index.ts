@@ -27,6 +27,20 @@ serve(async (req) => {
     const usageMode: string = preferences?.usage_mode || "self";
     const isCaretaker = usageMode === "caretaker";
 
+    // Caretaker mode context
+    let caretakerContext = "";
+    if (isCaretaker) {
+      caretakerContext = `\n\nCARETAKER MODE:
+The person using this app is a CARETAKER logging on behalf of someone else. Adjust ALL language accordingly:
+- Use THEY/THEM pronouns when referring to the person being cared for. Say "How are they doing today?" NOT "How are you doing today?"
+- The user you're talking to is the caretaker. Acknowledge THEIR stress, fears, and emotional weight too. Caregiving is exhausting and often invisible.
+- Ask about the care recipient's symptoms using they/them: "How's their pain been?" "Have they been sleeping okay?"
+- Periodically check in on the CARETAKER's wellbeing too: "How are YOU holding up?" "Are you getting any rest yourself?"
+- Validate caretaker-specific struggles: feeling helpless watching someone suffer, guilt about needing breaks, fear about their loved one's future, burnout, isolation.
+- When logging entries, the data is about the CARE RECIPIENT (their pain, their symptoms, etc.), but the journal_text can include the caretaker's observations and feelings.
+- Never assume the caretaker's relationship — they could be a parent, partner, sibling, friend, or professional caregiver.`;
+    }
+
     // Intake data for personalization
     const intakeCondition: string = preferences?.intake_condition || "";
     const intakeDuration: string = preferences?.intake_duration || "";
