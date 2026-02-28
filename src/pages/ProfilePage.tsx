@@ -42,13 +42,17 @@ const ProfilePage = () => {
               />
             </div>
             <div className="space-y-1">
-              <label className="text-xs font-semibold text-muted-foreground">Date of Birth</label>
-              <input
-                type="date"
-                value={dob}
-                onChange={(e) => setDob(e.target.value)}
+              <label className="text-xs font-semibold text-muted-foreground">Age Range</label>
+              <select
+                value={ageRange}
+                onChange={(e) => setAgeRange(e.target.value)}
                 className="w-full rounded-xl border bg-background px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary/30"
-              />
+              >
+                <option value="">Select age range</option>
+                {["17–24", "25–30", "31–36", "37–42", "43–50", "51–60", "60+"].map((r) => (
+                  <option key={r} value={r}>{r}</option>
+                ))}
+              </select>
             </div>
           </section>
 

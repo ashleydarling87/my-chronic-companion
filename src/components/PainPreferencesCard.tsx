@@ -201,9 +201,12 @@ export default function PainPreferencesCard() {
         <label className="text-xs font-semibold text-muted-foreground">
           Optional identity & context
         </label>
-        <p className="text-[11px] text-muted-foreground leading-relaxed">
-          This is only used to tailor Buddy's language and your reports. You can change this anytime.
-        </p>
+        <div className="rounded-xl bg-destructive/10 p-3 flex gap-2 items-start">
+          <span className="text-base mt-0.5">❤️</span>
+          <p className="text-xs text-muted-foreground leading-relaxed">
+            <strong>This is completely optional.</strong> Your identity information is never shared outside this app. We ask because different folks often receive different care in healthcare, and we want to empower everyone to be their own #1 advocate. This simply helps us tailor your experience.
+          </p>
+        </div>
         <div className="flex flex-wrap gap-2">
           {IDENTITY_OPTIONS.map((opt) => (
             <button
