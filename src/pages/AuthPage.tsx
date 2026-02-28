@@ -2,6 +2,13 @@ import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Heart, Loader2, ArrowLeft } from "lucide-react";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetDescription,
+} from "@/components/ui/sheet";
 
 const AuthPage = () => {
   const [isLogin, setIsLogin] = useState(true);
