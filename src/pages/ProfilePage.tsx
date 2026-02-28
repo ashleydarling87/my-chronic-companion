@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { ArrowLeft, ChevronRight } from "lucide-react";
-import { Link } from "react-router-dom";
+import { ArrowLeft, ChevronRight, LogOut } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
 import { buddyAvatars } from "../lib/data";
 import PainPreferencesCard from "../components/PainPreferencesCard";
+import { useAuth } from "@/contexts/AuthContext";
 
 const ProfilePage = () => {
   const [name, setName] = useState("Alex");
