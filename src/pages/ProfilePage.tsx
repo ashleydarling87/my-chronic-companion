@@ -23,6 +23,8 @@ const ProfilePage = () => {
   const [profilePicUrl, setProfilePicUrl] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const [cropSrc, setCropSrc] = useState<string | null>(null);
+  const [careRecipientName, setCareRecipientName] = useState("");
+  const [careRecipientAgeRange, setCareRecipientAgeRange] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
