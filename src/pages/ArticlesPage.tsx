@@ -62,15 +62,17 @@ const ArticlesPage = () => {
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
-      <Header
-        title="Articles"
-        subtitle="Curated from trusted sources 📖"
-        leftAction={
+      <header className="sticky top-0 z-40 flex items-center justify-between border-b bg-card/95 px-4 py-3 backdrop-blur-md">
+        <div className="flex items-center gap-2">
           <Button variant="ghost" size="icon" onClick={() => navigate("/resources")} className="h-8 w-8">
             <ArrowLeft className="h-4 w-4" />
           </Button>
-        }
-      />
+          <div>
+            <h1 className="text-lg font-bold">Articles</h1>
+            <p className="text-xs text-muted-foreground">Curated from trusted sources 📖</p>
+          </div>
+        </div>
+      </header>
 
       <main className="flex-1 overflow-y-auto px-4 py-4 pb-24">
         <div className="mx-auto max-w-lg">
