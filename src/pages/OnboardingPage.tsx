@@ -604,7 +604,7 @@ const OnboardingPage = () => {
           >
             {saving ? (
               <><Loader2 size={16} className="animate-spin" /> Setting up...</>
-            ) : step === 4 ? (
+            ) : step === 5 ? (
               <>Chat with {buddyName} <ChevronRight size={16} /></>
             ) : (
               <>Continue <ChevronRight size={16} /></>
