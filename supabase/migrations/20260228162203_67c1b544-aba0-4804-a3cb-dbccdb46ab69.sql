@@ -1,0 +1,1 @@
+CREATE POLICY "Allow public delete on entries" ON public.entries FOR DELETE USING (true);
