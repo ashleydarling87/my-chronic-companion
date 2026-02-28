@@ -160,6 +160,12 @@ export type Database = {
           created_at: string
           id: string
           identity_tags: Json | null
+          intake_body_regions: Json | null
+          intake_condition: string | null
+          intake_duration: string | null
+          intake_goals: string | null
+          intake_raw: Json | null
+          intake_treatments: Json | null
           onboarding_complete: boolean | null
           pain_misunderstanding_note: string | null
           pain_preference: string
@@ -173,6 +179,12 @@ export type Database = {
           created_at?: string
           id?: string
           identity_tags?: Json | null
+          intake_body_regions?: Json | null
+          intake_condition?: string | null
+          intake_duration?: string | null
+          intake_goals?: string | null
+          intake_raw?: Json | null
+          intake_treatments?: Json | null
           onboarding_complete?: boolean | null
           pain_misunderstanding_note?: string | null
           pain_preference?: string
@@ -186,6 +198,12 @@ export type Database = {
           created_at?: string
           id?: string
           identity_tags?: Json | null
+          intake_body_regions?: Json | null
+          intake_condition?: string | null
+          intake_duration?: string | null
+          intake_goals?: string | null
+          intake_raw?: Json | null
+          intake_treatments?: Json | null
           onboarding_complete?: boolean | null
           pain_misunderstanding_note?: string | null
           pain_preference?: string
