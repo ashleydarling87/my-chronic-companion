@@ -116,7 +116,7 @@ const IntakeChat = ({
 
           if (intakeData) {
             // Intake is complete — short delay then proceed
-            setTimeout(() => onComplete(), 2000);
+            setTimeout(() => onComplete(intakeData), 2000);
           }
         },
       });
