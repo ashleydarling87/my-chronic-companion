@@ -68,6 +68,7 @@ const AppRoutes = () => (
     <Route path="/weekly" element={<ProtectedRoute><WeeklyPage /></ProtectedRoute>} />
     <Route path="/resources" element={<ProtectedRoute><ResourcesPage /></ProtectedRoute>} />
     <Route path="/resources/articles" element={<ProtectedRoute><ArticlesPage /></ProtectedRoute>} />
+    <Route path="/resources/mindfulness" element={<ProtectedRoute><MindfulnessPage /></ProtectedRoute>} />
     <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
     <Route path="/summary" element={<ProtectedRoute><SummaryPage /></ProtectedRoute>} />
     <Route path="*" element={<NotFound />} />

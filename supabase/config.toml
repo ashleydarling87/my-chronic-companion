@@ -11,3 +11,6 @@ verify_jwt = false
 
 [functions.search-articles]
 verify_jwt = false
+
+[functions.mindfulness-exercises]
+verify_jwt = false
