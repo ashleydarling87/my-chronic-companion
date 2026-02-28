@@ -198,6 +198,7 @@ export type Database = {
           intake_goals: string | null
           intake_raw: Json | null
           intake_treatments: Json | null
+          my_symptoms: Json | null
           onboarding_complete: boolean | null
           pain_misunderstanding_note: string | null
           pain_preference: string
@@ -221,6 +222,7 @@ export type Database = {
           intake_goals?: string | null
           intake_raw?: Json | null
           intake_treatments?: Json | null
+          my_symptoms?: Json | null
           onboarding_complete?: boolean | null
           pain_misunderstanding_note?: string | null
           pain_preference?: string
@@ -244,6 +246,7 @@ export type Database = {
           intake_goals?: string | null
           intake_raw?: Json | null
           intake_treatments?: Json | null
+          my_symptoms?: Json | null
           onboarding_complete?: boolean | null
           pain_misunderstanding_note?: string | null
           pain_preference?: string

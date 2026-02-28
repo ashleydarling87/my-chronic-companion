@@ -1,0 +1,1 @@
+ALTER TABLE public.user_preferences ADD COLUMN my_symptoms jsonb DEFAULT '[]'::jsonb;
