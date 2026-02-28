@@ -33,6 +33,7 @@ export interface UserPreferences {
   communication_style: CommunicationStyle;
   display_name: string | null;
   my_symptoms: string[];
+  usage_mode: string;
 }
 
 const DEFAULT_PREFS: Omit<UserPreferences, "id"> = {
@@ -56,6 +57,7 @@ const DEFAULT_PREFS: Omit<UserPreferences, "id"> = {
   communication_style: {},
   display_name: null,
   my_symptoms: [],
+  usage_mode: "self",
 };
 
 export function useUserPreferences() {
@@ -106,6 +108,7 @@ export function useUserPreferences() {
         communication_style: (data as any).communication_style ?? {},
         display_name: (data as any).display_name ?? null,
         my_symptoms: (data as any).my_symptoms ?? [],
+        usage_mode: (data as any).usage_mode ?? "self",
       });
     }
     setLoading(false);
@@ -173,6 +176,7 @@ export function useUserPreferences() {
         communication_style: (data as any).communication_style ?? {},
         display_name: (data as any).display_name ?? null,
         my_symptoms: (data as any).my_symptoms ?? [],
+        usage_mode: (data as any).usage_mode ?? "self",
       });
       toast.success("Preferences saved");
     }
