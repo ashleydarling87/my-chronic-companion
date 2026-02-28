@@ -277,6 +277,7 @@ const ChatPage = () => {
               isLatest={msg.id === latestAssistantId}
               isLoading={isLoading}
               buddyEmoji={getBuddyEmoji(prefs?.buddy_avatar || "bear")}
+              userProfilePic={prefs?.profile_picture_url || null}
             />
           ))}
           {isLoading && !messages.some((m) => m.id === (Date.now() + 1).toString()) && (
