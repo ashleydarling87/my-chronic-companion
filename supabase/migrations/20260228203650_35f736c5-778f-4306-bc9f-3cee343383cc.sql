@@ -1,0 +1,1 @@
+ALTER TABLE public.user_preferences ADD COLUMN usage_mode text DEFAULT 'self';

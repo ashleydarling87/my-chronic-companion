@@ -203,6 +203,7 @@ export type Database = {
           pain_preference: string
           profile_picture_url: string | null
           report_sharing_defaults: Json | null
+          usage_mode: string | null
           user_id: string | null
         }
         Insert: {
@@ -225,6 +226,7 @@ export type Database = {
           pain_preference?: string
           profile_picture_url?: string | null
           report_sharing_defaults?: Json | null
+          usage_mode?: string | null
           user_id?: string | null
         }
         Update: {
@@ -247,6 +249,7 @@ export type Database = {
           pain_preference?: string
           profile_picture_url?: string | null
           report_sharing_defaults?: Json | null
+          usage_mode?: string | null
           user_id?: string | null
         }
         Relationships: []
