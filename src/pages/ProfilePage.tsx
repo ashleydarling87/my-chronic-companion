@@ -18,6 +18,7 @@ const ProfilePage = () => {
   const [selectedAvatarId, setSelectedAvatarId] = useState("bear");
   const [profilePicUrl, setProfilePicUrl] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [cropSrc, setCropSrc] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
