@@ -2,6 +2,13 @@ import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Heart, Loader2, ArrowLeft } from "lucide-react";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetDescription,
+} from "@/components/ui/sheet";
 
 const AuthPage = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -9,6 +16,7 @@ const AuthPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showDisclaimer, setShowDisclaimer] = useState(false);
 
   const handleForgotPassword = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,22 +39,34 @@ const AuthPage = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email.trim() || !password.trim()) return;
-    setLoading(true);
 
-    try {
-      if (isLogin) {
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
-        if (error) throw error;
-      } else {
-        if (password.length < 6) {
-          toast.error("Password must be at least 6 characters");
-          setLoading(false);
-          return;
-        }
-        const { error } = await supabase.auth.signUp({ email, password });
-        if (error) throw error;
-        toast.success("Account created!");
+    if (!isLogin) {
+      if (password.length < 6) {
+        toast.error("Password must be at least 6 characters");
+        return;
       }
+      setShowDisclaimer(true);
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) throw error;
+    } catch (e: any) {
+      toast.error(e.message || "Authentication failed");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleAcceptDisclaimer = async () => {
+    setShowDisclaimer(false);
+    setLoading(true);
+    try {
+      const { error } = await supabase.auth.signUp({ email, password });
+      if (error) throw error;
+      toast.success("Account created!");
     } catch (e: any) {
       toast.error(e.message || "Authentication failed");
     } finally {
@@ -166,11 +186,31 @@ const AuthPage = () => {
           </>
         )}
 
-        {/* Medical disclaimer */}
+        {/* Static disclaimer note */}
         <p className="text-[11px] text-muted-foreground/70 leading-relaxed text-center">
           This app is not medical advice and should not be used to diagnose or treat any health condition. It is a journal and logbook with resources to help you track symptoms, identify patterns, and present information to your doctors clearly so you can receive the best care.
         </p>
       </div>
+
+      {/* Disclaimer sheet for sign-up */}
+      <Sheet open={showDisclaimer} onOpenChange={setShowDisclaimer}>
+        <SheetContent side="bottom" className="rounded-t-2xl px-6 pb-8">
+          <SheetHeader className="text-left">
+            <SheetTitle className="text-lg">Before you get started</SheetTitle>
+            <SheetDescription className="text-sm leading-relaxed text-muted-foreground">
+              This app is <span className="font-semibold text-foreground">not medical advice</span> and should not be used to diagnose or treat any health condition. It is a journal and logbook with resources to help you track symptoms, identify patterns, and present information to your doctors in an efficient and clear way so that you can receive the best care.
+            </SheetDescription>
+          </SheetHeader>
+          <button
+            onClick={handleAcceptDisclaimer}
+            disabled={loading}
+            className="mt-6 flex w-full items-center justify-center gap-2 rounded-2xl bg-primary py-3.5 text-sm font-bold text-primary-foreground transition-all disabled:opacity-50"
+          >
+            {loading ? <Loader2 size={16} className="animate-spin" /> : null}
+            I Understand — Create My Account
+          </button>
+        </SheetContent>
+      </Sheet>
     </div>
   );
 };
