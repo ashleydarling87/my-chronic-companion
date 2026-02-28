@@ -10,9 +10,43 @@ import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 import { CalendarIcon } from "lucide-react";
 import { toast } from "sonner";
+
+interface DiscriminationDetails {
+  painNotReal: boolean;
+  attributedToAnxiety: boolean;
+  notTakenSeriously: boolean;
+  identityBias: boolean;
+  freeText: string;
+}
+
+interface EmotionalDetails {
+  hopelessness: boolean;
+  senseOfPurpose: boolean;
+  isolation: boolean;
+  faithAffected: boolean;
+  freeText: string;
+}
+
+const DEFAULT_DISCRIMINATION: DiscriminationDetails = {
+  painNotReal: false,
+  attributedToAnxiety: false,
+  notTakenSeriously: false,
+  identityBias: false,
+  freeText: "",
+};
+
+const DEFAULT_EMOTIONAL: EmotionalDetails = {
+  hopelessness: false,
+  senseOfPurpose: false,
+  isolation: false,
+  faithAffected: false,
+  freeText: "",
+};
 
 interface DbEntry {
   id: string;
