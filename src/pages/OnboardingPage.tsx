@@ -261,10 +261,10 @@ const OnboardingPage = () => {
     }
   };
 
-  const handleIntakeComplete = async () => {
+  const handleIntakeComplete = async (intakeData: Record<string, unknown> | null) => {
     setSaving(true);
     try {
-      await saveProgress(true);
+      await saveProgress(true, intakeData);
       toast.success(`${buddyName} is ready! Let's go 💛`);
       navigate("/");
     } catch (e: any) {
