@@ -134,11 +134,13 @@ const ResourcesPage = () => {
                   onClick={() => {
                     if (isCommunication) {
                       setShowAdvocacy(!showAdvocacy);
-                    if (cat.id === "encouragement") {
+                    } else if (cat.id === "encouragement") {
                       setShowEncouragement(true);
                     } else if (cat.id === "crisis") {
                       setShowCrisis(true);
                     } else {
+                      navigate(`/resources/${cat.id}`);
+                    }
                   }}
                   className="relative flex flex-col items-center gap-2 rounded-2xl border bg-card p-4 text-center transition-transform active:scale-95 animate-slide-up"
                 >
