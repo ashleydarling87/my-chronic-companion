@@ -10,9 +10,43 @@ import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 import { CalendarIcon } from "lucide-react";
 import { toast } from "sonner";
+
+interface DiscriminationDetails {
+  painNotReal: boolean;
+  attributedToAnxiety: boolean;
+  notTakenSeriously: boolean;
+  identityBias: boolean;
+  freeText: string;
+}
+
+interface EmotionalDetails {
+  hopelessness: boolean;
+  senseOfPurpose: boolean;
+  isolation: boolean;
+  faithAffected: boolean;
+  freeText: string;
+}
+
+const DEFAULT_DISCRIMINATION: DiscriminationDetails = {
+  painNotReal: false,
+  attributedToAnxiety: false,
+  notTakenSeriously: false,
+  identityBias: false,
+  freeText: "",
+};
+
+const DEFAULT_EMOTIONAL: EmotionalDetails = {
+  hopelessness: false,
+  senseOfPurpose: false,
+  isolation: false,
+  faithAffected: false,
+  freeText: "",
+};
 
 interface DbEntry {
   id: string;
@@ -64,6 +98,10 @@ const WeeklyPage = () => {
   const [expandedReport, setExpandedReport] = useState<string | null>(null);
   const [includeDiscrimination, setIncludeDiscrimination] = useState(false);
   const [includeEmotional, setIncludeEmotional] = useState(false);
+  const [showDiscriminationSheet, setShowDiscriminationSheet] = useState(false);
+  const [showEmotionalSheet, setShowEmotionalSheet] = useState(false);
+  const [discriminationDetails, setDiscriminationDetails] = useState<DiscriminationDetails>({ ...DEFAULT_DISCRIMINATION });
+  const [emotionalDetails, setEmotionalDetails] = useState<EmotionalDetails>({ ...DEFAULT_EMOTIONAL });
   const { prefs } = useUserPreferences();
 
   // Sync sharing defaults from preferences
@@ -199,17 +237,31 @@ ${topSymptoms.length ? topSymptoms.map(([s, c]) => `• ${s} — reported ${c} t
         report += `\n\nEMOTIONAL & SPIRITUAL IMPACT
 • Mood was affected on ${impactCounts["mood"] || 0} days
 • Family/community was affected on ${impactCounts["family"] || 0} days`;
+        const emotionalPrompts: string[] = [];
+        if (emotionalDetails.hopelessness) emotionalPrompts.push("Patient experiences feelings of hopelessness related to their condition");
+        if (emotionalDetails.senseOfPurpose) emotionalPrompts.push("Condition affects patient's sense of purpose or meaning");
+        if (emotionalDetails.isolation) emotionalPrompts.push("Patient feels isolated because of their symptoms");
+        if (emotionalDetails.faithAffected) emotionalPrompts.push("Patient's faith or spiritual practices have been affected");
+        if (emotionalPrompts.length > 0) report += `\n${emotionalPrompts.map(p => `• ${p}`).join("\n")}`;
+        if (emotionalDetails.freeText.trim()) report += `\n• Additional context: ${emotionalDetails.freeText.trim()}`;
       }
 
       if (includeDiscrimination) {
         const dismissedCount = filteredEntries.filter((e) => e.felt_dismissed_by_provider).length;
         const discrimCount = filteredEntries.filter((e) => e.experienced_discrimination).length;
         if (dismissedCount > 0 || discrimCount > 0) {
-          report += `\n\nPATIENT CONTEXT (shared with consent)`;
-          if (dismissedCount > 0) report += `\n• Reported feeling dismissed by a healthcare provider on ${dismissedCount} occasion(s)`;
-          if (discrimCount > 0) report += `\n• Reported experiencing discrimination on ${discrimCount} occasion(s)`;
+          report += `\n\nPATIENT HISTORY & CONTEXT (shared with consent)`;
+          if (dismissedCount > 0) report += `\n• Patient has a history of feeling dismissed by healthcare providers (noted on ${dismissedCount} occasion(s) during this period)`;
+          if (discrimCount > 0) report += `\n• Patient has a history of experiencing discrimination in healthcare settings (noted on ${discrimCount} occasion(s) during this period)`;
           const contextNotes = filteredEntries.filter((e) => e.context_notes).map((e) => e.context_notes);
           if (contextNotes.length > 0) report += `\n• Context notes: ${contextNotes.join("; ")}`;
+          const discrimPrompts: string[] = [];
+          if (discriminationDetails.painNotReal) discrimPrompts.push("Has been told their pain isn't real");
+          if (discriminationDetails.attributedToAnxiety) discrimPrompts.push("Symptoms were attributed to anxiety or stress without investigation");
+          if (discriminationDetails.notTakenSeriously) discrimPrompts.push("Felt concerns were not taken seriously");
+          if (discriminationDetails.identityBias) discrimPrompts.push("Experienced bias related to identity");
+          if (discrimPrompts.length > 0) report += `\n${discrimPrompts.map(p => `• ${p}`).join("\n")}`;
+          if (discriminationDetails.freeText.trim()) report += `\n• Additional context: ${discriminationDetails.freeText.trim()}`;
         }
       }
 
@@ -400,11 +452,29 @@ Generated by Buddy • ${format(new Date(), "MMM d, yyyy")}`;
               {/* Sharing toggles */}
               <div className="space-y-2 border-t pt-3">
                 <label className="flex items-start gap-2.5 cursor-pointer">
-                  <input type="checkbox" checked={includeDiscrimination} onChange={(e) => setIncludeDiscrimination(e.target.checked)} className="mt-0.5 h-4 w-4 rounded accent-primary" />
+                  <input
+                    type="checkbox"
+                    checked={includeDiscrimination}
+                    onChange={(e) => {
+                      const checked = e.target.checked;
+                      setIncludeDiscrimination(checked);
+                      if (checked) setShowDiscriminationSheet(true);
+                    }}
+                    className="mt-0.5 h-4 w-4 rounded accent-primary"
+                  />
                   <span className="text-xs leading-snug">Include notes about discrimination or being dismissed</span>
                 </label>
                 <label className="flex items-start gap-2.5 cursor-pointer">
-                  <input type="checkbox" checked={includeEmotional} onChange={(e) => setIncludeEmotional(e.target.checked)} className="mt-0.5 h-4 w-4 rounded accent-primary" />
+                  <input
+                    type="checkbox"
+                    checked={includeEmotional}
+                    onChange={(e) => {
+                      const checked = e.target.checked;
+                      setIncludeEmotional(checked);
+                      if (checked) setShowEmotionalSheet(true);
+                    }}
+                    className="mt-0.5 h-4 w-4 rounded accent-primary"
+                  />
                   <span className="text-xs leading-snug">Include emotional and spiritual impact</span>
                 </label>
               </div>
@@ -475,6 +545,132 @@ Generated by Buddy • ${format(new Date(), "MMM d, yyyy")}`;
           )}
         </div>
       </main>
+
+      {/* Discrimination Detail Sheet */}
+      <Sheet open={showDiscriminationSheet} onOpenChange={setShowDiscriminationSheet}>
+        <SheetContent side="bottom" className="rounded-t-2xl max-h-[85vh] overflow-y-auto">
+          <SheetHeader className="mb-4">
+            <SheetTitle className="text-base">Past Experiences with Providers</SheetTitle>
+            <SheetDescription className="text-xs">
+              Help your provider understand your past experiences. This information is shared with your consent.
+            </SheetDescription>
+          </SheetHeader>
+          <div className="space-y-3">
+            <label className="flex items-start gap-3 cursor-pointer">
+              <Checkbox
+                checked={discriminationDetails.painNotReal}
+                onCheckedChange={(c) => setDiscriminationDetails(d => ({ ...d, painNotReal: !!c }))}
+                className="mt-0.5"
+              />
+              <span className="text-sm">I have been told my pain isn't real</span>
+            </label>
+            <label className="flex items-start gap-3 cursor-pointer">
+              <Checkbox
+                checked={discriminationDetails.attributedToAnxiety}
+                onCheckedChange={(c) => setDiscriminationDetails(d => ({ ...d, attributedToAnxiety: !!c }))}
+                className="mt-0.5"
+              />
+              <span className="text-sm">My symptoms were attributed to anxiety or stress without investigation</span>
+            </label>
+            <label className="flex items-start gap-3 cursor-pointer">
+              <Checkbox
+                checked={discriminationDetails.notTakenSeriously}
+                onCheckedChange={(c) => setDiscriminationDetails(d => ({ ...d, notTakenSeriously: !!c }))}
+                className="mt-0.5"
+              />
+              <span className="text-sm">I felt my concerns were not taken seriously</span>
+            </label>
+            <label className="flex items-start gap-3 cursor-pointer">
+              <Checkbox
+                checked={discriminationDetails.identityBias}
+                onCheckedChange={(c) => setDiscriminationDetails(d => ({ ...d, identityBias: !!c }))}
+                className="mt-0.5"
+              />
+              <span className="text-sm">I experienced bias related to my identity</span>
+            </label>
+            <div className="pt-2">
+              <label className="text-sm font-medium mb-1.5 block">Anything else you'd like your provider to know about past experiences?</label>
+              <Textarea
+                value={discriminationDetails.freeText}
+                onChange={(e) => setDiscriminationDetails(d => ({ ...d, freeText: e.target.value }))}
+                placeholder="Optional — share as much or as little as you'd like"
+                className="min-h-[80px] text-sm"
+              />
+            </div>
+            <div className="flex gap-2 pt-2">
+              <Button variant="outline" className="flex-1 rounded-xl" onClick={() => setShowDiscriminationSheet(false)}>
+                Skip
+              </Button>
+              <Button className="flex-1 rounded-xl" onClick={() => { setShowDiscriminationSheet(false); toast.success("Details saved"); }}>
+                Save & Include
+              </Button>
+            </div>
+          </div>
+        </SheetContent>
+      </Sheet>
+
+      {/* Emotional & Spiritual Impact Sheet */}
+      <Sheet open={showEmotionalSheet} onOpenChange={setShowEmotionalSheet}>
+        <SheetContent side="bottom" className="rounded-t-2xl max-h-[85vh] overflow-y-auto">
+          <SheetHeader className="mb-4">
+            <SheetTitle className="text-base">Emotional & Spiritual Impact</SheetTitle>
+            <SheetDescription className="text-xs">
+              Share how your condition affects you emotionally and spiritually.
+            </SheetDescription>
+          </SheetHeader>
+          <div className="space-y-3">
+            <label className="flex items-start gap-3 cursor-pointer">
+              <Checkbox
+                checked={emotionalDetails.hopelessness}
+                onCheckedChange={(c) => setEmotionalDetails(d => ({ ...d, hopelessness: !!c }))}
+                className="mt-0.5"
+              />
+              <span className="text-sm">I experience feelings of hopelessness related to my condition</span>
+            </label>
+            <label className="flex items-start gap-3 cursor-pointer">
+              <Checkbox
+                checked={emotionalDetails.senseOfPurpose}
+                onCheckedChange={(c) => setEmotionalDetails(d => ({ ...d, senseOfPurpose: !!c }))}
+                className="mt-0.5"
+              />
+              <span className="text-sm">My condition affects my sense of purpose or meaning</span>
+            </label>
+            <label className="flex items-start gap-3 cursor-pointer">
+              <Checkbox
+                checked={emotionalDetails.isolation}
+                onCheckedChange={(c) => setEmotionalDetails(d => ({ ...d, isolation: !!c }))}
+                className="mt-0.5"
+              />
+              <span className="text-sm">I feel isolated because of my symptoms</span>
+            </label>
+            <label className="flex items-start gap-3 cursor-pointer">
+              <Checkbox
+                checked={emotionalDetails.faithAffected}
+                onCheckedChange={(c) => setEmotionalDetails(d => ({ ...d, faithAffected: !!c }))}
+                className="mt-0.5"
+              />
+              <span className="text-sm">My faith or spiritual practices have been affected</span>
+            </label>
+            <div className="pt-2">
+              <label className="text-sm font-medium mb-1.5 block">Describe any other emotional or spiritual effects</label>
+              <Textarea
+                value={emotionalDetails.freeText}
+                onChange={(e) => setEmotionalDetails(d => ({ ...d, freeText: e.target.value }))}
+                placeholder="Optional — share as much or as little as you'd like"
+                className="min-h-[80px] text-sm"
+              />
+            </div>
+            <div className="flex gap-2 pt-2">
+              <Button variant="outline" className="flex-1 rounded-xl" onClick={() => setShowEmotionalSheet(false)}>
+                Skip
+              </Button>
+              <Button className="flex-1 rounded-xl" onClick={() => { setShowEmotionalSheet(false); toast.success("Details saved"); }}>
+                Save & Include
+              </Button>
+            </div>
+          </div>
+        </SheetContent>
+      </Sheet>
 
       <BottomNav />
     </div>
