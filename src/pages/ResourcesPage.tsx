@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 import BottomNav from "../components/BottomNav";
-import { BookOpen, Heart, Brain, Phone, MessageCircle, Star } from "lucide-react";
+import { BookOpen, Heart, Brain, Phone, MessageCircle, Star, HelpCircle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import EncouragementSheet from "@/components/EncouragementSheet";
 import CrisisSheet from "@/components/CrisisSheet";
