@@ -99,6 +99,17 @@ const AuthPage = () => {
               className="w-full rounded-xl border bg-card px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-primary/30"
             />
           </div>
+          {isLogin && !isForgot && (
+            <div className="text-right">
+              <button
+                type="button"
+                onClick={() => setIsForgot(true)}
+                className="text-xs text-primary hover:underline"
+              >
+                Forgot password?
+              </button>
+            </div>
+          )}
 
           <button
             type="submit"
