@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useUserPreferences } from "@/hooks/useUserPreferences";
 import { useAuth } from "@/contexts/AuthContext";
 import { streamChat, parseAIResponse, type ChatMsg } from "@/lib/chatStream";
+import { getBuddyEmoji } from "@/lib/data";
 
 interface DisplayMessage {
   id: string;
