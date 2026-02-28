@@ -31,8 +31,49 @@ interface Exercise {
 }
 
 /* ─── Breathing Timer Component ─── */
+/* ─── Audio & Haptic Helpers ─── */
+const audioCtxRef = { current: null as AudioContext | null };
+
+const getAudioCtx = () => {
+  if (!audioCtxRef.current) {
+    audioCtxRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+  }
+  return audioCtxRef.current;
+};
+
+const playTone = (frequency: number, duration: number, volume = 0.15) => {
+  try {
+    const ctx = getAudioCtx();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = "sine";
+    osc.frequency.setValueAtTime(frequency, ctx.currentTime);
+    gain.gain.setValueAtTime(0, ctx.currentTime);
+    gain.gain.linearRampToValueAtTime(volume, ctx.currentTime + 0.05);
+    gain.gain.linearRampToValueAtTime(0, ctx.currentTime + duration);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start(ctx.currentTime);
+    osc.stop(ctx.currentTime + duration);
+  } catch { /* audio not supported */ }
+};
+
+const PHASE_SOUNDS: Record<string, () => void> = {
+  inhale: () => playTone(396, 0.6, 0.12),   // gentle rising tone
+  hold: () => playTone(528, 0.4, 0.08),      // soft mid tone
+  exhale: () => playTone(285, 0.8, 0.1),     // low calming tone
+  rest: () => playTone(432, 0.3, 0.06),      // whisper tone
+};
+
+const hapticPulse = (pattern: number | number[]) => {
+  try {
+    if (navigator.vibrate) navigator.vibrate(pattern);
+  } catch { /* haptics not supported */ }
+};
+
 const BreathingTimer = () => {
   const [isActive, setIsActive] = useState(false);
+  const [soundEnabled, setSoundEnabled] = useState(true);
   const [phase, setPhase] = useState<"inhale" | "hold" | "exhale" | "rest">("inhale");
   const [seconds, setSeconds] = useState(0);
   const [cycles, setCycles] = useState(0);
@@ -48,6 +89,18 @@ const BreathingTimer = () => {
   const currentPhase = PHASES.find((p) => p.name === phase)!;
   const progress = seconds / currentPhase.duration;
 
+  const triggerPhaseFeedback = useCallback((phaseName: string) => {
+    if (soundEnabled) PHASE_SOUNDS[phaseName]?.();
+    // Haptic patterns: inhale=gentle, hold=double tap, exhale=long, rest=soft
+    const hapticPatterns: Record<string, number | number[]> = {
+      inhale: 30,
+      hold: [15, 50, 15],
+      exhale: 50,
+      rest: 10,
+    };
+    hapticPulse(hapticPatterns[phaseName] || 20);
+  }, [soundEnabled]);
+
   useEffect(() => {
     if (!isActive) return;
 
@@ -57,7 +110,9 @@ const BreathingTimer = () => {
         if (next >= currentPhase.duration) {
           const phaseIndex = PHASES.findIndex((p) => p.name === phase);
           const nextIndex = (phaseIndex + 1) % PHASES.length;
-          setPhase(PHASES[nextIndex].name);
+          const nextPhaseName = PHASES[nextIndex].name;
+          setPhase(nextPhaseName);
+          triggerPhaseFeedback(nextPhaseName);
           if (nextIndex === 0) setCycles((c) => c + 1);
           return 0;
         }
@@ -68,7 +123,7 @@ const BreathingTimer = () => {
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
     };
-  }, [isActive, phase, currentPhase.duration]);
+  }, [isActive, phase, currentPhase.duration, triggerPhaseFeedback]);
 
   const reset = useCallback(() => {
     setIsActive(false);
