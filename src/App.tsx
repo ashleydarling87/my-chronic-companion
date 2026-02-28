@@ -9,6 +9,7 @@ import ChatPage from "./pages/ChatPage";
 import LogPage from "./pages/LogPage";
 import WeeklyPage from "./pages/WeeklyPage";
 import ResourcesPage from "./pages/ResourcesPage";
+import ArticlesPage from "./pages/ArticlesPage";
 import ProfilePage from "./pages/ProfilePage";
 import SummaryPage from "./pages/SummaryPage";
 import AuthPage from "./pages/AuthPage";
