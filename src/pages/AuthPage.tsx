@@ -186,11 +186,31 @@ const AuthPage = () => {
           </>
         )}
 
-        {/* Medical disclaimer */}
+        {/* Static disclaimer note */}
         <p className="text-[11px] text-muted-foreground/70 leading-relaxed text-center">
           This app is not medical advice and should not be used to diagnose or treat any health condition. It is a journal and logbook with resources to help you track symptoms, identify patterns, and present information to your doctors clearly so you can receive the best care.
         </p>
       </div>
+
+      {/* Disclaimer sheet for sign-up */}
+      <Sheet open={showDisclaimer} onOpenChange={setShowDisclaimer}>
+        <SheetContent side="bottom" className="rounded-t-2xl px-6 pb-8">
+          <SheetHeader className="text-left">
+            <SheetTitle className="text-lg">Before you get started</SheetTitle>
+            <SheetDescription className="text-sm leading-relaxed text-muted-foreground">
+              This app is <span className="font-semibold text-foreground">not medical advice</span> and should not be used to diagnose or treat any health condition. It is a journal and logbook with resources to help you track symptoms, identify patterns, and present information to your doctors in an efficient and clear way so that you can receive the best care.
+            </SheetDescription>
+          </SheetHeader>
+          <button
+            onClick={handleAcceptDisclaimer}
+            disabled={loading}
+            className="mt-6 flex w-full items-center justify-center gap-2 rounded-2xl bg-primary py-3.5 text-sm font-bold text-primary-foreground transition-all disabled:opacity-50"
+          >
+            {loading ? <Loader2 size={16} className="animate-spin" /> : null}
+            I Understand — Create My Account
+          </button>
+        </SheetContent>
+      </Sheet>
     </div>
   );
 };
