@@ -212,6 +212,9 @@ const ProfilePage = () => {
           {/* Pain & Communication Preferences */}
           <PainPreferencesCard />
 
+          {/* Symptoms */}
+          <SymptomsCard />
+
           {/* Communication Style */}
           <CommunicationStyleCard />
 
