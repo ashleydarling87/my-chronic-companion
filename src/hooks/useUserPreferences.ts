@@ -3,6 +3,14 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 
+export interface CommunicationStyle {
+  message_length?: string;
+  tone?: string;
+  emoji_usage?: string;
+  vocabulary?: string;
+  humor?: string;
+}
+
 export interface UserPreferences {
   id: string;
   pain_preference: "numeric" | "verbal" | "faces" | "adaptive";
@@ -22,6 +30,7 @@ export interface UserPreferences {
   intake_treatments: string[];
   intake_goals: string | null;
   profile_picture_url: string | null;
+  communication_style: CommunicationStyle;
 }
 
 const DEFAULT_PREFS: Omit<UserPreferences, "id"> = {
@@ -42,6 +51,7 @@ const DEFAULT_PREFS: Omit<UserPreferences, "id"> = {
   intake_treatments: [],
   intake_goals: null,
   profile_picture_url: null,
+  communication_style: {},
 };
 
 export function useUserPreferences() {
@@ -89,6 +99,7 @@ export function useUserPreferences() {
         intake_treatments: (data as any).intake_treatments ?? [],
         intake_goals: (data as any).intake_goals ?? null,
         profile_picture_url: (data as any).profile_picture_url ?? null,
+        communication_style: (data as any).communication_style ?? {},
       });
     }
     setLoading(false);
@@ -105,6 +116,7 @@ export function useUserPreferences() {
           pain_misunderstanding_note: updated.pain_misunderstanding_note ?? prefs.pain_misunderstanding_note,
           identity_tags: updated.identity_tags ?? prefs.identity_tags,
           report_sharing_defaults: updated.report_sharing_defaults ?? prefs.report_sharing_defaults,
+          communication_style: (updated.communication_style ?? prefs.communication_style) as unknown as Record<string, string>,
         })
         .eq("id", prefs.id);
 
@@ -151,6 +163,7 @@ export function useUserPreferences() {
         intake_treatments: (data as any).intake_treatments ?? [],
         intake_goals: (data as any).intake_goals ?? null,
         profile_picture_url: (data as any).profile_picture_url ?? null,
+        communication_style: (data as any).communication_style ?? {},
       });
       toast.success("Preferences saved");
     }
