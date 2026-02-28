@@ -199,12 +199,9 @@ const EncouragementSheet = ({ open, onClose }: { open: boolean; onClose: () => v
                       )}
                     </AvatarFallback>
                   </Avatar>
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs font-semibold">
-                      {note.is_anonymous ? "Anonymous" : (note.display_name || "User")}
-                    </span>
-                    <span className="text-[10px] text-muted-foreground">{timeAgo(note.created_at)}</span>
-                  </div>
+                  <span className="text-xs font-semibold">
+                    {note.is_anonymous ? "Anonymous" : (note.display_name || "User")}
+                  </span>
                 </div>
                 <p className="text-sm leading-relaxed">{note.content}</p>
               </div>
