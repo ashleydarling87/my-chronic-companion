@@ -108,6 +108,16 @@ const ProfilePage = () => {
               </button>
             ))}
           </section>
+
+          {/* Sign Out */}
+          <section className="rounded-2xl border bg-card overflow-hidden">
+            <button
+              onClick={handleSignOut}
+              className="flex w-full items-center justify-center gap-2 px-4 py-3.5 text-sm font-semibold text-destructive hover:bg-destructive/5 transition-colors"
+            >
+              <LogOut size={16} /> Sign Out
+            </button>
+          </section>
         </div>
       </main>
     </div>
