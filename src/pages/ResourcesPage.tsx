@@ -132,6 +132,8 @@ const ResourcesPage = () => {
                   onClick={() => {
                     if (isCommunication) {
                       setShowAdvocacy(!showAdvocacy);
+                    } else if (cat.id === "encouragement") {
+                      setShowEncouragement(true);
                     } else {
                       navigate(`/resources/${cat.id}`);
                     }
