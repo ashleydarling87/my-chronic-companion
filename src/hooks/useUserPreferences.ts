@@ -183,6 +183,8 @@ export function useUserPreferences() {
         display_name: (data as any).display_name ?? null,
         my_symptoms: (data as any).my_symptoms ?? [],
         usage_mode: (data as any).usage_mode ?? "self",
+        care_recipient_name: (data as any).care_recipient_name ?? null,
+        care_recipient_age_range: (data as any).care_recipient_age_range ?? null,
       });
       toast.success("Preferences saved");
     }
