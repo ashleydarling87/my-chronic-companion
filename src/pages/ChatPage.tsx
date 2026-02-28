@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useUserPreferences } from "@/hooks/useUserPreferences";
 import { useAuth } from "@/contexts/AuthContext";
 import { streamChat, parseAIResponse, type ChatMsg } from "@/lib/chatStream";
+import { getBuddyEmoji } from "@/lib/data";
 
 interface DisplayMessage {
   id: string;
@@ -40,17 +41,18 @@ const QuickChips = ({ chips, onSelect, disabled }: { chips: string[]; onSelect: 
   </div>
 );
 
-const ChatBubble = ({ message, onChipSelect, isLatest, isLoading }: {
+const ChatBubble = ({ message, onChipSelect, isLatest, isLoading, buddyEmoji }: {
   message: DisplayMessage;
   onChipSelect: (c: string) => void;
   isLatest: boolean;
   isLoading: boolean;
+  buddyEmoji: string;
 }) => {
   const isUser = message.role === "user";
 
   return (
     <div className={`flex ${isUser ? "justify-end" : "justify-start"} animate-slide-up`}>
-      {!isUser && <span className="mr-2 mt-1 text-xl">🐻</span>}
+      {!isUser && <span className="mr-2 mt-1 text-xl">{buddyEmoji}</span>}
       <div className="max-w-[78%] space-y-1">
         <div className={isUser ? "chat-bubble-user" : "chat-bubble-ai"}>
           <p className="text-[15px] leading-relaxed whitespace-pre-wrap">{message.content}</p>
@@ -253,7 +255,7 @@ const ChatPage = () => {
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
-      <Header title={`${prefs?.buddy_name || "Buddy"} ${prefs?.buddy_avatar === "cat" ? "🐱" : prefs?.buddy_avatar === "dog" ? "🐶" : prefs?.buddy_avatar === "owl" ? "🦉" : prefs?.buddy_avatar === "fox" ? "🦊" : prefs?.buddy_avatar === "rabbit" ? "🐰" : "🐻"}`} subtitle="Always here for you" />
+      <Header title={`${prefs?.buddy_name || "Buddy"} ${getBuddyEmoji(prefs?.buddy_avatar || "bear")}`} subtitle="Always here for you" />
 
       <main className="flex-1 overflow-y-auto px-4 py-4 pb-36">
         <div className="mx-auto max-w-lg space-y-3">
@@ -264,11 +266,12 @@ const ChatPage = () => {
               onChipSelect={handleChipSelect}
               isLatest={msg.id === latestAssistantId}
               isLoading={isLoading}
+              buddyEmoji={getBuddyEmoji(prefs?.buddy_avatar || "bear")}
             />
           ))}
           {isLoading && !messages.some((m) => m.id === (Date.now() + 1).toString()) && (
             <div className="flex items-center">
-              <span className="mr-2 text-xl">🐻</span>
+              <span className="mr-2 text-xl">{getBuddyEmoji(prefs?.buddy_avatar || "bear")}</span>
               <TypingIndicator />
             </div>
           )}
