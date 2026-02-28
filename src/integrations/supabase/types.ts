@@ -187,6 +187,7 @@ export type Database = {
           age_range: string | null
           buddy_avatar: string | null
           buddy_name: string | null
+          communication_style: Json | null
           created_at: string
           id: string
           identity_tags: Json | null
@@ -207,6 +208,7 @@ export type Database = {
           age_range?: string | null
           buddy_avatar?: string | null
           buddy_name?: string | null
+          communication_style?: Json | null
           created_at?: string
           id?: string
           identity_tags?: Json | null
@@ -227,6 +229,7 @@ export type Database = {
           age_range?: string | null
           buddy_avatar?: string | null
           buddy_name?: string | null
+          communication_style?: Json | null
           created_at?: string
           id?: string
           identity_tags?: Json | null
