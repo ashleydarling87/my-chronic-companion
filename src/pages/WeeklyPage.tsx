@@ -91,7 +91,7 @@ const WeeklyPage = () => {
   const [loading, setLoading] = useState(true);
   const [generatedReport, setGeneratedReport] = useState<string | null>(null);
   const [editableReport, setEditableReport] = useState("");
-  const [isEditing, setIsEditing] = useState(false);
+  const [showReportSheet, setShowReportSheet] = useState(false);
   const [savedReports, setSavedReports] = useState<SavedReport[]>([]);
   const [copied, setCopied] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
