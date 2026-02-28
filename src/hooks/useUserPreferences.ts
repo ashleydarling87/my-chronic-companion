@@ -124,20 +124,19 @@ export function useUserPreferences() {
     if (!user) return;
 
     if (prefs?.id) {
+      // Only send the fields explicitly provided — prevents stale snapshots from overwriting other components' saves
+      const patch: Record<string, unknown> = {};
+      for (const key of Object.keys(updated) as (keyof typeof updated)[]) {
+        if (key === "communication_style") {
+          patch[key] = updated[key] as unknown as Record<string, string>;
+        } else {
+          patch[key] = updated[key];
+        }
+      }
+
       const { error } = await supabase
         .from("user_preferences")
-        .update({
-          pain_preference: updated.pain_preference ?? prefs.pain_preference,
-          pain_misunderstanding_note: updated.pain_misunderstanding_note ?? prefs.pain_misunderstanding_note,
-          identity_tags: updated.identity_tags ?? prefs.identity_tags,
-          report_sharing_defaults: updated.report_sharing_defaults ?? prefs.report_sharing_defaults,
-          communication_style: (updated.communication_style ?? prefs.communication_style) as unknown as Record<string, string>,
-          display_name: updated.display_name !== undefined ? updated.display_name : prefs.display_name,
-          buddy_name: updated.buddy_name !== undefined ? updated.buddy_name : prefs.buddy_name,
-          buddy_avatar: updated.buddy_avatar !== undefined ? updated.buddy_avatar : prefs.buddy_avatar,
-          care_recipient_name: updated.care_recipient_name !== undefined ? updated.care_recipient_name : prefs.care_recipient_name,
-          care_recipient_age_range: updated.care_recipient_age_range !== undefined ? updated.care_recipient_age_range : prefs.care_recipient_age_range,
-        })
+        .update(patch)
         .eq("id", prefs.id);
 
       if (error) {
