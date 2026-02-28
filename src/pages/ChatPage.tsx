@@ -227,6 +227,7 @@ const ChatPage = () => {
           intake_body_regions: prefs.intake_body_regions,
           intake_treatments: prefs.intake_treatments,
           intake_goals: prefs.intake_goals,
+          communication_style: prefs.communication_style,
         } : undefined,
         onDelta: (chunk) => upsertAssistant(chunk),
         onDone: async () => {
