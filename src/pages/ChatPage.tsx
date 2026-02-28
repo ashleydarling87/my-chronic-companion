@@ -5,6 +5,7 @@ import Header from "../components/Header";
 import BottomNav from "../components/BottomNav";
 import { supabase } from "@/integrations/supabase/client";
 import { useUserPreferences } from "@/hooks/useUserPreferences";
+import { useAuth } from "@/contexts/AuthContext";
 import { streamChat, parseAIResponse, type ChatMsg } from "@/lib/chatStream";
 
 interface DisplayMessage {
