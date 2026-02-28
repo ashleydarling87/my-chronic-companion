@@ -554,6 +554,8 @@ const OnboardingPage = () => {
                   </button>
                 ))}
               </div>
+                );
+              })()}
             </div>
           )}
 
