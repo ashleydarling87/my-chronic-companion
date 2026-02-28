@@ -13,6 +13,7 @@ import ProfilePage from "./pages/ProfilePage";
 import SummaryPage from "./pages/SummaryPage";
 import AuthPage from "./pages/AuthPage";
 import OnboardingPage from "./pages/OnboardingPage";
+import ResetPasswordPage from "./pages/ResetPasswordPage";
 import NotFound from "./pages/NotFound";
 import { Loader2 } from "lucide-react";
 
