@@ -209,6 +209,7 @@ const ResourcesPage = () => {
 
       <EncouragementSheet open={showEncouragement} onClose={() => setShowEncouragement(false)} />
       <CrisisSheet open={showCrisis} onClose={() => setShowCrisis(false)} />
+      <HowToUseSheet open={showHowToUse} onClose={() => setShowHowToUse(false)} />
       <BottomNav />
     </div>
   );
