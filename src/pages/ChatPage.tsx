@@ -8,6 +8,7 @@ import { useUserPreferences } from "@/hooks/useUserPreferences";
 import { useAuth } from "@/contexts/AuthContext";
 import { streamChat, parseAIResponse, type ChatMsg } from "@/lib/chatStream";
 import { getBuddyEmoji } from "@/lib/data";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 interface DisplayMessage {
   id: string;
