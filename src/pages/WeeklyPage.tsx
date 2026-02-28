@@ -235,6 +235,23 @@ ${topTriggers.length ? topTriggers.map(([t, c]) => `• ${t} — reported ${c} t
 SYMPTOMS & BODY REGIONS
 ${topSymptoms.length ? topSymptoms.map(([s, c]) => `• ${s} — reported ${c} time(s)`).join("\n") : "• No symptoms reported"}`;
 
+      // Add mental health scores to doctor report
+      const filteredMH = mhScores.filter((s) =>
+        isWithinInterval(new Date(s.created_at), { start: startOfDay(startDate), end: endOfDay(endDate) })
+      );
+      if (filteredMH.length > 0) {
+        const avgMHTotal = Math.round((filteredMH.reduce((s, m) => s + m.total_score, 0) / filteredMH.length) * 10) / 10;
+        const avgAnx = Math.round((filteredMH.reduce((s, m) => s + (m.anxiety_score ?? 0), 0) / filteredMH.length) * 10) / 10;
+        const avgDep = Math.round((filteredMH.reduce((s, m) => s + (m.depression_score ?? 0), 0) / filteredMH.length) * 10) / 10;
+        const latestSev = filteredMH[0]?.severity || "normal";
+        report += `\n\nMENTAL HEALTH SCREENING (PHQ-4)
+• ${filteredMH.length} screening(s) completed during this period
+• Average Total Score: ${avgMHTotal}/12 (${latestSev})
+• Average Anxiety Sub-Score (GAD-2): ${avgAnx}/6
+• Average Depression Sub-Score (PHQ-2): ${avgDep}/6
+• Scoring: 0-2 Normal, 3-5 Mild, 6-8 Moderate, 9-12 Severe`;
+      }
+
       if (includeEmotional && impactEntries.some(([k]) => k === "mood" || k === "family")) {
         report += `\n\nEMOTIONAL & SPIRITUAL IMPACT
 • Mood was affected on ${impactCounts["mood"] || 0} days
