@@ -70,21 +70,30 @@ export type Database = {
       }
       encouragement_notes: {
         Row: {
+          author_profile_pic: string | null
           content: string
           created_at: string
+          display_name: string | null
           id: string
+          is_anonymous: boolean
           user_id: string
         }
         Insert: {
+          author_profile_pic?: string | null
           content: string
           created_at?: string
+          display_name?: string | null
           id?: string
+          is_anonymous?: boolean
           user_id: string
         }
         Update: {
+          author_profile_pic?: string | null
           content?: string
           created_at?: string
+          display_name?: string | null
           id?: string
+          is_anonymous?: boolean
           user_id?: string
         }
         Relationships: []
