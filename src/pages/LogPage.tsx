@@ -7,31 +7,8 @@ import BottomNav from "../components/BottomNav";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useUserPreferences } from "@/hooks/useUserPreferences";
-
-interface DbEntry {
-  id: string;
-  created_at: string;
-  pain_level: number | null;
-  pain_verbal: string | null;
-  energy_level: number | null;
-  mood: string | null;
-  sleep_hours: number | null;
-  symptoms: string[];
-  triggers: string[];
-  body_regions: string[];
-  qualities: string[];
-  impacts: Record<string, number>;
-  reliefs: string[];
-  summary: string | null;
-  severity: string | null;
-  raw_text: string | null;
-  journal_text: string | null;
-  felt_dismissed_by_provider: boolean;
-  experienced_discrimination: boolean;
-  context_notes: string | null;
-  emergency: boolean;
-  share_with_doctor_flags: { includeContextNotes: boolean; includeDiscriminationNotes: boolean };
-}
+import EntryEditForm from "@/components/log/EntryEditForm";
+import type { DbEntry } from "@/components/log/EntryEditForm";
 
 const IMPACT_LABELS: Record<string, string> = {
   sleep: "Sleep",
@@ -218,8 +195,9 @@ const CheckInForm = ({ onClose, onSaved }: { onClose: () => void; onSaved: () =>
   );
 };
 
-const EntryDetailView = ({ entry, onClose }: { entry: DbEntry; onClose: () => void }) => {
+const EntryDetailView = ({ entry, onClose, onUpdated }: { entry: DbEntry; onClose: () => void; onUpdated: () => void }) => {
   const [flags, setFlags] = useState(entry.share_with_doctor_flags);
+  const [editing, setEditing] = useState(false);
 
   const handleToggleFlag = async (key: "includeContextNotes" | "includeDiscriminationNotes") => {
     const updated = { ...flags, [key]: !flags[key] };
@@ -230,11 +208,27 @@ const EntryDetailView = ({ entry, onClose }: { entry: DbEntry; onClose: () => vo
 
   const impactEntries = Object.entries(entry.impacts || {}).filter(([, v]) => v > 0);
 
+  if (editing) {
+    return (
+      <EntryEditForm
+        entry={entry}
+        onClose={() => setEditing(false)}
+        onSaved={() => {
+          setEditing(false);
+          onUpdated();
+        }}
+      />
+    );
+  }
+
   return (
     <div className="rounded-2xl border bg-card p-4 space-y-4 animate-slide-up">
       <div className="flex items-center justify-between">
         <span className="text-sm font-bold">{format(new Date(entry.created_at), "EEEE, MMM d")}</span>
-        <button onClick={onClose} className="rounded-full p-1.5 text-muted-foreground hover:bg-secondary"><X size={16} /></button>
+        <div className="flex items-center gap-1">
+          <button onClick={() => setEditing(true)} className="rounded-full p-1.5 text-muted-foreground hover:bg-secondary"><Edit2 size={16} /></button>
+          <button onClick={onClose} className="rounded-full p-1.5 text-muted-foreground hover:bg-secondary"><X size={16} /></button>
+        </div>
       </div>
 
       {/* Scores */}
@@ -441,7 +435,7 @@ const LogPage = () => {
           )}
 
           {expandedEntry ? (
-            <EntryDetailView entry={expandedEntry} onClose={() => setExpandedId(null)} />
+            <EntryDetailView entry={expandedEntry} onClose={() => setExpandedId(null)} onUpdated={() => { setExpandedId(null); fetchEntries(); }} />
           ) : (
             <>
               {loading ? (
