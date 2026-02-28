@@ -87,6 +87,8 @@ const IDENTITY_OPTIONS = [
   { value: "man", label: "I'm a Man" },
   { value: "woman", label: "I'm a Woman" },
   { value: "gender_fluid", label: "I'm Gender Fluid" },
+  // Neurodivergence
+  { value: "neurodivergent", label: "I'm Neurodivergent" },
 ];
 
 export default function PainPreferencesCard() {
