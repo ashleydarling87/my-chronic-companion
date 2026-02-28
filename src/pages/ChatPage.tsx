@@ -84,13 +84,35 @@ const ChatBubble = ({ message, onChipSelect, isLatest, isLoading, buddyEmoji, us
   );
 };
 
-const makeInitialMessage = (): DisplayMessage => ({
-  id: "initial",
-  role: "assistant",
-  content: "Hey bestie! 💛 How are you feeling today? Tell me everything — the good, the bad, the ugh.",
-  chips: ["Not great today", "Pretty good actually", "Symptoms are really bad", "I just want to vent"],
-  timestamp: new Date(),
-});
+const makeInitialMessage = (painPref?: string): DisplayMessage => {
+  // Tailor the pain question to the user's preferred description style
+  let painChip = "Symptoms are really bad";
+  let greeting = "Hey bestie! 💛 How are you feeling today? Tell me everything — the good, the bad, the ugh.";
+
+  switch (painPref) {
+    case "numeric":
+      painChip = "Pain is high today (7+)";
+      break;
+    case "verbal":
+      painChip = "Pain is really bad today";
+      break;
+    case "faces":
+      painChip = "😣 Hurting a lot";
+      break;
+    case "adaptive":
+    default:
+      painChip = "Symptoms are really bad";
+      break;
+  }
+
+  return {
+    id: "initial",
+    role: "assistant",
+    content: greeting,
+    chips: ["Not great today", "Pretty good actually", painChip, "I just want to vent"],
+    timestamp: new Date(),
+  };
+};
 
 /** Returns the "chat day" string (YYYY-MM-DD) where the day flips at 3 AM local time. */
 const getChatDay = (): string => {
@@ -127,12 +149,22 @@ const saveSession = (msgs: DisplayMessage[]) => {
 const ChatPage = () => {
   const [messages, setMessages] = useState<DisplayMessage[]>(() => {
     const restored = loadSession();
-    return restored.length > 0 ? restored : [makeInitialMessage()];
+    return restored.length > 0 ? restored : [makeInitialMessage(prefs?.pain_preference)];
   });
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
   const { prefs } = useUserPreferences();
+
+  // Update initial message chips when preferences load
+  useEffect(() => {
+    setMessages((prev) => {
+      if (prev.length === 1 && prev[0].id === "initial") {
+        return [makeInitialMessage(prefs?.pain_preference)];
+      }
+      return prev;
+    });
+  }, [prefs?.pain_preference]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
