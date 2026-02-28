@@ -527,13 +527,24 @@ const OnboardingPage = () => {
                 </button>
               )}
 
-              {/* Suggestions */}
-              <div className="flex flex-wrap gap-1.5">
-                {SUGGESTED_SYMPTOMS.filter(
+              {/* Suggestions — prioritized by selected conditions */}
+              {(() => {
+                const conditionRelevant = new Set(
+                  belongSelection.flatMap((c) => CONDITION_SYMPTOMS[c] || [])
+                );
+                const available = SUGGESTED_SYMPTOMS.filter(
                   (s) =>
                     !selectedSymptoms.some((m) => m.toLowerCase() === s.toLowerCase()) &&
                     (!symptomSearch || s.toLowerCase().includes(symptomSearch.toLowerCase()))
-                ).map((s) => (
+                );
+                // Sort: condition-relevant first, then the rest
+                const sorted = [
+                  ...available.filter((s) => conditionRelevant.has(s)),
+                  ...available.filter((s) => !conditionRelevant.has(s)),
+                ];
+                return (
+              <div className="flex flex-wrap gap-1.5">
+                {sorted.map((s) => (
                   <button
                     key={s}
                     onClick={() => setSelectedSymptoms((prev) => [...prev, s])}
