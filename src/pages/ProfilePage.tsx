@@ -239,6 +239,9 @@ const ProfilePage = () => {
               <LogOut size={16} /> Sign Out
             </button>
           </section>
+
+          {/* Delete Account */}
+          <DeleteAccountSection />
         </div>
       </main>
     </div>
