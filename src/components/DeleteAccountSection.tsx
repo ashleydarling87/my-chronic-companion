@@ -28,6 +28,7 @@ const DeleteAccountSection = () => {
   const [selectedReason, setSelectedReason] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
   const [exporting, setExporting] = useState(false);
+  const [confirmText, setConfirmText] = useState("");
   const { session } = useAuth();
   const navigate = useNavigate();
 
@@ -83,6 +84,7 @@ const DeleteAccountSection = () => {
     if (!value) {
       setStep("reason");
       setSelectedReason(null);
+      setConfirmText("");
     }
   };
 
@@ -177,11 +179,24 @@ const DeleteAccountSection = () => {
                 </p>
               </div>
 
+              <div className="space-y-1.5">
+                <label className="text-sm font-medium">
+                  Type <span className="font-bold text-destructive">DELETE</span> to confirm
+                </label>
+                <input
+                  value={confirmText}
+                  onChange={(e) => setConfirmText(e.target.value)}
+                  placeholder="DELETE"
+                  className="w-full rounded-xl border bg-background px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-destructive/30"
+                  autoComplete="off"
+                />
+              </div>
+
               <AlertDialogFooter className="flex-col gap-2 sm:flex-col">
                 <Button
                   variant="destructive"
                   onClick={handleDelete}
-                  disabled={deleting}
+                  disabled={deleting || confirmText !== "DELETE"}
                   className="w-full gap-2"
                 >
                   {deleting ? (
