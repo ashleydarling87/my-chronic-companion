@@ -147,14 +147,14 @@ const saveSession = (msgs: DisplayMessage[]) => {
 };
 
 const ChatPage = () => {
+  const { prefs } = useUserPreferences();
   const [messages, setMessages] = useState<DisplayMessage[]>(() => {
     const restored = loadSession();
-    return restored.length > 0 ? restored : [makeInitialMessage(prefs?.pain_preference)];
+    return restored.length > 0 ? restored : [makeInitialMessage()];
   });
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
-  const { prefs } = useUserPreferences();
 
   // Update initial message chips when preferences load
   useEffect(() => {
