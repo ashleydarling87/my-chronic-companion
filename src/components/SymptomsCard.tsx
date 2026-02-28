@@ -40,16 +40,15 @@ const SymptomsCard = () => {
 
   const save = async (updated: string[]) => {
     if (!prefs?.id || !user) return;
+    setMySymptoms(updated);
     const { error } = await supabase
       .from("user_preferences")
       .update({ my_symptoms: updated } as any)
       .eq("id", prefs.id);
     if (error) {
       toast.error("Failed to save symptoms");
-      return;
+      setMySymptoms((prefs as any)?.my_symptoms ?? []);
     }
-    // Optimistic: force a re-render by reloading — the hook will pick it up
-    window.dispatchEvent(new Event("prefs-updated"));
   };
 
   const addSymptom = (symptom: string) => {
