@@ -150,6 +150,8 @@ const ResourcesPage = () => {
                       setShowCrisis(true);
                     } else if (cat.id === "how-to-use") {
                       setShowHowToUse(true);
+                    } else if (cat.id === "mindfulness") {
+                      navigate("/resources/mindfulness");
                     } else {
                       navigate(`/resources/${cat.id}`);
                     }
