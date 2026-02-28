@@ -216,7 +216,7 @@ const OnboardingPage = () => {
     return true;
   };
 
-  const saveProgress = async (complete = false) => {
+  const saveProgress = async (complete = false, intakeData?: Record<string, unknown> | null) => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
 
@@ -228,6 +228,15 @@ const OnboardingPage = () => {
       buddy_name: buddyName.trim() || "Buddy",
       onboarding_complete: complete,
     };
+
+    if (intakeData) {
+      row.intake_condition = intakeData.condition || intakeData.primary_condition || null;
+      row.intake_duration = intakeData.duration || intakeData.pain_duration || null;
+      row.intake_body_regions = intakeData.body_regions || intakeData.areas || [];
+      row.intake_treatments = intakeData.treatments || intakeData.treatments_tried || [];
+      row.intake_goals = intakeData.goals || intakeData.goal || null;
+      row.intake_raw = intakeData;
+    }
 
     const { data: existing } = await supabase
       .from("user_preferences")
