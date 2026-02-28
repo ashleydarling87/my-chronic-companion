@@ -108,6 +108,7 @@ export function useUserPreferences() {
         communication_style: (data as any).communication_style ?? {},
         display_name: (data as any).display_name ?? null,
         my_symptoms: (data as any).my_symptoms ?? [],
+        usage_mode: (data as any).usage_mode ?? "self",
       });
     }
     setLoading(false);
