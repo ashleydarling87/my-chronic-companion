@@ -32,7 +32,11 @@ const SymptomsCard = () => {
   const { user } = useAuth();
   const { prefs } = useUserPreferences();
   const [search, setSearch] = useState("");
-  const mySymptoms: string[] = (prefs as any)?.my_symptoms ?? [];
+  const [mySymptoms, setMySymptoms] = useState<string[]>([]);
+
+  useEffect(() => {
+    setMySymptoms((prefs as any)?.my_symptoms ?? []);
+  }, [prefs]);
 
   const save = async (updated: string[]) => {
     if (!prefs?.id || !user) return;
