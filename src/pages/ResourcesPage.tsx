@@ -148,6 +148,8 @@ const ResourcesPage = () => {
                       setShowEncouragement(true);
                     } else if (cat.id === "crisis") {
                       setShowCrisis(true);
+                    } else if (cat.id === "how-to-use") {
+                      setShowHowToUse(true);
                     } else {
                       navigate(`/resources/${cat.id}`);
                     }
