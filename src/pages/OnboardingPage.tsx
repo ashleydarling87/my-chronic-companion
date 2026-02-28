@@ -447,7 +447,7 @@ const OnboardingPage = () => {
                 </p>
               </div>
               <div className="grid grid-cols-2 gap-2">
-                {AGE_RANGES.map((r) => (
+                {(usageMode === "caretaker" ? AGE_RANGES_CARETAKER : AGE_RANGES_SELF).map((r) => (
                   <button
                     key={r}
                     onClick={() => setAgeRange(r)}
