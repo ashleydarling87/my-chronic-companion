@@ -152,6 +152,8 @@ const ProfilePage = () => {
               <input
                 value={name}
                 onChange={(e) => setName(e.target.value)}
+                onBlur={() => savePrefs({ display_name: name.trim() || null })}
+                placeholder="Your name"
                 className="w-full rounded-xl border bg-background px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary/30"
               />
             </div>
