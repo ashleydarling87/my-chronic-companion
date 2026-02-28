@@ -156,7 +156,7 @@ export default function PainPreferencesCard() {
           {PAIN_OPTIONS.map((opt) => (
             <button
               key={opt.value}
-              onClick={() => { setPainPref(opt.value); setDirty(true); }}
+              onClick={() => openPreview(opt.value)}
               className={`rounded-xl border px-3 py-2.5 text-left text-sm transition-all ${
                 painPref === opt.value
                   ? "border-primary bg-primary/10 ring-1 ring-primary"
