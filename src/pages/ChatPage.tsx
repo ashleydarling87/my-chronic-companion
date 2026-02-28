@@ -9,6 +9,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { streamChat, parseAIResponse, type ChatMsg } from "@/lib/chatStream";
 import { getBuddyEmoji } from "@/lib/data";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import OnboardingCompleteDialog from "@/components/OnboardingCompleteDialog";
 
 interface DisplayMessage {
   id: string;
