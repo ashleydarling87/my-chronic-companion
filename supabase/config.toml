@@ -2,3 +2,9 @@ project_id = "ktjchmgzawcfmmjzzpmq"
 
 [functions.processDailyEntry]
 verify_jwt = false
+
+[functions.deleteAccount]
+verify_jwt = false
+
+[functions.exportMyData]
+verify_jwt = false
