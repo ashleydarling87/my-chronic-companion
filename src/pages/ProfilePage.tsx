@@ -3,6 +3,7 @@ import { ArrowLeft, ChevronRight, LogOut, Camera, Loader2 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { BUDDY_AVATARS, getBuddyEmoji } from "../lib/data";
 import PainPreferencesCard from "../components/PainPreferencesCard";
+import CropSheet from "../components/CropSheet";
 import { useAuth } from "@/contexts/AuthContext";
 import { useUserPreferences } from "@/hooks/useUserPreferences";
 import { supabase } from "@/integrations/supabase/client";
@@ -17,6 +18,7 @@ const ProfilePage = () => {
   const [selectedAvatarId, setSelectedAvatarId] = useState("bear");
   const [profilePicUrl, setProfilePicUrl] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [cropSrc, setCropSrc] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -27,7 +29,7 @@ const ProfilePage = () => {
     }
   }, [prefs]);
 
-  const handleProfilePicUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file || !user) return;
 
@@ -40,16 +42,25 @@ const ProfilePage = () => {
       return;
     }
 
-    setUploading(true);
-    const fileExt = file.name.split(".").pop();
-    const filePath = `${user.id}/profile.${fileExt}`;
+    const reader = new FileReader();
+    reader.onload = () => setCropSrc(reader.result as string);
+    reader.readAsDataURL(file);
+    // Reset input so re-selecting same file works
+    e.target.value = "";
+  };
 
-    // Remove old file if exists
+  const handleCroppedUpload = async (blob: Blob) => {
+    if (!user) return;
+    setCropSrc(null);
+    setUploading(true);
+
+    const filePath = `${user.id}/profile.jpg`;
+
     await supabase.storage.from("profile-pictures").remove([filePath]);
 
     const { error: uploadError } = await supabase.storage
       .from("profile-pictures")
-      .upload(filePath, file, { upsert: true });
+      .upload(filePath, blob, { upsert: true, contentType: "image/jpeg" });
 
     if (uploadError) {
       toast.error("Failed to upload photo");
@@ -64,7 +75,6 @@ const ProfilePage = () => {
     const publicUrl = `${urlData.publicUrl}?t=${Date.now()}`;
     setProfilePicUrl(publicUrl);
 
-    // Save URL to preferences
     if (prefs?.id) {
       await supabase
         .from("user_preferences")
@@ -119,10 +129,17 @@ const ProfilePage = () => {
               type="file"
               accept="image/*"
               capture="environment"
-              onChange={handleProfilePicUpload}
+              onChange={handleFileSelect}
               className="hidden"
             />
           </div>
+
+          <CropSheet
+            open={!!cropSrc}
+            imageSrc={cropSrc || ""}
+            onClose={() => setCropSrc(null)}
+            onCropComplete={handleCroppedUpload}
+          />
 
           {/* User Info */}
           <section className="rounded-2xl border bg-card p-4 space-y-4 animate-slide-up">
