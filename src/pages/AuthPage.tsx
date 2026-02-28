@@ -80,8 +80,8 @@ const AuthPage = () => {
         {/* Logo area */}
         <div className="text-center space-y-2">
           <span className="text-5xl">🐻</span>
-          <h1 className="text-2xl font-extrabold text-foreground">Pain Buddy</h1>
-          <p className="text-sm text-muted-foreground">Your personal pain & symptom companion</p>
+          <h1 className="text-2xl font-extrabold text-foreground">Wellbeing Buddy</h1>
+          <p className="text-sm text-muted-foreground">Your personal health & mental wellness companion</p>
         </div>
 
         {/* Warm welcome */}
