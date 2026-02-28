@@ -1,6 +1,4 @@
 import { useUserPreferences, type CommunicationStyle } from "@/hooks/useUserPreferences";
-import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
 
 const OPTIONS: { key: keyof CommunicationStyle; label: string; choices: { value: string; label: string }[] }[] = [
   {
