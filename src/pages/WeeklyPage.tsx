@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
 import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, Tooltip } from "recharts";
-import { Heart, Zap, FileText, Copy, Check, ChevronDown, ChevronUp, Trash2, Loader2, X } from "lucide-react";
+import { Heart, Zap, FileText, Copy, Check, ChevronDown, ChevronUp, Trash2, Loader2, X, Brain } from "lucide-react";
 import Header from "../components/Header";
 import BottomNav from "../components/BottomNav";
 import { supabase } from "@/integrations/supabase/client";
 import { useUserPreferences } from "@/hooks/useUserPreferences";
 import { format, subDays, isWithinInterval, startOfDay, endOfDay } from "date-fns";
+import { useMentalHealthScores, getSeverityColor } from "@/hooks/useMentalHealthScores";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
