@@ -18,6 +18,16 @@ const BELONG_OPTIONS = [
   { label: "Other / not sure yet", emoji: "🌱" },
 ];
 
+const CONDITION_SYMPTOMS: Record<string, string[]> = {
+  "Chronic pain": ["Fatigue", "Joint pain", "Muscle aches", "Stiffness", "Back pain", "Insomnia", "Numbness / tingling"],
+  "Fibromyalgia": ["Fatigue", "Brain fog", "Muscle aches", "Insomnia", "Sensitivity to light", "Sensitivity to sound", "Anxiety", "Stiffness"],
+  "Autoimmune condition": ["Fatigue", "Joint pain", "Swelling", "Brain fog", "Nausea", "Muscle aches", "Hot flashes"],
+  "Migraines / headaches": ["Headache", "Sensitivity to light", "Sensitivity to sound", "Nausea", "Dizziness", "Brain fog", "Fatigue"],
+  "Post-surgical recovery": ["Fatigue", "Stiffness", "Muscle aches", "Insomnia", "Swelling", "Numbness / tingling", "Anxiety"],
+  "Undiagnosed symptoms": ["Fatigue", "Brain fog", "Dizziness", "Nausea", "Headache", "Anxiety", "Muscle aches"],
+  "Other / not sure yet": [],
+};
+
 const USAGE_MODES = [
   { value: "self", label: "For myself", desc: "I'm tracking my own symptoms", emoji: "🙋" },
   { value: "caretaker", label: "As a caretaker", desc: "I'm helping someone else track theirs", emoji: "🤝" },
@@ -517,13 +527,24 @@ const OnboardingPage = () => {
                 </button>
               )}
 
-              {/* Suggestions */}
-              <div className="flex flex-wrap gap-1.5">
-                {SUGGESTED_SYMPTOMS.filter(
+              {/* Suggestions — prioritized by selected conditions */}
+              {(() => {
+                const conditionRelevant = new Set(
+                  belongSelection.flatMap((c) => CONDITION_SYMPTOMS[c] || [])
+                );
+                const available = SUGGESTED_SYMPTOMS.filter(
                   (s) =>
                     !selectedSymptoms.some((m) => m.toLowerCase() === s.toLowerCase()) &&
                     (!symptomSearch || s.toLowerCase().includes(symptomSearch.toLowerCase()))
-                ).map((s) => (
+                );
+                // Sort: condition-relevant first, then the rest
+                const sorted = [
+                  ...available.filter((s) => conditionRelevant.has(s)),
+                  ...available.filter((s) => !conditionRelevant.has(s)),
+                ];
+                return (
+              <div className="flex flex-wrap gap-1.5">
+                {sorted.map((s) => (
                   <button
                     key={s}
                     onClick={() => setSelectedSymptoms((prev) => [...prev, s])}
@@ -533,6 +554,8 @@ const OnboardingPage = () => {
                   </button>
                 ))}
               </div>
+                );
+              })()}
             </div>
           )}
 
