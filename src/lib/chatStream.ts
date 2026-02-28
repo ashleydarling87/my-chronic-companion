@@ -5,11 +5,13 @@ const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/buddyChat`;
 export async function streamChat({
   messages,
   preferences,
+  mode,
   onDelta,
   onDone,
 }: {
   messages: ChatMsg[];
   preferences?: Record<string, unknown>;
+  mode?: "intake" | "chat";
   onDelta: (chunk: string) => void;
   onDone: () => void;
 }) {
@@ -19,7 +21,7 @@ export async function streamChat({
       "Content-Type": "application/json",
       Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
     },
-    body: JSON.stringify({ messages, preferences }),
+    body: JSON.stringify({ messages, preferences, mode }),
   });
 
   if (!resp.ok || !resp.body) {
