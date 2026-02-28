@@ -23,6 +23,7 @@ serve(async (req) => {
     const identityTags: string[] = preferences?.identity_tags || [];
     const buddyName = preferences?.buddy_name || "Buddy";
     const buddyAvatar = preferences?.buddy_avatar || "bear";
+    const commStyle: Record<string, string> = preferences?.communication_style || {};
 
     // Intake data for personalization
     const intakeCondition: string = preferences?.intake_condition || "";
