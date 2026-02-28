@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { ChevronRight, ChevronLeft, Loader2 } from "lucide-react";
+import { ChevronRight, ChevronLeft, Loader2, Send } from "lucide-react";
+import { streamChat, parseIntakeResponse, type ChatMsg } from "@/lib/chatStream";
 
 const AGE_RANGES = ["17–24", "25–30", "31–36", "37–42", "43–50", "51–60", "60+"];
 
@@ -21,6 +22,182 @@ const BUDDY_AVATARS = [
   { id: "rabbit", emoji: "🐰", name: "Rabbit" },
 ];
 
+const getBuddyEmoji = (id: string) => BUDDY_AVATARS.find((a) => a.id === id)?.emoji || "🐻";
+
+interface IntakeMessage {
+  id: string;
+  role: "user" | "assistant";
+  content: string;
+  chips?: string[];
+  timestamp: Date;
+}
+
+const IntakeChat = ({
+  buddyName,
+  buddyAvatar,
+  painPref,
+  onComplete,
+}: {
+  buddyName: string;
+  buddyAvatar: string;
+  painPref: string;
+  onComplete: () => void;
+}) => {
+  const emoji = getBuddyEmoji(buddyAvatar);
+  const [messages, setMessages] = useState<IntakeMessage[]>([
+    {
+      id: "initial",
+      role: "assistant",
+      content: `Hey! I'm ${buddyName} ${emoji} — so glad you're here! I'd love to get to know you a little before we start. What brings you to Pain Buddy?`,
+      chips: ["Chronic pain", "Fibromyalgia", "I'm not sure yet", "Multiple things"],
+      timestamp: new Date(),
+    },
+  ]);
+  const [input, setInput] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const bottomRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages, isLoading]);
+
+  const sendMessage = async (text: string) => {
+    if (!text.trim() || isLoading) return;
+
+    const userMsg: IntakeMessage = {
+      id: Date.now().toString(),
+      role: "user",
+      content: text.trim(),
+      timestamp: new Date(),
+    };
+    setMessages((prev) => [...prev, userMsg]);
+    setInput("");
+    setIsLoading(true);
+
+    const allMessages = [...messages, userMsg];
+    const chatHistory: ChatMsg[] = allMessages
+      .filter((m) => m.id !== "initial")
+      .map((m) => ({ role: m.role, content: m.content }));
+
+    if (allMessages[0].id === "initial") {
+      chatHistory.unshift({ role: "assistant", content: allMessages[0].content });
+    }
+
+    let assistantText = "";
+    const assistantId = (Date.now() + 1).toString();
+
+    const upsertAssistant = (chunk: string) => {
+      assistantText += chunk;
+      setMessages((prev) => {
+        const last = prev[prev.length - 1];
+        if (last?.role === "assistant" && last.id === assistantId) {
+          return prev.map((m) => (m.id === assistantId ? { ...m, content: assistantText } : m));
+        }
+        return [...prev, { id: assistantId, role: "assistant", content: assistantText, timestamp: new Date() }];
+      });
+    };
+
+    try {
+      await streamChat({
+        messages: chatHistory,
+        preferences: {
+          pain_preference: painPref,
+          buddy_name: buddyName,
+          buddy_avatar: buddyAvatar,
+        },
+        mode: "intake",
+        onDelta: (chunk) => upsertAssistant(chunk),
+        onDone: () => {
+          const { displayText, chips, intakeData } = parseIntakeResponse(assistantText);
+          setMessages((prev) =>
+            prev.map((m) => (m.id === assistantId ? { ...m, content: displayText, chips } : m))
+          );
+          setIsLoading(false);
+
+          if (intakeData) {
+            // Intake is complete — short delay then proceed
+            setTimeout(() => onComplete(), 2000);
+          }
+        },
+      });
+    } catch (e) {
+      console.error("Intake chat error:", e);
+      toast.error(e instanceof Error ? e.message : "Something went wrong");
+      setIsLoading(false);
+    }
+  };
+
+  const latestAssistantId = [...messages].reverse().find((m) => m.role === "assistant")?.id;
+
+  return (
+    <div className="flex flex-col h-full">
+      <div className="flex-1 overflow-y-auto px-4 py-4 space-y-3">
+        {messages.map((msg) => {
+          const isUser = msg.role === "user";
+          const isLatest = msg.id === latestAssistantId;
+          return (
+            <div key={msg.id} className={`flex ${isUser ? "justify-end" : "justify-start"} animate-slide-up`}>
+              {!isUser && <span className="mr-2 mt-1 text-xl">{emoji}</span>}
+              <div className="max-w-[78%] space-y-1">
+                <div className={isUser ? "chat-bubble-user" : "chat-bubble-ai"}>
+                  <p className="text-[15px] leading-relaxed whitespace-pre-wrap">{msg.content}</p>
+                </div>
+                {!isUser && isLatest && msg.chips && msg.chips.length > 0 && (
+                  <div className="flex flex-wrap gap-1.5 mt-2 animate-slide-up">
+                    {msg.chips.map((chip) => (
+                      <button
+                        key={chip}
+                        onClick={() => sendMessage(chip)}
+                        disabled={isLoading}
+                        className="rounded-full border border-primary/30 bg-primary/5 px-3 py-1.5 text-xs font-medium text-foreground transition-all hover:bg-primary/15 hover:border-primary/50 disabled:opacity-40"
+                      >
+                        {chip}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          );
+        })}
+        {isLoading && !messages.some((m) => m.id === (Date.now() + 1).toString()) && (
+          <div className="flex items-center">
+            <span className="mr-2 text-xl">{emoji}</span>
+            <div className="flex items-center gap-1 chat-bubble-ai w-fit">
+              <div className="h-2 w-2 rounded-full bg-muted-foreground animate-bounce [animation-delay:0ms]" />
+              <div className="h-2 w-2 rounded-full bg-muted-foreground animate-bounce [animation-delay:150ms]" />
+              <div className="h-2 w-2 rounded-full bg-muted-foreground animate-bounce [animation-delay:300ms]" />
+            </div>
+          </div>
+        )}
+        <div ref={bottomRef} />
+      </div>
+
+      {/* Input */}
+      <div className="border-t bg-card/95 px-4 py-3 backdrop-blur-md">
+        <div className="flex items-center gap-2">
+          <input
+            type="text"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && sendMessage(input)}
+            placeholder="Tell me about yourself..."
+            disabled={isLoading}
+            className="flex-1 rounded-full border bg-background px-4 py-2.5 text-sm outline-none placeholder:text-muted-foreground focus:ring-2 focus:ring-primary/30 disabled:opacity-50"
+          />
+          <button
+            onClick={() => sendMessage(input)}
+            disabled={!input.trim() || isLoading}
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground transition-all disabled:opacity-40"
+          >
+            <Send size={18} />
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const OnboardingPage = () => {
   const navigate = useNavigate();
   const [step, setStep] = useState(0);
@@ -30,7 +207,7 @@ const OnboardingPage = () => {
   const [buddyName, setBuddyName] = useState("Buddy");
   const [saving, setSaving] = useState(false);
 
-  const totalSteps = 3;
+  const totalSteps = 4; // age → pain pref → buddy setup → intake chat
 
   const canAdvance = () => {
     if (step === 0) return !!ageRange;
@@ -52,7 +229,6 @@ const OnboardingPage = () => {
       onboarding_complete: complete,
     };
 
-    // Check if preferences already exist
     const { data: existing } = await supabase
       .from("user_preferences")
       .select("id")
@@ -60,29 +236,23 @@ const OnboardingPage = () => {
       .maybeSingle();
 
     if (existing) {
-      const { error } = await supabase
-        .from("user_preferences")
-        .update(row)
-        .eq("id", existing.id);
+      const { error } = await supabase.from("user_preferences").update(row).eq("id", existing.id);
       if (error) throw error;
     } else {
-      const { error } = await supabase
-        .from("user_preferences")
-        .insert(row);
+      const { error } = await supabase.from("user_preferences").insert(row);
       if (error) throw error;
     }
   };
 
   const handleNext = async () => {
-    if (step < totalSteps - 1) {
+    if (step < 2) {
       setStep(step + 1);
-    } else {
-      // Final step — save and go to chat
+    } else if (step === 2) {
+      // Save buddy setup then enter intake chat
       setSaving(true);
       try {
-        await saveProgress(true);
-        toast.success(`${buddyName} is ready to chat! 💛`);
-        navigate("/");
+        await saveProgress(false);
+        setStep(3);
       } catch (e: any) {
         toast.error(e.message || "Failed to save");
       } finally {
@@ -90,6 +260,51 @@ const OnboardingPage = () => {
       }
     }
   };
+
+  const handleIntakeComplete = async () => {
+    setSaving(true);
+    try {
+      await saveProgress(true);
+      toast.success(`${buddyName} is ready! Let's go 💛`);
+      navigate("/");
+    } catch (e: any) {
+      toast.error(e.message || "Failed to complete onboarding");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  // Intake chat step — full screen
+  if (step === 3) {
+    return (
+      <div className="flex min-h-screen flex-col bg-background">
+        {/* Header */}
+        <div className="sticky top-0 z-40 border-b bg-card/95 px-4 py-3 backdrop-blur-md">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className="text-xl">{getBuddyEmoji(buddyAvatar)}</span>
+              <div>
+                <h2 className="text-sm font-bold">{buddyName}</h2>
+                <p className="text-[10px] text-muted-foreground">Getting to know you</p>
+              </div>
+            </div>
+            <div className="flex gap-1.5">
+              {Array.from({ length: totalSteps }).map((_, i) => (
+                <div key={i} className={`h-1.5 w-6 rounded-full ${i <= step ? "bg-primary" : "bg-secondary"}`} />
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <IntakeChat
+          buddyName={buddyName}
+          buddyAvatar={buddyAvatar}
+          painPref={painPref}
+          onComplete={handleIntakeComplete}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
@@ -99,9 +314,7 @@ const OnboardingPage = () => {
           {Array.from({ length: totalSteps }).map((_, i) => (
             <div
               key={i}
-              className={`h-1.5 flex-1 rounded-full transition-all ${
-                i <= step ? "bg-primary" : "bg-secondary"
-              }`}
+              className={`h-1.5 flex-1 rounded-full transition-all ${i <= step ? "bg-primary" : "bg-secondary"}`}
             />
           ))}
         </div>
@@ -174,7 +387,6 @@ const OnboardingPage = () => {
                 <p className="text-sm text-muted-foreground">Choose an avatar and give them a name</p>
               </div>
 
-              {/* Avatar selection */}
               <div className="grid grid-cols-3 gap-3">
                 {BUDDY_AVATARS.map((a) => (
                   <button
@@ -192,7 +404,6 @@ const OnboardingPage = () => {
                 ))}
               </div>
 
-              {/* Name input */}
               <div className="space-y-1.5">
                 <label className="text-sm font-semibold">What should we call them?</label>
                 <input
@@ -205,12 +416,11 @@ const OnboardingPage = () => {
                 />
               </div>
 
-              {/* Preview */}
               <div className="flex items-center gap-3 rounded-2xl bg-primary/5 border border-primary/15 p-4">
-                <span className="text-3xl">{BUDDY_AVATARS.find((a) => a.id === buddyAvatar)?.emoji}</span>
+                <span className="text-3xl">{getBuddyEmoji(buddyAvatar)}</span>
                 <div>
                   <p className="text-sm font-bold">{buddyName || "Buddy"}</p>
-                  <p className="text-xs text-muted-foreground">Ready to help you track & understand your pain</p>
+                  <p className="text-xs text-muted-foreground">Ready to get to know you!</p>
                 </div>
               </div>
             </div>
@@ -236,8 +446,8 @@ const OnboardingPage = () => {
           >
             {saving ? (
               <><Loader2 size={16} className="animate-spin" /> Setting up...</>
-            ) : step === totalSteps - 1 ? (
-              <>Start Chatting <ChevronRight size={16} /></>
+            ) : step === 2 ? (
+              <>Chat with {buddyName} <ChevronRight size={16} /></>
             ) : (
               <>Continue <ChevronRight size={16} /></>
             )}
