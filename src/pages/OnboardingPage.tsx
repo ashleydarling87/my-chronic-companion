@@ -267,14 +267,14 @@ const OnboardingPage = () => {
   };
 
   const handleNext = async () => {
-    if (step < 4) {
+    if (step < 5) {
       setStep(step + 1);
-    } else if (step === 4) {
+    } else if (step === 5) {
       // Save buddy setup then enter intake chat
       setSaving(true);
       try {
         await saveProgress(false);
-        setStep(5);
+        setStep(6);
       } catch (e: any) {
         toast.error(e.message || "Failed to save");
       } finally {
