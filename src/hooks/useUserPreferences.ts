@@ -51,6 +51,7 @@ const DEFAULT_PREFS: Omit<UserPreferences, "id"> = {
   intake_treatments: [],
   intake_goals: null,
   profile_picture_url: null,
+  communication_style: {},
 };
 
 export function useUserPreferences() {
