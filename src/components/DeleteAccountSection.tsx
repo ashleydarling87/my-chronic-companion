@@ -28,6 +28,7 @@ const DeleteAccountSection = () => {
   const [selectedReason, setSelectedReason] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
   const [exporting, setExporting] = useState(false);
+  const [confirmText, setConfirmText] = useState("");
   const { session } = useAuth();
   const navigate = useNavigate();
 
