@@ -56,7 +56,7 @@ const OPTIONS: { key: keyof CommunicationStyle; label: string; choices: { value:
 ];
 
 const CommunicationStyleCard = () => {
-  const { prefs } = useUserPreferences();
+  const { prefs, savePrefs } = useUserPreferences();
   const style = prefs?.communication_style || {};
 
   const updateStyle = async (key: keyof CommunicationStyle, value: string) => {
