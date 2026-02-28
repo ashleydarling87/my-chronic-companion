@@ -6,7 +6,8 @@ import { ChevronRight, ChevronLeft, Loader2, Send } from "lucide-react";
 import { streamChat, parseIntakeResponse, type ChatMsg } from "@/lib/chatStream";
 import { BUDDY_AVATARS, getBuddyEmoji, SUGGESTED_SYMPTOMS } from "@/lib/data";
 
-const AGE_RANGES = ["17–24", "25–30", "31–36", "37–42", "43–50", "51–60", "60+"];
+const AGE_RANGES_SELF = ["17–24", "25–30", "31–36", "37–42", "43–50", "51–60", "60+"];
+const AGE_RANGES_CARETAKER = ["0–4", "5–9", "10–13", "14–17", "17–24", "25–30", "31–36", "37–42", "43–50", "51–60", "60+"];
 
 const BELONG_OPTIONS = [
   { label: "Chronic pain", emoji: "🩹" },
@@ -438,11 +439,15 @@ const OnboardingPage = () => {
             <div className="space-y-6 animate-slide-up">
               <div className="text-center space-y-2">
                 <span className="text-4xl">👋</span>
-                <h2 className="text-xl font-extrabold">Welcome! Let's get started</h2>
-                <p className="text-sm text-muted-foreground">What's your age range?</p>
+                <h2 className="text-xl font-extrabold">
+                  {usageMode === "caretaker" ? "About the person you're caring for" : "Welcome! Let's get started"}
+                </h2>
+                <p className="text-sm text-muted-foreground">
+                  {usageMode === "caretaker" ? "What's their age range?" : "What's your age range?"}
+                </p>
               </div>
               <div className="grid grid-cols-2 gap-2">
-                {AGE_RANGES.map((r) => (
+                {(usageMode === "caretaker" ? AGE_RANGES_CARETAKER : AGE_RANGES_SELF).map((r) => (
                   <button
                     key={r}
                     onClick={() => setAgeRange(r)}
@@ -464,7 +469,9 @@ const OnboardingPage = () => {
             <div className="space-y-6 animate-slide-up">
               <div className="text-center space-y-2">
                 <span className="text-4xl">📊</span>
-                <h2 className="text-xl font-extrabold">How do you describe pain?</h2>
+                <h2 className="text-xl font-extrabold">
+                  {usageMode === "caretaker" ? "How do they describe pain?" : "How do you describe pain?"}
+                </h2>
                 <p className="text-sm text-muted-foreground">Choose the scale that feels most natural</p>
               </div>
               <div className="space-y-2">
@@ -494,8 +501,14 @@ const OnboardingPage = () => {
             <div className="space-y-6 animate-slide-up">
               <div className="text-center space-y-2">
                 <span className="text-4xl">🩺</span>
-                <h2 className="text-xl font-extrabold">What symptoms do you deal with?</h2>
-                <p className="text-sm text-muted-foreground">Choose any you're currently struggling with. You can always add more later in your profile settings.</p>
+                <h2 className="text-xl font-extrabold">
+                  {usageMode === "caretaker" ? "What symptoms do they deal with?" : "What symptoms do you deal with?"}
+                </h2>
+                <p className="text-sm text-muted-foreground">
+                  {usageMode === "caretaker"
+                    ? "Choose any they're currently struggling with. You can always add more later in settings."
+                    : "Choose any you're currently struggling with. You can always add more later in your profile settings."}
+                </p>
               </div>
 
               {/* Selected */}
