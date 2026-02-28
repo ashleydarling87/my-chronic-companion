@@ -6,10 +6,17 @@ import PainPreferencesCard from "../components/PainPreferencesCard";
 import { useAuth } from "@/contexts/AuthContext";
 
 const ProfilePage = () => {
+  const { signOut } = useAuth();
+  const navigate = useNavigate();
   const [name, setName] = useState("Alex");
   const [ageRange, setAgeRange] = useState("");
   const [buddyName, setBuddyName] = useState("Buddy");
   const [selectedAvatar, setSelectedAvatar] = useState("🐻");
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate("/auth");
+  };
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
