@@ -41,7 +41,7 @@ const ProfilePage = () => {
           {/* Avatar */}
           <div className="flex flex-col items-center gap-2 animate-slide-up">
             <div className="flex h-20 w-20 items-center justify-center rounded-full bg-primary/10 text-4xl">
-              {selectedAvatar}
+              {getBuddyEmoji(selectedAvatarId)}
             </div>
             <p className="text-sm text-muted-foreground">Your AI buddy</p>
           </div>
