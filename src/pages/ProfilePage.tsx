@@ -86,18 +86,22 @@ const ProfilePage = () => {
             </div>
             <div className="space-y-1">
               <label className="text-xs font-semibold text-muted-foreground">Choose Avatar</label>
-              <div className="flex flex-wrap gap-2 mt-1">
-                {buddyAvatars.map((av) => (
+              <div className="grid grid-cols-3 gap-2 mt-1">
+                {BUDDY_AVATARS.map((av) => (
                   <button
-                    key={av}
-                    onClick={() => setSelectedAvatar(av)}
-                    className={`flex h-12 w-12 items-center justify-center rounded-full text-xl transition-all ${
-                      selectedAvatar === av
-                        ? "bg-primary/20 ring-2 ring-primary scale-110"
-                        : "bg-secondary hover:bg-primary/10"
+                    key={av.id}
+                    onClick={() => {
+                      setSelectedAvatarId(av.id);
+                      savePrefs({ buddy_avatar: av.id });
+                    }}
+                    className={`flex flex-col items-center gap-1 rounded-2xl py-3 transition-all ${
+                      selectedAvatarId === av.id
+                        ? "bg-primary/15 border-2 border-primary scale-105"
+                        : "bg-secondary hover:bg-primary/10 border border-transparent"
                     }`}
                   >
-                    {av}
+                    <span className="text-2xl">{av.emoji}</span>
+                    <span className="text-xs font-medium">{av.name}</span>
                   </button>
                 ))}
               </div>
