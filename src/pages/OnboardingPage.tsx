@@ -469,7 +469,9 @@ const OnboardingPage = () => {
             <div className="space-y-6 animate-slide-up">
               <div className="text-center space-y-2">
                 <span className="text-4xl">📊</span>
-                <h2 className="text-xl font-extrabold">How do you describe pain?</h2>
+                <h2 className="text-xl font-extrabold">
+                  {usageMode === "caretaker" ? "How do they describe pain?" : "How do you describe pain?"}
+                </h2>
                 <p className="text-sm text-muted-foreground">Choose the scale that feels most natural</p>
               </div>
               <div className="space-y-2">
