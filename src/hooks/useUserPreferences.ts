@@ -53,6 +53,7 @@ const DEFAULT_PREFS: Omit<UserPreferences, "id"> = {
   intake_goals: null,
   profile_picture_url: null,
   communication_style: {},
+  display_name: null,
 };
 
 export function useUserPreferences() {
