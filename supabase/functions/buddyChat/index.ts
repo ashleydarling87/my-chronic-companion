@@ -31,6 +31,7 @@ serve(async (req) => {
     const intakeBodyRegions: string[] = preferences?.intake_body_regions || [];
     const intakeTreatments: string[] = preferences?.intake_treatments || [];
     const intakeGoals: string = preferences?.intake_goals || "";
+    const mySymptoms: string[] = preferences?.my_symptoms || [];
 
     let painFormatInstruction = "";
     switch (painPref) {
