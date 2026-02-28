@@ -98,6 +98,10 @@ const WeeklyPage = () => {
   const [expandedReport, setExpandedReport] = useState<string | null>(null);
   const [includeDiscrimination, setIncludeDiscrimination] = useState(false);
   const [includeEmotional, setIncludeEmotional] = useState(false);
+  const [showDiscriminationSheet, setShowDiscriminationSheet] = useState(false);
+  const [showEmotionalSheet, setShowEmotionalSheet] = useState(false);
+  const [discriminationDetails, setDiscriminationDetails] = useState<DiscriminationDetails>({ ...DEFAULT_DISCRIMINATION });
+  const [emotionalDetails, setEmotionalDetails] = useState<EmotionalDetails>({ ...DEFAULT_EMOTIONAL });
   const { prefs } = useUserPreferences();
 
   // Sync sharing defaults from preferences
