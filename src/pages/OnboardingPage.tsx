@@ -501,8 +501,14 @@ const OnboardingPage = () => {
             <div className="space-y-6 animate-slide-up">
               <div className="text-center space-y-2">
                 <span className="text-4xl">🩺</span>
-                <h2 className="text-xl font-extrabold">What symptoms do you deal with?</h2>
-                <p className="text-sm text-muted-foreground">Choose any you're currently struggling with. You can always add more later in your profile settings.</p>
+                <h2 className="text-xl font-extrabold">
+                  {usageMode === "caretaker" ? "What symptoms do they deal with?" : "What symptoms do you deal with?"}
+                </h2>
+                <p className="text-sm text-muted-foreground">
+                  {usageMode === "caretaker"
+                    ? "Choose any they're currently struggling with. You can always add more later in settings."
+                    : "Choose any you're currently struggling with. You can always add more later in your profile settings."}
+                </p>
               </div>
 
               {/* Selected */}
