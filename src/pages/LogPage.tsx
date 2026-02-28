@@ -7,31 +7,8 @@ import BottomNav from "../components/BottomNav";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useUserPreferences } from "@/hooks/useUserPreferences";
-
-interface DbEntry {
-  id: string;
-  created_at: string;
-  pain_level: number | null;
-  pain_verbal: string | null;
-  energy_level: number | null;
-  mood: string | null;
-  sleep_hours: number | null;
-  symptoms: string[];
-  triggers: string[];
-  body_regions: string[];
-  qualities: string[];
-  impacts: Record<string, number>;
-  reliefs: string[];
-  summary: string | null;
-  severity: string | null;
-  raw_text: string | null;
-  journal_text: string | null;
-  felt_dismissed_by_provider: boolean;
-  experienced_discrimination: boolean;
-  context_notes: string | null;
-  emergency: boolean;
-  share_with_doctor_flags: { includeContextNotes: boolean; includeDiscriminationNotes: boolean };
-}
+import EntryEditForm from "@/components/log/EntryEditForm";
+import type { DbEntry } from "@/components/log/EntryEditForm";
 
 const IMPACT_LABELS: Record<string, string> = {
   sleep: "Sleep",
