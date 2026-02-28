@@ -21,6 +21,7 @@ export interface UserPreferences {
   intake_body_regions: string[];
   intake_treatments: string[];
   intake_goals: string | null;
+  profile_picture_url: string | null;
 }
 
 const DEFAULT_PREFS: Omit<UserPreferences, "id"> = {
@@ -40,6 +41,7 @@ const DEFAULT_PREFS: Omit<UserPreferences, "id"> = {
   intake_body_regions: [],
   intake_treatments: [],
   intake_goals: null,
+  profile_picture_url: null,
 };
 
 export function useUserPreferences() {
@@ -86,6 +88,7 @@ export function useUserPreferences() {
         intake_body_regions: (data as any).intake_body_regions ?? [],
         intake_treatments: (data as any).intake_treatments ?? [],
         intake_goals: (data as any).intake_goals ?? null,
+        profile_picture_url: (data as any).profile_picture_url ?? null,
       });
     }
     setLoading(false);
@@ -147,6 +150,7 @@ export function useUserPreferences() {
         intake_body_regions: (data as any).intake_body_regions ?? [],
         intake_treatments: (data as any).intake_treatments ?? [],
         intake_goals: (data as any).intake_goals ?? null,
+        profile_picture_url: (data as any).profile_picture_url ?? null,
       });
       toast.success("Preferences saved");
     }
