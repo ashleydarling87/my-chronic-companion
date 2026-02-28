@@ -467,8 +467,77 @@ const OnboardingPage = () => {
             </div>
           )}
 
-          {/* Step 4: Buddy Setup */}
+          {/* Step 4: Symptoms */}
           {step === 4 && (
+            <div className="space-y-6 animate-slide-up">
+              <div className="text-center space-y-2">
+                <span className="text-4xl">🩺</span>
+                <h2 className="text-xl font-extrabold">What symptoms do you deal with?</h2>
+                <p className="text-sm text-muted-foreground">Choose any you're currently struggling with. You can always add more later in your profile settings.</p>
+              </div>
+
+              {/* Selected */}
+              {selectedSymptoms.length > 0 && (
+                <div className="flex flex-wrap gap-1.5">
+                  {selectedSymptoms.map((s) => (
+                    <span
+                      key={s}
+                      className="inline-flex items-center gap-1 rounded-full bg-primary/10 border border-primary/20 px-3 py-1.5 text-xs font-medium text-foreground"
+                    >
+                      {s}
+                      <button onClick={() => setSelectedSymptoms((prev) => prev.filter((x) => x !== s))} className="ml-0.5 rounded-full p-0.5 hover:bg-primary/20">
+                        ✕
+                      </button>
+                    </span>
+                  ))}
+                </div>
+              )}
+
+              {/* Search */}
+              <input
+                value={symptomSearch}
+                onChange={(e) => setSymptomSearch(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && symptomSearch.trim() && !selectedSymptoms.some((s) => s.toLowerCase() === symptomSearch.trim().toLowerCase())) {
+                    setSelectedSymptoms((prev) => [...prev, symptomSearch.trim()]);
+                    setSymptomSearch("");
+                  }
+                }}
+                placeholder="Search or type your own..."
+                className="w-full rounded-xl border bg-card px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-primary/30"
+              />
+
+              {/* Add custom */}
+              {symptomSearch.trim() && !SUGGESTED_SYMPTOMS.some((s) => s.toLowerCase() === symptomSearch.trim().toLowerCase()) && !selectedSymptoms.some((s) => s.toLowerCase() === symptomSearch.trim().toLowerCase()) && (
+                <button
+                  onClick={() => { setSelectedSymptoms((prev) => [...prev, symptomSearch.trim()]); setSymptomSearch(""); }}
+                  className="flex items-center gap-1.5 rounded-full border border-dashed border-primary/40 bg-primary/5 px-3 py-1.5 text-xs font-medium text-primary"
+                >
+                  + Add "{symptomSearch.trim()}"
+                </button>
+              )}
+
+              {/* Suggestions */}
+              <div className="flex flex-wrap gap-1.5">
+                {SUGGESTED_SYMPTOMS.filter(
+                  (s) =>
+                    !selectedSymptoms.some((m) => m.toLowerCase() === s.toLowerCase()) &&
+                    (!symptomSearch || s.toLowerCase().includes(symptomSearch.toLowerCase()))
+                ).map((s) => (
+                  <button
+                    key={s}
+                    onClick={() => setSelectedSymptoms((prev) => [...prev, s])}
+                    className="rounded-full border border-muted bg-secondary/50 px-3 py-1.5 text-xs font-medium text-foreground transition-all hover:bg-primary/10 hover:border-primary/30"
+                  >
+                    + {s}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Step 5: Buddy Setup */}
+          {step === 5 && (
             <div className="space-y-6 animate-slide-up">
               <div className="text-center space-y-2">
                 <span className="text-4xl">✨</span>
