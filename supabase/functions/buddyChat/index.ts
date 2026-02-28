@@ -24,6 +24,8 @@ serve(async (req) => {
     const buddyName = preferences?.buddy_name || "Buddy";
     const buddyAvatar = preferences?.buddy_avatar || "bear";
     const commStyle: Record<string, string> = preferences?.communication_style || {};
+    const usageMode: string = preferences?.usage_mode || "self";
+    const isCaretaker = usageMode === "caretaker";
 
     // Intake data for personalization
     const intakeCondition: string = preferences?.intake_condition || "";

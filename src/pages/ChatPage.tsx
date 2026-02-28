@@ -273,6 +273,7 @@ const ChatPage = () => {
           intake_goals: prefs.intake_goals,
           communication_style: prefs.communication_style,
           my_symptoms: prefs.my_symptoms,
+          usage_mode: prefs.usage_mode,
         } : undefined,
         onDelta: (chunk) => upsertAssistant(chunk),
         onDone: async () => {
