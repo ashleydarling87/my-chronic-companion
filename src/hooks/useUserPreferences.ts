@@ -3,6 +3,14 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 
+export interface CommunicationStyle {
+  message_length?: string;
+  tone?: string;
+  emoji_usage?: string;
+  vocabulary?: string;
+  humor?: string;
+}
+
 export interface UserPreferences {
   id: string;
   pain_preference: "numeric" | "verbal" | "faces" | "adaptive";
@@ -22,6 +30,7 @@ export interface UserPreferences {
   intake_treatments: string[];
   intake_goals: string | null;
   profile_picture_url: string | null;
+  communication_style: CommunicationStyle;
 }
 
 const DEFAULT_PREFS: Omit<UserPreferences, "id"> = {
