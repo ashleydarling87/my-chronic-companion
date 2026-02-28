@@ -210,18 +210,21 @@ const OnboardingPage = () => {
   const [usageMode, setUsageMode] = useState("self");
   const [ageRange, setAgeRange] = useState("");
   const [painPref, setPainPref] = useState("numeric");
+  const [selectedSymptoms, setSelectedSymptoms] = useState<string[]>([]);
+  const [symptomSearch, setSymptomSearch] = useState("");
   const [buddyAvatar, setBuddyAvatar] = useState("bear");
   const [buddyName, setBuddyName] = useState("Buddy");
   const [saving, setSaving] = useState(false);
 
-  const totalSteps = 6; // belong → usage mode → age → pain pref → buddy setup → intake chat
+  const totalSteps = 7; // belong → usage mode → age → pain pref → symptoms → buddy setup → intake chat
 
   const canAdvance = () => {
     if (step === 0) return belongSelection.length > 0;
     if (step === 1) return !!usageMode;
     if (step === 2) return !!ageRange;
     if (step === 3) return !!painPref;
-    if (step === 4) return buddyName.trim().length > 0;
+    if (step === 4) return true; // symptoms optional
+    if (step === 5) return buddyName.trim().length > 0;
     return true;
   };
 
