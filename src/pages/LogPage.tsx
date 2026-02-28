@@ -9,6 +9,9 @@ import { toast } from "sonner";
 import { useUserPreferences } from "@/hooks/useUserPreferences";
 import EntryEditForm from "@/components/log/EntryEditForm";
 import type { DbEntry } from "@/components/log/EntryEditForm";
+import { useMentalHealthScores } from "@/hooks/useMentalHealthScores";
+import PHQ4CheckIn from "@/components/mental-health/PHQ4CheckIn";
+import PHQ4ScoreCard from "@/components/mental-health/PHQ4ScoreCard";
 
 const IMPACT_LABELS: Record<string, string> = {
   sleep: "Sleep",
