@@ -39,22 +39,34 @@ const AuthPage = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email.trim() || !password.trim()) return;
-    setLoading(true);
 
-    try {
-      if (isLogin) {
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
-        if (error) throw error;
-      } else {
-        if (password.length < 6) {
-          toast.error("Password must be at least 6 characters");
-          setLoading(false);
-          return;
-        }
-        const { error } = await supabase.auth.signUp({ email, password });
-        if (error) throw error;
-        toast.success("Account created!");
+    if (!isLogin) {
+      if (password.length < 6) {
+        toast.error("Password must be at least 6 characters");
+        return;
       }
+      setShowDisclaimer(true);
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) throw error;
+    } catch (e: any) {
+      toast.error(e.message || "Authentication failed");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleAcceptDisclaimer = async () => {
+    setShowDisclaimer(false);
+    setLoading(true);
+    try {
+      const { error } = await supabase.auth.signUp({ email, password });
+      if (error) throw error;
+      toast.success("Account created!");
     } catch (e: any) {
       toast.error(e.message || "Authentication failed");
     } finally {
