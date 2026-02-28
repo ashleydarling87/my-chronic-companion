@@ -9,6 +9,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { streamChat, parseAIResponse, type ChatMsg } from "@/lib/chatStream";
 import { getBuddyEmoji } from "@/lib/data";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import OnboardingCompleteDialog from "@/components/OnboardingCompleteDialog";
 
 interface DisplayMessage {
   id: string;
@@ -266,6 +267,7 @@ const ChatPage = () => {
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
+      <OnboardingCompleteDialog />
       <Header title={`${prefs?.buddy_name || "Buddy"} ${getBuddyEmoji(prefs?.buddy_avatar || "bear")}`} subtitle="Always here for you" />
 
       <main className="flex-1 overflow-y-auto px-4 py-4 pb-36">
