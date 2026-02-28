@@ -190,6 +190,7 @@ export type Database = {
           onboarding_complete: boolean | null
           pain_misunderstanding_note: string | null
           pain_preference: string
+          profile_picture_url: string | null
           report_sharing_defaults: Json | null
           user_id: string | null
         }
@@ -209,6 +210,7 @@ export type Database = {
           onboarding_complete?: boolean | null
           pain_misunderstanding_note?: string | null
           pain_preference?: string
+          profile_picture_url?: string | null
           report_sharing_defaults?: Json | null
           user_id?: string | null
         }
@@ -228,6 +230,7 @@ export type Database = {
           onboarding_complete?: boolean | null
           pain_misunderstanding_note?: string | null
           pain_preference?: string
+          profile_picture_url?: string | null
           report_sharing_defaults?: Json | null
           user_id?: string | null
         }
