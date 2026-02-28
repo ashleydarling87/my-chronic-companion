@@ -236,14 +236,25 @@ const ChatPage = () => {
     let assistantText = "";
     const assistantId = (Date.now() + 1).toString();
 
+    const stripHiddenBlocks = (text: string): string => {
+      // Remove complete [ENTRY_SAVE]...[/ENTRY_SAVE] blocks
+      let cleaned = text.replace(/\[ENTRY_SAVE\][\s\S]*?\[\/ENTRY_SAVE\]/g, "");
+      // Remove partial [ENTRY_SAVE] block still streaming (no closing tag yet)
+      cleaned = cleaned.replace(/\[ENTRY_SAVE\][\s\S]*$/g, "");
+      // Remove CHIPS: line
+      cleaned = cleaned.replace(/CHIPS:\s*.*/g, "");
+      return cleaned.trim();
+    };
+
     const upsertAssistant = (nextChunk: string) => {
       assistantText += nextChunk;
+      const displayText = stripHiddenBlocks(assistantText);
       setMessages((prev) => {
         const last = prev[prev.length - 1];
         if (last?.role === "assistant" && last.id === assistantId) {
-          return prev.map((m) => (m.id === assistantId ? { ...m, content: assistantText } : m));
+          return prev.map((m) => (m.id === assistantId ? { ...m, content: displayText } : m));
         }
-        return [...prev, { id: assistantId, role: "assistant", content: assistantText, timestamp: new Date() }];
+        return [...prev, { id: assistantId, role: "assistant", content: displayText, timestamp: new Date() }];
       });
     };
 
