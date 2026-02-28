@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { format } from "date-fns";
-import { Plus, Edit2, Check, X, Loader2, ChevronDown, ChevronUp, AlertTriangle, Eye } from "lucide-react";
+import { Plus, Edit2, Check, X, Loader2, ChevronDown, ChevronUp, AlertTriangle, Eye, Trash2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 import BottomNav from "../components/BottomNav";
@@ -195,15 +195,32 @@ const CheckInForm = ({ onClose, onSaved }: { onClose: () => void; onSaved: () =>
   );
 };
 
-const EntryDetailView = ({ entry, onClose, onUpdated }: { entry: DbEntry; onClose: () => void; onUpdated: () => void }) => {
+const EntryDetailView = ({ entry, onClose, onUpdated, onDeleted }: { entry: DbEntry; onClose: () => void; onUpdated: () => void; onDeleted: () => void }) => {
   const [flags, setFlags] = useState(entry.share_with_doctor_flags);
   const [editing, setEditing] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   const handleToggleFlag = async (key: "includeContextNotes" | "includeDiscriminationNotes") => {
     const updated = { ...flags, [key]: !flags[key] };
     setFlags(updated);
     await supabase.from("entries").update({ share_with_doctor_flags: updated }).eq("id", entry.id);
     toast.success("Sharing preference updated");
+  };
+
+  const handleDelete = async () => {
+    setDeleting(true);
+    try {
+      const { error } = await supabase.from("entries").delete().eq("id", entry.id);
+      if (error) throw error;
+      toast.success("Entry deleted");
+      onDeleted();
+    } catch (e: any) {
+      toast.error(e.message || "Failed to delete entry");
+    } finally {
+      setDeleting(false);
+      setConfirmDelete(false);
+    }
   };
 
   const impactEntries = Object.entries(entry.impacts || {}).filter(([, v]) => v > 0);
@@ -227,9 +244,24 @@ const EntryDetailView = ({ entry, onClose, onUpdated }: { entry: DbEntry; onClos
         <span className="text-sm font-bold">{format(new Date(entry.created_at), "EEEE, MMM d")}</span>
         <div className="flex items-center gap-1">
           <button onClick={() => setEditing(true)} className="rounded-full p-1.5 text-muted-foreground hover:bg-secondary"><Edit2 size={16} /></button>
+          <button onClick={() => setConfirmDelete(true)} className="rounded-full p-1.5 text-muted-foreground hover:bg-destructive/10 hover:text-destructive"><Trash2 size={16} /></button>
           <button onClick={onClose} className="rounded-full p-1.5 text-muted-foreground hover:bg-secondary"><X size={16} /></button>
         </div>
       </div>
+
+      {/* Delete confirmation */}
+      {confirmDelete && (
+        <div className="rounded-xl border border-destructive/30 bg-destructive/5 p-3 space-y-2 animate-slide-up">
+          <p className="text-sm font-semibold text-destructive">Delete this entry?</p>
+          <p className="text-xs text-muted-foreground">This action cannot be undone.</p>
+          <div className="flex gap-2">
+            <button onClick={handleDelete} disabled={deleting} className="flex items-center gap-1.5 rounded-xl bg-destructive px-3 py-1.5 text-xs font-semibold text-destructive-foreground disabled:opacity-50">
+              {deleting ? <Loader2 size={12} className="animate-spin" /> : <Trash2 size={12} />} Delete
+            </button>
+            <button onClick={() => setConfirmDelete(false)} className="rounded-xl bg-secondary px-3 py-1.5 text-xs font-semibold text-secondary-foreground">Cancel</button>
+          </div>
+        </div>
+      )}
 
       {/* Scores */}
       <div className="flex flex-wrap gap-2">
@@ -435,7 +467,7 @@ const LogPage = () => {
           )}
 
           {expandedEntry ? (
-            <EntryDetailView entry={expandedEntry} onClose={() => setExpandedId(null)} onUpdated={() => { setExpandedId(null); fetchEntries(); }} />
+            <EntryDetailView entry={expandedEntry} onClose={() => setExpandedId(null)} onUpdated={() => { setExpandedId(null); fetchEntries(); }} onDeleted={() => { setExpandedId(null); fetchEntries(); }} />
           ) : (
             <>
               {loading ? (
