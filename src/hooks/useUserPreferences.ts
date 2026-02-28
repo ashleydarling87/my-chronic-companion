@@ -150,6 +150,7 @@ export function useUserPreferences() {
         intake_body_regions: (data as any).intake_body_regions ?? [],
         intake_treatments: (data as any).intake_treatments ?? [],
         intake_goals: (data as any).intake_goals ?? null,
+        profile_picture_url: (data as any).profile_picture_url ?? null,
       });
       toast.success("Preferences saved");
     }
