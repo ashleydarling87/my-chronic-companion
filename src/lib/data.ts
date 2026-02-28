@@ -190,5 +190,28 @@ export const BUDDY_AVATARS = [
 export const getBuddyEmoji = (id: string) =>
   BUDDY_AVATARS.find((a) => a.id === id)?.emoji || "🐻";
 
+export const SUGGESTED_SYMPTOMS = [
+  "Fatigue",
+  "Brain fog",
+  "Joint pain",
+  "Muscle aches",
+  "Headache",
+  "Nausea",
+  "Dizziness",
+  "Insomnia",
+  "Stiffness",
+  "Numbness / tingling",
+  "Back pain",
+  "Cramping",
+  "Bloating",
+  "Anxiety",
+  "Shortness of breath",
+  "Sensitivity to light",
+  "Sensitivity to sound",
+  "Swelling",
+  "Chest tightness",
+  "Hot flashes",
+];
+
 /** @deprecated Use BUDDY_AVATARS instead */
 export const buddyAvatars = BUDDY_AVATARS.map((a) => a.emoji);

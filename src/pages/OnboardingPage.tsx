@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { ChevronRight, ChevronLeft, Loader2, Send } from "lucide-react";
 import { streamChat, parseIntakeResponse, type ChatMsg } from "@/lib/chatStream";
-import { BUDDY_AVATARS, getBuddyEmoji } from "@/lib/data";
+import { BUDDY_AVATARS, getBuddyEmoji, SUGGESTED_SYMPTOMS } from "@/lib/data";
 
 const AGE_RANGES = ["17–24", "25–30", "31–36", "37–42", "43–50", "51–60", "60+"];
 
@@ -210,18 +210,21 @@ const OnboardingPage = () => {
   const [usageMode, setUsageMode] = useState("self");
   const [ageRange, setAgeRange] = useState("");
   const [painPref, setPainPref] = useState("numeric");
+  const [selectedSymptoms, setSelectedSymptoms] = useState<string[]>([]);
+  const [symptomSearch, setSymptomSearch] = useState("");
   const [buddyAvatar, setBuddyAvatar] = useState("bear");
   const [buddyName, setBuddyName] = useState("Buddy");
   const [saving, setSaving] = useState(false);
 
-  const totalSteps = 6; // belong → usage mode → age → pain pref → buddy setup → intake chat
+  const totalSteps = 7; // belong → usage mode → age → pain pref → symptoms → buddy setup → intake chat
 
   const canAdvance = () => {
     if (step === 0) return belongSelection.length > 0;
     if (step === 1) return !!usageMode;
     if (step === 2) return !!ageRange;
     if (step === 3) return !!painPref;
-    if (step === 4) return buddyName.trim().length > 0;
+    if (step === 4) return true; // symptoms optional
+    if (step === 5) return buddyName.trim().length > 0;
     return true;
   };
 
@@ -237,6 +240,7 @@ const OnboardingPage = () => {
       buddy_name: buddyName.trim() || "Buddy",
       onboarding_complete: complete,
       usage_mode: usageMode,
+      my_symptoms: selectedSymptoms,
     };
 
     if (intakeData) {
@@ -264,14 +268,14 @@ const OnboardingPage = () => {
   };
 
   const handleNext = async () => {
-    if (step < 4) {
+    if (step < 5) {
       setStep(step + 1);
-    } else if (step === 4) {
+    } else if (step === 5) {
       // Save buddy setup then enter intake chat
       setSaving(true);
       try {
         await saveProgress(false);
-        setStep(5);
+        setStep(6);
       } catch (e: any) {
         toast.error(e.message || "Failed to save");
       } finally {
@@ -295,7 +299,7 @@ const OnboardingPage = () => {
   };
 
   // Intake chat step — full screen
-  if (step === 5) {
+  if (step === 6) {
     return (
       <div className="flex min-h-screen flex-col bg-background">
         {/* Header */}
@@ -463,8 +467,77 @@ const OnboardingPage = () => {
             </div>
           )}
 
-          {/* Step 4: Buddy Setup */}
+          {/* Step 4: Symptoms */}
           {step === 4 && (
+            <div className="space-y-6 animate-slide-up">
+              <div className="text-center space-y-2">
+                <span className="text-4xl">🩺</span>
+                <h2 className="text-xl font-extrabold">What symptoms do you deal with?</h2>
+                <p className="text-sm text-muted-foreground">Choose any you're currently struggling with. You can always add more later in your profile settings.</p>
+              </div>
+
+              {/* Selected */}
+              {selectedSymptoms.length > 0 && (
+                <div className="flex flex-wrap gap-1.5">
+                  {selectedSymptoms.map((s) => (
+                    <span
+                      key={s}
+                      className="inline-flex items-center gap-1 rounded-full bg-primary/10 border border-primary/20 px-3 py-1.5 text-xs font-medium text-foreground"
+                    >
+                      {s}
+                      <button onClick={() => setSelectedSymptoms((prev) => prev.filter((x) => x !== s))} className="ml-0.5 rounded-full p-0.5 hover:bg-primary/20">
+                        ✕
+                      </button>
+                    </span>
+                  ))}
+                </div>
+              )}
+
+              {/* Search */}
+              <input
+                value={symptomSearch}
+                onChange={(e) => setSymptomSearch(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && symptomSearch.trim() && !selectedSymptoms.some((s) => s.toLowerCase() === symptomSearch.trim().toLowerCase())) {
+                    setSelectedSymptoms((prev) => [...prev, symptomSearch.trim()]);
+                    setSymptomSearch("");
+                  }
+                }}
+                placeholder="Search or type your own..."
+                className="w-full rounded-xl border bg-card px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-primary/30"
+              />
+
+              {/* Add custom */}
+              {symptomSearch.trim() && !SUGGESTED_SYMPTOMS.some((s) => s.toLowerCase() === symptomSearch.trim().toLowerCase()) && !selectedSymptoms.some((s) => s.toLowerCase() === symptomSearch.trim().toLowerCase()) && (
+                <button
+                  onClick={() => { setSelectedSymptoms((prev) => [...prev, symptomSearch.trim()]); setSymptomSearch(""); }}
+                  className="flex items-center gap-1.5 rounded-full border border-dashed border-primary/40 bg-primary/5 px-3 py-1.5 text-xs font-medium text-primary"
+                >
+                  + Add "{symptomSearch.trim()}"
+                </button>
+              )}
+
+              {/* Suggestions */}
+              <div className="flex flex-wrap gap-1.5">
+                {SUGGESTED_SYMPTOMS.filter(
+                  (s) =>
+                    !selectedSymptoms.some((m) => m.toLowerCase() === s.toLowerCase()) &&
+                    (!symptomSearch || s.toLowerCase().includes(symptomSearch.toLowerCase()))
+                ).map((s) => (
+                  <button
+                    key={s}
+                    onClick={() => setSelectedSymptoms((prev) => [...prev, s])}
+                    className="rounded-full border border-muted bg-secondary/50 px-3 py-1.5 text-xs font-medium text-foreground transition-all hover:bg-primary/10 hover:border-primary/30"
+                  >
+                    + {s}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Step 5: Buddy Setup */}
+          {step === 5 && (
             <div className="space-y-6 animate-slide-up">
               <div className="text-center space-y-2">
                 <span className="text-4xl">✨</span>
@@ -531,7 +604,7 @@ const OnboardingPage = () => {
           >
             {saving ? (
               <><Loader2 size={16} className="animate-spin" /> Setting up...</>
-            ) : step === 4 ? (
+            ) : step === 5 ? (
               <>Chat with {buddyName} <ChevronRight size={16} /></>
             ) : (
               <>Continue <ChevronRight size={16} /></>

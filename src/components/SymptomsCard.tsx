@@ -4,29 +4,7 @@ import { useUserPreferences } from "@/hooks/useUserPreferences";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
-
-const SUGGESTED_SYMPTOMS = [
-  "Fatigue",
-  "Brain fog",
-  "Joint pain",
-  "Muscle aches",
-  "Headache",
-  "Nausea",
-  "Dizziness",
-  "Insomnia",
-  "Stiffness",
-  "Numbness / tingling",
-  "Back pain",
-  "Cramping",
-  "Bloating",
-  "Anxiety",
-  "Shortness of breath",
-  "Sensitivity to light",
-  "Sensitivity to sound",
-  "Swelling",
-  "Chest tightness",
-  "Hot flashes",
-];
+import { SUGGESTED_SYMPTOMS } from "@/lib/data";
 
 const SymptomsCard = () => {
   const { user } = useAuth();
