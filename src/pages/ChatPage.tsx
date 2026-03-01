@@ -105,32 +105,41 @@ const ChatBubble = ({ message, onChipSelect, isLatest, isLoading, buddyEmoji, us
   );
 };
 
-const makeInitialMessage = (painPref?: string, buddyName?: string): DisplayMessage => {
+const makeInitialMessage = (painPref?: string, buddyName?: string, hasExistingEntry?: boolean): DisplayMessage => {
   const hour = new Date().getHours();
   const timeGreeting = hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
-  let painChip = "Symptoms are really bad";
-  let greeting = `${timeGreeting}! 💛 How are you feeling today? Tell me everything — the good, the bad, the ugh.`;
 
+  if (hasExistingEntry) {
+    return {
+      id: "initial",
+      role: "assistant",
+      content: `${timeGreeting}! I see you're back 💛 Has anything changed since earlier, or is something on your mind?`,
+      chips: ["Things have changed", "I just want to talk", "Update my log", "I'm doing better now"],
+      timestamp: new Date(),
+    };
+  }
+
+  let painChip = "Symptoms are bad today";
   switch (painPref) {
     case "numeric":
-      painChip = "Pain is high today (7+)";
+      painChip = "Pain is high (7+)";
       break;
     case "verbal":
-      painChip = "Pain is really bad today";
+      painChip = "Pain is really bad";
       break;
     case "faces":
       painChip = "😣 Hurting a lot";
       break;
     case "adaptive":
     default:
-      painChip = "Symptoms are really bad";
+      painChip = "Symptoms are bad today";
       break;
   }
 
   return {
     id: "initial",
     role: "assistant",
-    content: greeting,
+    content: `${timeGreeting}! Let's do a quick check-in 💛 How are you feeling right now?`,
     chips: ["Not great today", "Pretty good actually", painChip, "I just want to vent"],
     timestamp: new Date(),
   };
@@ -168,6 +177,7 @@ const ChatPage = () => {
   const { prefs } = useUserPreferences();
   const { user } = useAuth();
   const userId = user?.id || "anonymous";
+  const [hasExistingEntry, setHasExistingEntry] = useState(false);
   const [messages, setMessages] = useState<DisplayMessage[]>(() => {
     const restored = loadSession(userId);
     return restored.length > 0 ? restored : [makeInitialMessage()];
@@ -177,15 +187,32 @@ const ChatPage = () => {
   const [selectedChips, setSelectedChips] = useState<string[]>([]);
   const bottomRef = useRef<HTMLDivElement>(null);
 
-  // Update initial message chips when preferences load
+  // Check if user already has an entry today
+  useEffect(() => {
+    const checkTodayEntry = async () => {
+      if (!user?.id) return;
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const { count } = await supabase
+        .from("entries")
+        .select("id", { count: "exact", head: true })
+        .eq("user_id", user.id)
+        .gte("created_at", today.toISOString());
+      const exists = (count ?? 0) > 0;
+      setHasExistingEntry(exists);
+    };
+    checkTodayEntry();
+  }, [user?.id]);
+
+  // Update initial message chips when preferences or entry status load
   useEffect(() => {
     setMessages((prev) => {
       if (prev.length === 1 && prev[0].id === "initial") {
-        return [makeInitialMessage(prefs?.pain_preference, prefs?.buddy_name)];
+        return [makeInitialMessage(prefs?.pain_preference, prefs?.buddy_name, hasExistingEntry)];
       }
       return prev;
     });
-  }, [prefs?.pain_preference]);
+  }, [prefs?.pain_preference, hasExistingEntry]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -298,6 +325,7 @@ const ChatPage = () => {
           care_recipient_name: prefs.care_recipient_name,
           care_recipient_age_range: prefs.care_recipient_age_range,
         } : undefined,
+        hasExistingEntry,
         onDelta: (chunk) => upsertAssistant(chunk),
         onDone: async () => {
           // Parse the final text for chips and entry data
@@ -308,6 +336,7 @@ const ChatPage = () => {
             saved = await saveEntryToDb(entryData);
             if (saved) {
               toast.success("Check-in saved to your log! 📝");
+              setHasExistingEntry(true);
             }
           }
 
