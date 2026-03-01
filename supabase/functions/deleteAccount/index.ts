@@ -46,6 +46,8 @@ Deno.serve(async (req) => {
     await adminClient.from("entries").delete().eq("user_id", user.id);
     await adminClient.from("doctor_reports").delete().eq("user_id", user.id);
     await adminClient.from("encouragement_notes").delete().eq("user_id", user.id);
+    await adminClient.from("saved_reports").delete().eq("user_id", user.id);
+    await adminClient.from("mental_health_scores").delete().eq("user_id", user.id);
     await adminClient.from("user_preferences").delete().eq("user_id", user.id);
 
     // Delete profile picture from storage
