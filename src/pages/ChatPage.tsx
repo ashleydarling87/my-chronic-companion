@@ -170,10 +170,10 @@ const ChatPage = () => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isLoading]);
 
-  // Persist messages to sessionStorage
+  // Persist messages to sessionStorage (user-scoped)
   useEffect(() => {
-    saveSession(messages);
-  }, [messages]);
+    saveSession(userId, messages);
+  }, [messages, userId]);
 
   const saveEntryToDb = async (entryData: Record<string, unknown>) => {
     const { data: { user: currentUser } } = await supabase.auth.getUser();
