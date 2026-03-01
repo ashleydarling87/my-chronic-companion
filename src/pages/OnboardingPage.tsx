@@ -5,12 +5,13 @@ import { useUserPreferencesContext } from "@/contexts/UserPreferencesContext";
 import { toast } from "sonner";
 import { ChevronRight, ChevronLeft, Loader2, Send } from "lucide-react";
 import { streamChat, parseIntakeResponse, type ChatMsg } from "@/lib/chatStream";
-import { BUDDY_AVATARS, getBuddyEmoji, SUGGESTED_SYMPTOMS } from "@/lib/data";
+import { BUDDY_AVATARS, getBuddyEmoji, SUGGESTED_SYMPTOMS, DIAGNOSIS_SYMPTOM_MAP } from "@/lib/data";
+import { Search, Plus } from "lucide-react";
 
 const AGE_RANGES_SELF = ["17–24", "25–30", "31–36", "37–42", "43–50", "51–60", "60+"];
 const AGE_RANGES_CARETAKER = ["0–4", "5–9", "10–13", "14–17", "17–24", "25–30", "31–36", "37–42", "43–50", "51–60", "60+"];
 
-const BELONG_OPTIONS = [
+const CONDITION_OPTIONS = [
   { label: "Chronic pain", emoji: "🩹" },
   { label: "Fibromyalgia", emoji: "🦋" },
   { label: "Autoimmune condition", emoji: "🔬" },
@@ -22,8 +23,18 @@ const BELONG_OPTIONS = [
   { label: "ADHD", emoji: "🧠" },
   { label: "Bipolar disorder", emoji: "🎭" },
   { label: "OCD", emoji: "🔁" },
-  { label: "Undiagnosed symptoms", emoji: "❓" },
-  { label: "Other / not sure yet", emoji: "🌱" },
+];
+
+const UNDIAGNOSED_TAGS = [
+  "Waiting for testing",
+  "Doctors aren't sure yet",
+  "I'm just exploring",
+];
+
+const DIAGNOSIS_MODES = [
+  { value: "diagnosed" as const, label: "I have diagnoses I want to track", emoji: "📋" },
+  { value: "undiagnosed" as const, label: "I don't have a diagnosis yet", emoji: "🔍" },
+  { value: "prefer_not_say" as const, label: "I'd rather not say right now", emoji: "🤐" },
 ];
 
 const CONDITION_SYMPTOMS: Record<string, string[]> = {
@@ -48,9 +59,9 @@ const USAGE_MODES = [
 ];
 
 const PAIN_PREFS = [
-  { value: "numeric", label: "0–10 Scale", desc: "Classic slider from 0 to 10", emoji: "🔢" },
-  { value: "verbal", label: "Word Scale", desc: "None, mild, moderate, severe", emoji: "💬" },
-  { value: "faces", label: "Faces", desc: "Emoji faces to express pain", emoji: "😊" },
+  { value: "numeric", label: "Numbers (0–10)", desc: "Rate how you're feeling on a scale", emoji: "🔢" },
+  { value: "verbal", label: "Words (none → severe)", desc: "None, mild, moderate, severe", emoji: "💬" },
+  { value: "faces", label: "Faces (emoji)", desc: "Emoji faces to express how you feel", emoji: "😊" },
 ];
 
 interface IntakeMessage {
@@ -294,6 +305,10 @@ const OnboardingPage = () => {
   const [step, setStep] = useState(saved?.step ?? 0);
   const [belongSelection, setBelongSelection] = useState<string[]>(saved?.belongSelection ?? []);
   const [usageMode, setUsageMode] = useState(saved?.usageMode ?? "self");
+  const [diagnosisMode, setDiagnosisMode] = useState<"diagnosed" | "undiagnosed" | "prefer_not_say" | null>(saved?.diagnosisMode ?? null);
+  const [undiagnosedTags, setUndiagnosedTags] = useState<string[]>(saved?.undiagnosedTags ?? []);
+  const [suspectedConditions, setSuspectedConditions] = useState(saved?.suspectedConditions ?? "");
+  const [conditionSearch, setConditionSearch] = useState("");
   const [ageRange, setAgeRange] = useState(saved?.ageRange ?? "");
   const [painPref, setPainPref] = useState(saved?.painPref ?? "numeric");
   const [selectedSymptoms, setSelectedSymptoms] = useState<string[]>(saved?.selectedSymptoms ?? []);
@@ -306,7 +321,7 @@ const OnboardingPage = () => {
 
   const canAdvance = () => {
     if (step === 0) return !!usageMode;
-    if (step === 1) return belongSelection.length > 0;
+    if (step === 1) return !!diagnosisMode;
     if (step === 2) return !!ageRange;
     if (step === 3) return !!painPref;
     if (step === 4) return true; // symptoms optional
@@ -335,7 +350,20 @@ const OnboardingPage = () => {
       row.intake_body_regions = intakeData.body_regions || intakeData.areas || [];
       row.intake_treatments = intakeData.treatments || intakeData.treatments_tried || [];
       row.intake_goals = intakeData.goals || intakeData.goal || null;
-      row.intake_raw = intakeData;
+      row.intake_raw = {
+        ...intakeData,
+        diagnosis_mode: diagnosisMode,
+        undiagnosed_tags: undiagnosedTags,
+        suspected_conditions: suspectedConditions || null,
+        selected_conditions: belongSelection,
+      };
+    } else {
+      row.intake_raw = {
+        diagnosis_mode: diagnosisMode,
+        undiagnosed_tags: undiagnosedTags,
+        suspected_conditions: suspectedConditions || null,
+        selected_conditions: belongSelection,
+      };
     }
 
     const { data: existing } = await supabase
@@ -357,14 +385,14 @@ const OnboardingPage = () => {
     const nextStep = step + 1;
     if (step < 5) {
       setStep(nextStep);
-      saveOnboardingProgress({ step: nextStep, belongSelection, usageMode, ageRange, painPref, selectedSymptoms, buddyAvatar, buddyName });
+      saveOnboardingProgress({ step: nextStep, belongSelection, usageMode, diagnosisMode, undiagnosedTags, suspectedConditions, ageRange, painPref, selectedSymptoms, buddyAvatar, buddyName });
     } else if (step === 5) {
       // Save buddy setup then enter intake chat
       setSaving(true);
       try {
         await saveProgress(false);
         setStep(6);
-        saveOnboardingProgress({ step: 6, belongSelection, usageMode, ageRange, painPref, selectedSymptoms, buddyAvatar, buddyName });
+        saveOnboardingProgress({ step: 6, belongSelection, usageMode, diagnosisMode, undiagnosedTags, suspectedConditions, ageRange, painPref, selectedSymptoms, buddyAvatar, buddyName });
       } catch (e: any) {
         toast.error(e.message || "Failed to save");
       } finally {
@@ -467,38 +495,134 @@ const OnboardingPage = () => {
             </div>
           )}
 
-          {/* Step 1: Do I belong here? */}
+          {/* Step 1: Conditions & Diagnoses */}
           {step === 1 && (
-            <div className="space-y-6 animate-slide-up">
+            <div className="space-y-5 animate-slide-up">
               <div className="text-center space-y-2">
-                <span className="text-4xl">💛</span>
-                <h2 className="text-xl font-extrabold">You're in the right place</h2>
-                <p className="text-sm text-muted-foreground">This app helps people living with ongoing health challenges. What resonates with you?</p>
+                <span className="text-4xl">📋</span>
+                <h2 className="text-xl font-extrabold">Do you have any diagnoses or conditions?</h2>
+                <p className="text-sm text-muted-foreground">Add anything that helps you track patterns. You can skip this or change it later.</p>
               </div>
+
+              {/* Three mode cards */}
               <div className="space-y-2">
-                {BELONG_OPTIONS.map((opt) => {
-                  const selected = belongSelection.includes(opt.label);
-                  return (
-                    <button
-                      key={opt.label}
-                      onClick={() =>
-                        setBelongSelection((prev) =>
-                          selected ? prev.filter((s) => s !== opt.label) : [...prev, opt.label]
-                        )
-                      }
-                      className={`flex w-full items-center gap-3 rounded-xl px-4 py-3.5 text-left transition-all ${
-                        selected
-                          ? "bg-primary text-primary-foreground scale-[1.02]"
-                          : "bg-card border text-foreground hover:bg-primary/10"
-                      }`}
-                    >
-                      <span className="text-2xl">{opt.emoji}</span>
-                      <span className="text-sm font-bold">{opt.label}</span>
-                    </button>
-                  );
-                })}
+                {DIAGNOSIS_MODES.map((mode) => (
+                  <button
+                    key={mode.value}
+                    onClick={() => setDiagnosisMode(mode.value)}
+                    className={`flex w-full items-center gap-3 rounded-xl px-4 py-3.5 text-left transition-all ${
+                      diagnosisMode === mode.value
+                        ? "bg-primary text-primary-foreground scale-[1.02]"
+                        : "bg-card border text-foreground hover:bg-primary/10"
+                    }`}
+                  >
+                    <span className="text-2xl">{mode.emoji}</span>
+                    <span className="text-sm font-bold">{mode.label}</span>
+                  </button>
+                ))}
               </div>
-              <p className="text-xs text-muted-foreground text-center">Select all that apply</p>
+
+              {/* Variant panels */}
+              {diagnosisMode === "diagnosed" && (
+                <div className="space-y-4 animate-slide-up">
+                  {/* Selected conditions chips */}
+                  {belongSelection.length > 0 && (
+                    <div className="flex flex-wrap gap-1.5">
+                      {belongSelection.map((s) => (
+                        <span key={s} className="inline-flex items-center gap-1 rounded-full bg-primary/10 border border-primary/20 px-3 py-1.5 text-xs font-medium text-foreground">
+                          {s}
+                          <button onClick={() => setBelongSelection((prev) => prev.filter((x) => x !== s))} className="ml-0.5 rounded-full p-0.5 hover:bg-primary/20">✕</button>
+                        </span>
+                      ))}
+                    </div>
+                  )}
+
+                  <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Common conditions</p>
+                  <div className="flex flex-wrap gap-1.5 max-h-48 overflow-y-auto">
+                    {CONDITION_OPTIONS.filter((opt) => !belongSelection.includes(opt.label)).map((opt) => (
+                      <button
+                        key={opt.label}
+                        onClick={() => setBelongSelection((prev) => [...prev, opt.label])}
+                        className="rounded-full border border-muted bg-secondary/50 px-3 py-1.5 text-xs font-medium text-foreground transition-all hover:bg-primary/10 hover:border-primary/30"
+                      >
+                        {opt.emoji} {opt.label}
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Search / add field */}
+                  <div className="relative">
+                    <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                    <input
+                      value={conditionSearch}
+                      onChange={(e) => setConditionSearch(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" && conditionSearch.trim() && !belongSelection.some((s) => s.toLowerCase() === conditionSearch.trim().toLowerCase())) {
+                          setBelongSelection((prev) => [...prev, conditionSearch.trim()]);
+                          setConditionSearch("");
+                        }
+                      }}
+                      placeholder="Search or type another diagnosis…"
+                      className="w-full rounded-xl border bg-background pl-9 pr-3 py-2.5 text-sm outline-none placeholder:text-muted-foreground focus:ring-2 focus:ring-primary/30"
+                    />
+                  </div>
+
+                  {conditionSearch.trim() && !CONDITION_OPTIONS.some((o) => o.label.toLowerCase() === conditionSearch.trim().toLowerCase()) && !belongSelection.some((s) => s.toLowerCase() === conditionSearch.trim().toLowerCase()) && (
+                    <button
+                      onClick={() => { setBelongSelection((prev) => [...prev, conditionSearch.trim()]); setConditionSearch(""); }}
+                      className="flex items-center gap-1.5 rounded-full border border-dashed border-primary/40 bg-primary/5 px-3 py-1.5 text-xs font-medium text-primary"
+                    >
+                      <Plus size={12} /> Add "{conditionSearch.trim()}"
+                    </button>
+                  )}
+
+                  <button
+                    onClick={() => { setDiagnosisMode("undiagnosed"); setBelongSelection([]); }}
+                    className="text-xs text-muted-foreground underline underline-offset-2 hover:text-foreground transition-colors"
+                  >
+                    I'm not sure / still undiagnosed instead
+                  </button>
+                </div>
+              )}
+
+              {diagnosisMode === "undiagnosed" && (
+                <div className="space-y-4 animate-slide-up">
+                  <p className="text-sm text-muted-foreground">Totally okay. We'll focus on your symptoms, patterns, and what your days feel like.</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {UNDIAGNOSED_TAGS.map((tag) => {
+                      const selected = undiagnosedTags.includes(tag);
+                      return (
+                        <button
+                          key={tag}
+                          onClick={() => setUndiagnosedTags((prev) => selected ? prev.filter((t) => t !== tag) : [...prev, tag])}
+                          className={`rounded-full border px-3 py-1.5 text-xs font-medium transition-all ${
+                            selected
+                              ? "bg-primary/20 border-primary/50 text-foreground"
+                              : "border-muted bg-secondary/50 text-foreground hover:bg-primary/10 hover:border-primary/30"
+                          }`}
+                        >
+                          {tag}
+                        </button>
+                      );
+                    })}
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-xs text-muted-foreground">If you'd like, add any suspected conditions</label>
+                    <input
+                      value={suspectedConditions}
+                      onChange={(e) => setSuspectedConditions(e.target.value)}
+                      placeholder="Optional…"
+                      className="w-full rounded-xl border bg-background px-4 py-2.5 text-sm outline-none placeholder:text-muted-foreground focus:ring-2 focus:ring-primary/30"
+                    />
+                  </div>
+                </div>
+              )}
+
+              {diagnosisMode === "prefer_not_say" && (
+                <div className="animate-slide-up">
+                  <p className="text-sm text-muted-foreground">That's okay. You can add or edit diagnoses later in settings.</p>
+                </div>
+              )}
             </div>
           )}
 
@@ -538,9 +662,9 @@ const OnboardingPage = () => {
               <div className="text-center space-y-2">
                 <span className="text-4xl">📊</span>
                 <h2 className="text-xl font-extrabold">
-                  {usageMode === "caretaker" ? "How do they describe pain?" : "How do you describe pain?"}
+                  {usageMode === "caretaker" ? "How do they like to rate how they're feeling?" : "How do you like to rate how you're feeling?"}
                 </h2>
-                <p className="text-sm text-muted-foreground">Choose the scale that feels most natural</p>
+                <p className="text-sm text-muted-foreground">We'll use this for pain and other symptoms.</p>
               </div>
               <div className="space-y-2">
                 {PAIN_PREFS.map((p) => (
@@ -620,6 +744,39 @@ const OnboardingPage = () => {
                 </button>
               )}
 
+              {/* Diagnosis-aware suggestions from search */}
+              {(() => {
+                const searchLower = symptomSearch.toLowerCase();
+                // Check if search matches a diagnosis keyword
+                const diagnosisMatches = searchLower
+                  ? Object.entries(DIAGNOSIS_SYMPTOM_MAP)
+                      .filter(([key]) => key.toLowerCase().includes(searchLower))
+                      .flatMap(([, symptoms]) => symptoms)
+                      .filter((s, i, arr) => arr.indexOf(s) === i)
+                      .filter((s) => !selectedSymptoms.some((m) => m.toLowerCase() === s.toLowerCase()))
+                  : [];
+
+                if (diagnosisMatches.length > 0) {
+                  return (
+                    <div className="space-y-2">
+                      <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Related symptoms</p>
+                      <div className="flex flex-wrap gap-1.5">
+                        {diagnosisMatches.map((s) => (
+                          <button
+                            key={s}
+                            onClick={() => setSelectedSymptoms((prev) => [...prev, s])}
+                            className="rounded-full border border-primary/30 bg-primary/5 px-3 py-1.5 text-xs font-medium text-foreground transition-all hover:bg-primary/10 hover:border-primary/50"
+                          >
+                            + {s}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                }
+                return null;
+              })()}
+
               {/* Suggestions — prioritized by selected conditions */}
               {(() => {
                 const conditionRelevant = new Set(
@@ -630,23 +787,37 @@ const OnboardingPage = () => {
                     !selectedSymptoms.some((m) => m.toLowerCase() === s.toLowerCase()) &&
                     (!symptomSearch || s.toLowerCase().includes(symptomSearch.toLowerCase()))
                 );
-                // Sort: condition-relevant first, then the rest
                 const sorted = [
                   ...available.filter((s) => conditionRelevant.has(s)),
                   ...available.filter((s) => !conditionRelevant.has(s)),
                 ];
+
+                // Add catch-all meta-tag
+                const CATCH_ALL = "I experience other things that are hard to describe";
+                const showCatchAll = !selectedSymptoms.includes(CATCH_ALL) && !symptomSearch;
+
                 return (
-              <div className="flex flex-wrap gap-1.5">
-                {sorted.map((s) => (
-                  <button
-                    key={s}
-                    onClick={() => setSelectedSymptoms((prev) => [...prev, s])}
-                    className="rounded-full border border-muted bg-secondary/50 px-3 py-1.5 text-xs font-medium text-foreground transition-all hover:bg-primary/10 hover:border-primary/30"
-                  >
-                    + {s}
-                  </button>
-                ))}
-              </div>
+                  <div className="space-y-3">
+                    <div className="flex flex-wrap gap-1.5">
+                      {sorted.map((s) => (
+                        <button
+                          key={s}
+                          onClick={() => setSelectedSymptoms((prev) => [...prev, s])}
+                          className="rounded-full border border-muted bg-secondary/50 px-3 py-1.5 text-xs font-medium text-foreground transition-all hover:bg-primary/10 hover:border-primary/30"
+                        >
+                          + {s}
+                        </button>
+                      ))}
+                    </div>
+                    {showCatchAll && (
+                      <button
+                        onClick={() => setSelectedSymptoms((prev) => [...prev, CATCH_ALL])}
+                        className="rounded-full border border-dashed border-muted-foreground/30 bg-secondary/30 px-3 py-1.5 text-xs font-medium text-muted-foreground transition-all hover:bg-primary/5 hover:border-primary/30 hover:text-foreground"
+                      >
+                        + {CATCH_ALL}
+                      </button>
+                    )}
+                  </div>
                 );
               })()}
             </div>

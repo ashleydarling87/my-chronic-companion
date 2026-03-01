@@ -233,3 +233,17 @@ export const SUGGESTED_SYMPTOMS = [
 
 /** @deprecated Use BUDDY_AVATARS instead */
 export const buddyAvatars = BUDDY_AVATARS.map((a) => a.emoji);
+
+/** Maps diagnosis keywords typed in symptom search to relevant symptom suggestions */
+export const DIAGNOSIS_SYMPTOM_MAP: Record<string, string[]> = {
+  "POTS": ["Dizziness", "Fatigue", "Numbness / tingling", "Chest tightness", "Shortness of breath"],
+  "Long COVID": ["Fatigue", "Brain fog", "Shortness of breath", "Chest tightness", "Insomnia", "Muscle aches"],
+  "Endometriosis": ["Cramping", "Fatigue", "Nausea", "Bloating", "Back pain", "Insomnia"],
+  "MCAS": ["Nausea", "Bloating", "Dizziness", "Hot flashes", "Swelling", "Fatigue", "Headache"],
+  "EDS": ["Joint pain", "Fatigue", "Dizziness", "Muscle aches", "Numbness / tingling", "Back pain"],
+  "Lupus": ["Fatigue", "Joint pain", "Muscle aches", "Swelling", "Brain fog", "Sensitivity to light"],
+  "MS": ["Fatigue", "Numbness / tingling", "Brain fog", "Dizziness", "Muscle aches", "Stiffness"],
+  "Crohn's": ["Nausea", "Cramping", "Bloating", "Fatigue", "Loss of appetite", "Joint pain"],
+  "IBS": ["Bloating", "Cramping", "Nausea", "Fatigue", "Anxiety", "Loss of appetite"],
+  "Lyme": ["Fatigue", "Joint pain", "Headache", "Brain fog", "Muscle aches", "Numbness / tingling"],
+};
