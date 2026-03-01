@@ -336,6 +336,7 @@ const ChatPage = () => {
             saved = await saveEntryToDb(entryData);
             if (saved) {
               toast.success("Check-in saved to your log! 📝");
+              setHasExistingEntry(true);
             }
           }
 
