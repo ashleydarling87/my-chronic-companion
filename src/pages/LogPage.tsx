@@ -12,6 +12,7 @@ import type { DbEntry } from "@/components/log/EntryEditForm";
 import { useMentalHealthScores } from "@/hooks/useMentalHealthScores";
 import PHQ4CheckIn from "@/components/mental-health/PHQ4CheckIn";
 import PHQ4ScoreCard from "@/components/mental-health/PHQ4ScoreCard";
+import HowToUseSheet from "@/components/HowToUseSheet";
 
 const IMPACT_LABELS: Record<string, string> = {
   sleep: "Sleep",
