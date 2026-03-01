@@ -482,38 +482,134 @@ const OnboardingPage = () => {
             </div>
           )}
 
-          {/* Step 1: Do I belong here? */}
+          {/* Step 1: Conditions & Diagnoses */}
           {step === 1 && (
-            <div className="space-y-6 animate-slide-up">
+            <div className="space-y-5 animate-slide-up">
               <div className="text-center space-y-2">
-                <span className="text-4xl">💛</span>
-                <h2 className="text-xl font-extrabold">You're in the right place</h2>
-                <p className="text-sm text-muted-foreground">This app helps people living with ongoing health challenges. What resonates with you?</p>
+                <span className="text-4xl">📋</span>
+                <h2 className="text-xl font-extrabold">Do you have any diagnoses or conditions?</h2>
+                <p className="text-sm text-muted-foreground">Add anything that helps you track patterns. You can skip this or change it later.</p>
               </div>
+
+              {/* Three mode cards */}
               <div className="space-y-2">
-                {BELONG_OPTIONS.map((opt) => {
-                  const selected = belongSelection.includes(opt.label);
-                  return (
-                    <button
-                      key={opt.label}
-                      onClick={() =>
-                        setBelongSelection((prev) =>
-                          selected ? prev.filter((s) => s !== opt.label) : [...prev, opt.label]
-                        )
-                      }
-                      className={`flex w-full items-center gap-3 rounded-xl px-4 py-3.5 text-left transition-all ${
-                        selected
-                          ? "bg-primary text-primary-foreground scale-[1.02]"
-                          : "bg-card border text-foreground hover:bg-primary/10"
-                      }`}
-                    >
-                      <span className="text-2xl">{opt.emoji}</span>
-                      <span className="text-sm font-bold">{opt.label}</span>
-                    </button>
-                  );
-                })}
+                {DIAGNOSIS_MODES.map((mode) => (
+                  <button
+                    key={mode.value}
+                    onClick={() => setDiagnosisMode(mode.value)}
+                    className={`flex w-full items-center gap-3 rounded-xl px-4 py-3.5 text-left transition-all ${
+                      diagnosisMode === mode.value
+                        ? "bg-primary text-primary-foreground scale-[1.02]"
+                        : "bg-card border text-foreground hover:bg-primary/10"
+                    }`}
+                  >
+                    <span className="text-2xl">{mode.emoji}</span>
+                    <span className="text-sm font-bold">{mode.label}</span>
+                  </button>
+                ))}
               </div>
-              <p className="text-xs text-muted-foreground text-center">Select all that apply</p>
+
+              {/* Variant panels */}
+              {diagnosisMode === "diagnosed" && (
+                <div className="space-y-4 animate-slide-up">
+                  {/* Selected conditions chips */}
+                  {belongSelection.length > 0 && (
+                    <div className="flex flex-wrap gap-1.5">
+                      {belongSelection.map((s) => (
+                        <span key={s} className="inline-flex items-center gap-1 rounded-full bg-primary/10 border border-primary/20 px-3 py-1.5 text-xs font-medium text-foreground">
+                          {s}
+                          <button onClick={() => setBelongSelection((prev) => prev.filter((x) => x !== s))} className="ml-0.5 rounded-full p-0.5 hover:bg-primary/20">✕</button>
+                        </span>
+                      ))}
+                    </div>
+                  )}
+
+                  <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Common conditions</p>
+                  <div className="flex flex-wrap gap-1.5 max-h-48 overflow-y-auto">
+                    {CONDITION_OPTIONS.filter((opt) => !belongSelection.includes(opt.label)).map((opt) => (
+                      <button
+                        key={opt.label}
+                        onClick={() => setBelongSelection((prev) => [...prev, opt.label])}
+                        className="rounded-full border border-muted bg-secondary/50 px-3 py-1.5 text-xs font-medium text-foreground transition-all hover:bg-primary/10 hover:border-primary/30"
+                      >
+                        {opt.emoji} {opt.label}
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Search / add field */}
+                  <div className="relative">
+                    <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                    <input
+                      value={conditionSearch}
+                      onChange={(e) => setConditionSearch(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" && conditionSearch.trim() && !belongSelection.some((s) => s.toLowerCase() === conditionSearch.trim().toLowerCase())) {
+                          setBelongSelection((prev) => [...prev, conditionSearch.trim()]);
+                          setConditionSearch("");
+                        }
+                      }}
+                      placeholder="Search or type another diagnosis…"
+                      className="w-full rounded-xl border bg-background pl-9 pr-3 py-2.5 text-sm outline-none placeholder:text-muted-foreground focus:ring-2 focus:ring-primary/30"
+                    />
+                  </div>
+
+                  {conditionSearch.trim() && !CONDITION_OPTIONS.some((o) => o.label.toLowerCase() === conditionSearch.trim().toLowerCase()) && !belongSelection.some((s) => s.toLowerCase() === conditionSearch.trim().toLowerCase()) && (
+                    <button
+                      onClick={() => { setBelongSelection((prev) => [...prev, conditionSearch.trim()]); setConditionSearch(""); }}
+                      className="flex items-center gap-1.5 rounded-full border border-dashed border-primary/40 bg-primary/5 px-3 py-1.5 text-xs font-medium text-primary"
+                    >
+                      <Plus size={12} /> Add "{conditionSearch.trim()}"
+                    </button>
+                  )}
+
+                  <button
+                    onClick={() => { setDiagnosisMode("undiagnosed"); setBelongSelection([]); }}
+                    className="text-xs text-muted-foreground underline underline-offset-2 hover:text-foreground transition-colors"
+                  >
+                    I'm not sure / still undiagnosed instead
+                  </button>
+                </div>
+              )}
+
+              {diagnosisMode === "undiagnosed" && (
+                <div className="space-y-4 animate-slide-up">
+                  <p className="text-sm text-muted-foreground">Totally okay. We'll focus on your symptoms, patterns, and what your days feel like.</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {UNDIAGNOSED_TAGS.map((tag) => {
+                      const selected = undiagnosedTags.includes(tag);
+                      return (
+                        <button
+                          key={tag}
+                          onClick={() => setUndiagnosedTags((prev) => selected ? prev.filter((t) => t !== tag) : [...prev, tag])}
+                          className={`rounded-full border px-3 py-1.5 text-xs font-medium transition-all ${
+                            selected
+                              ? "bg-primary/20 border-primary/50 text-foreground"
+                              : "border-muted bg-secondary/50 text-foreground hover:bg-primary/10 hover:border-primary/30"
+                          }`}
+                        >
+                          {tag}
+                        </button>
+                      );
+                    })}
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-xs text-muted-foreground">If you'd like, add any suspected conditions</label>
+                    <input
+                      value={suspectedConditions}
+                      onChange={(e) => setSuspectedConditions(e.target.value)}
+                      placeholder="Optional…"
+                      className="w-full rounded-xl border bg-background px-4 py-2.5 text-sm outline-none placeholder:text-muted-foreground focus:ring-2 focus:ring-primary/30"
+                    />
+                  </div>
+                </div>
+              )}
+
+              {diagnosisMode === "prefer_not_say" && (
+                <div className="animate-slide-up">
+                  <p className="text-sm text-muted-foreground">That's okay. You can add or edit diagnoses later in settings.</p>
+                </div>
+              )}
             </div>
           )}
 
