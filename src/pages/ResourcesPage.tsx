@@ -172,39 +172,6 @@ const ResourcesPage = () => {
             })}
           </div>
 
-          {/* Advocacy Resources (expanded from Communication) */}
-          {showAdvocacy && (
-            <div className="mt-4 space-y-3 animate-slide-up">
-              <h3 className="text-sm font-bold text-muted-foreground">Communication & Advocacy</h3>
-              <p className="text-xs text-muted-foreground leading-relaxed">
-                Your pain is real. These resources are here to help you advocate for yourself and get the care you deserve.
-              </p>
-              {ADVOCACY_RESOURCES.map((res, i) => (
-                <div
-                  key={i}
-                  className="rounded-2xl border bg-card p-4 transition-all hover:shadow-sm animate-slide-up"
-                >
-                  <div className="flex items-start gap-3">
-                    <span className="text-2xl mt-0.5">{res.emoji}</span>
-                    <div className="flex-1">
-                      <h4 className="text-sm font-bold">{res.title}</h4>
-                      <p className="text-xs text-muted-foreground mt-1 leading-relaxed">{res.description}</p>
-                    </div>
-                  </div>
-                </div>
-              ))}
-
-              {suggestedForYou && (
-                <div className="rounded-2xl bg-accent/10 border border-accent/20 p-4">
-                  <p className="text-xs leading-relaxed">
-                    <span className="text-base mr-1">🐻</span>
-                    <strong>Buddy noticed</strong> you've logged feeling dismissed or discriminated against recently.
-                    These resources might be especially helpful right now. Remember: your pain is real, and you deserve to be heard. 💛
-                  </p>
-                </div>
-              )}
-            </div>
-          )}
         </div>
       </main>
 
