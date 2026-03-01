@@ -1,0 +1,2 @@
+ALTER TABLE public.user_preferences
+ADD COLUMN IF NOT EXISTS notification_preferences jsonb DEFAULT '{"dailyReminder": true, "weeklyReport": true, "encouragement": false, "crisisUpdates": true}'::jsonb;
