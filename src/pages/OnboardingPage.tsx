@@ -330,8 +330,9 @@ const OnboardingPage = () => {
   };
 
   const saveProgress = async (complete = false, intakeData?: Record<string, unknown> | null) => {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
+    const { data: { session } } = await supabase.auth.getSession();
+    const user = session?.user;
+    if (!user) throw new Error("Your session expired. Please sign in again.");
 
     const row: Record<string, unknown> = {
       user_id: user.id,
