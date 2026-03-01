@@ -60,6 +60,8 @@ interface IntakeMessage {
   timestamp: Date;
 }
 
+const READY_CHIP = "Ready to explore the app ✨";
+
 const IntakeChat = ({
   buddyName,
   buddyAvatar,
@@ -83,6 +85,8 @@ const IntakeChat = ({
   ]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [selectedChips, setSelectedChips] = useState<string[]>([]);
+  const [pendingIntakeData, setPendingIntakeData] = useState<Record<string, unknown> | null>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
