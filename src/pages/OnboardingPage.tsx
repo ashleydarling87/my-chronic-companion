@@ -375,10 +375,22 @@ const OnboardingPage = () => {
 
     if (existing) {
       const { error } = await supabase.from("user_preferences").update(row).eq("id", existing.id);
-      if (error) throw error;
+      if (error) {
+        if (error.message?.includes("foreign key") || error.message?.includes("user_not_found")) {
+          await supabase.auth.signOut();
+          throw new Error("Your account session is invalid. Please sign in again.");
+        }
+        throw error;
+      }
     } else {
       const { error } = await supabase.from("user_preferences").insert(row);
-      if (error) throw error;
+      if (error) {
+        if (error.message?.includes("foreign key") || error.message?.includes("user_not_found")) {
+          await supabase.auth.signOut();
+          throw new Error("Your account session is invalid. Please sign in again.");
+        }
+        throw error;
+      }
     }
   };
 
