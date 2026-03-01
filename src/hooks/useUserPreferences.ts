@@ -46,6 +46,13 @@ export interface UserPreferences {
   notification_preferences: NotificationPreferences;
 }
 
+const DEFAULT_NOTIFICATION_PREFS: NotificationPreferences = {
+  dailyReminder: true,
+  weeklyReport: true,
+  encouragement: false,
+  crisisUpdates: true,
+};
+
 const DEFAULT_PREFS: Omit<UserPreferences, "id"> = {
   pain_preference: "numeric",
   pain_misunderstanding_note: "",
@@ -70,6 +77,7 @@ const DEFAULT_PREFS: Omit<UserPreferences, "id"> = {
   usage_mode: "self",
   care_recipient_name: null,
   care_recipient_age_range: null,
+  notification_preferences: DEFAULT_NOTIFICATION_PREFS,
 };
 
 export function useUserPreferences() {
