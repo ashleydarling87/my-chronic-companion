@@ -105,32 +105,41 @@ const ChatBubble = ({ message, onChipSelect, isLatest, isLoading, buddyEmoji, us
   );
 };
 
-const makeInitialMessage = (painPref?: string, buddyName?: string): DisplayMessage => {
+const makeInitialMessage = (painPref?: string, buddyName?: string, hasExistingEntry?: boolean): DisplayMessage => {
   const hour = new Date().getHours();
   const timeGreeting = hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
-  let painChip = "Symptoms are really bad";
-  let greeting = `${timeGreeting}! 💛 How are you feeling today? Tell me everything — the good, the bad, the ugh.`;
 
+  if (hasExistingEntry) {
+    return {
+      id: "initial",
+      role: "assistant",
+      content: `${timeGreeting}! I see you're back 💛 Has anything changed since earlier, or is something on your mind?`,
+      chips: ["Things have changed", "I just want to talk", "Update my log", "I'm doing better now"],
+      timestamp: new Date(),
+    };
+  }
+
+  let painChip = "Symptoms are bad today";
   switch (painPref) {
     case "numeric":
-      painChip = "Pain is high today (7+)";
+      painChip = "Pain is high (7+)";
       break;
     case "verbal":
-      painChip = "Pain is really bad today";
+      painChip = "Pain is really bad";
       break;
     case "faces":
       painChip = "😣 Hurting a lot";
       break;
     case "adaptive":
     default:
-      painChip = "Symptoms are really bad";
+      painChip = "Symptoms are bad today";
       break;
   }
 
   return {
     id: "initial",
     role: "assistant",
-    content: greeting,
+    content: `${timeGreeting}! Let's do a quick check-in 💛 How are you feeling right now?`,
     chips: ["Not great today", "Pretty good actually", painChip, "I just want to vent"],
     timestamp: new Date(),
   };
