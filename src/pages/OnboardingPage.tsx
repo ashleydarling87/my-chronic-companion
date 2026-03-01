@@ -11,7 +11,7 @@ import { Search, Plus } from "lucide-react";
 const AGE_RANGES_SELF = ["17–24", "25–30", "31–36", "37–42", "43–50", "51–60", "60+"];
 const AGE_RANGES_CARETAKER = ["0–4", "5–9", "10–13", "14–17", "17–24", "25–30", "31–36", "37–42", "43–50", "51–60", "60+"];
 
-const BELONG_OPTIONS = [
+const CONDITION_OPTIONS = [
   { label: "Chronic pain", emoji: "🩹" },
   { label: "Fibromyalgia", emoji: "🦋" },
   { label: "Autoimmune condition", emoji: "🔬" },
@@ -23,8 +23,18 @@ const BELONG_OPTIONS = [
   { label: "ADHD", emoji: "🧠" },
   { label: "Bipolar disorder", emoji: "🎭" },
   { label: "OCD", emoji: "🔁" },
-  { label: "Undiagnosed symptoms", emoji: "❓" },
-  { label: "Other / not sure yet", emoji: "🌱" },
+];
+
+const UNDIAGNOSED_TAGS = [
+  "Waiting for testing",
+  "Doctors aren't sure yet",
+  "I'm just exploring",
+];
+
+const DIAGNOSIS_MODES = [
+  { value: "diagnosed" as const, label: "I have diagnoses I want to track", emoji: "📋" },
+  { value: "undiagnosed" as const, label: "I don't have a diagnosis yet", emoji: "🔍" },
+  { value: "prefer_not_say" as const, label: "I'd rather not say right now", emoji: "🤐" },
 ];
 
 const CONDITION_SYMPTOMS: Record<string, string[]> = {
