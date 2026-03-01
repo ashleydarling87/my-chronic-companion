@@ -11,6 +11,13 @@ export interface CommunicationStyle {
   humor?: string;
 }
 
+export interface NotificationPreferences {
+  dailyReminder: boolean;
+  weeklyReport: boolean;
+  encouragement: boolean;
+  crisisUpdates: boolean;
+}
+
 export interface UserPreferences {
   id: string;
   pain_preference: "numeric" | "verbal" | "faces" | "adaptive";
@@ -36,6 +43,7 @@ export interface UserPreferences {
   usage_mode: string;
   care_recipient_name: string | null;
   care_recipient_age_range: string | null;
+  notification_preferences: NotificationPreferences;
 }
 
 const DEFAULT_PREFS: Omit<UserPreferences, "id"> = {
