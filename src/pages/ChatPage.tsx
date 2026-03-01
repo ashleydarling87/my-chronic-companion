@@ -28,18 +28,37 @@ const TypingIndicator = () => (
   </div>
 );
 
-const QuickChips = ({ chips, onSelect, disabled }: { chips: string[]; onSelect: (c: string) => void; disabled: boolean }) => (
-  <div className="flex flex-wrap gap-1.5 mt-2 animate-slide-up">
-    {chips.map((chip) => (
+const QuickChips = ({ chips, onSelect, disabled, selectedChips, onSend }: { chips: string[]; onSelect: (c: string) => void; disabled: boolean; selectedChips: string[]; onSend: () => void }) => (
+  <div className="space-y-2 mt-2 animate-slide-up">
+    <div className="flex flex-wrap gap-1.5">
+      {chips.map((chip) => {
+        const isSelected = selectedChips.includes(chip);
+        return (
+          <button
+            key={chip}
+            onClick={() => onSelect(chip)}
+            disabled={disabled}
+            className={`rounded-full border px-3 py-1.5 text-xs font-medium transition-all disabled:opacity-40 ${
+              isSelected
+                ? "border-primary bg-primary text-primary-foreground"
+                : "border-primary/30 bg-primary/5 text-foreground hover:bg-primary/15 hover:border-primary/50"
+            }`}
+          >
+            {chip}
+          </button>
+        );
+      })}
+    </div>
+    {selectedChips.length > 0 && (
       <button
-        key={chip}
-        onClick={() => onSelect(chip)}
+        onClick={onSend}
         disabled={disabled}
-        className="rounded-full border border-primary/30 bg-primary/5 px-3 py-1.5 text-xs font-medium text-foreground transition-all hover:bg-primary/15 hover:border-primary/50 disabled:opacity-40"
+        className="flex items-center gap-1.5 rounded-full bg-primary px-4 py-1.5 text-xs font-semibold text-primary-foreground transition-all active:scale-95 disabled:opacity-40"
       >
-        {chip}
+        <Send size={12} />
+        Send {selectedChips.length > 1 ? `(${selectedChips.length})` : ""}
       </button>
-    ))}
+    )}
   </div>
 );
 
