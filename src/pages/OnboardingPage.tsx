@@ -289,6 +289,7 @@ const clearOnboardingProgress = () => {
 
 const OnboardingPage = () => {
   const navigate = useNavigate();
+  const { refreshPrefs } = useUserPreferencesContext();
   const saved = loadOnboardingProgress();
   const [step, setStep] = useState(saved?.step ?? 0);
   const [belongSelection, setBelongSelection] = useState<string[]>(saved?.belongSelection ?? []);
