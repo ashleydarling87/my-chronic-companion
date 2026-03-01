@@ -372,7 +372,7 @@ const OnboardingPage = () => {
     const nextStep = step + 1;
     if (step < 5) {
       setStep(nextStep);
-      saveOnboardingProgress({ step: nextStep, belongSelection, usageMode, ageRange, painPref, selectedSymptoms, buddyAvatar, buddyName });
+      saveOnboardingProgress({ step: nextStep, belongSelection, usageMode, diagnosisMode, undiagnosedTags, suspectedConditions, ageRange, painPref, selectedSymptoms, buddyAvatar, buddyName });
     } else if (step === 5) {
       // Save buddy setup then enter intake chat
       setSaving(true);
