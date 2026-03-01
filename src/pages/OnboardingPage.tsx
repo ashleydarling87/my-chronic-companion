@@ -305,6 +305,10 @@ const OnboardingPage = () => {
   const [step, setStep] = useState(saved?.step ?? 0);
   const [belongSelection, setBelongSelection] = useState<string[]>(saved?.belongSelection ?? []);
   const [usageMode, setUsageMode] = useState(saved?.usageMode ?? "self");
+  const [diagnosisMode, setDiagnosisMode] = useState<"diagnosed" | "undiagnosed" | "prefer_not_say" | null>(saved?.diagnosisMode ?? null);
+  const [undiagnosedTags, setUndiagnosedTags] = useState<string[]>(saved?.undiagnosedTags ?? []);
+  const [suspectedConditions, setSuspectedConditions] = useState(saved?.suspectedConditions ?? "");
+  const [conditionSearch, setConditionSearch] = useState("");
   const [ageRange, setAgeRange] = useState(saved?.ageRange ?? "");
   const [painPref, setPainPref] = useState(saved?.painPref ?? "numeric");
   const [selectedSymptoms, setSelectedSymptoms] = useState<string[]>(saved?.selectedSymptoms ?? []);
