@@ -84,10 +84,11 @@ const ChatBubble = ({ message, onChipSelect, isLatest, isLoading, buddyEmoji, us
   );
 };
 
-const makeInitialMessage = (painPref?: string): DisplayMessage => {
-  // Tailor the pain question to the user's preferred description style
+const makeInitialMessage = (painPref?: string, buddyName?: string): DisplayMessage => {
+  const hour = new Date().getHours();
+  const timeGreeting = hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
   let painChip = "Symptoms are really bad";
-  let greeting = "Hey! 💛 How are you feeling today? Tell me everything — the good, the bad, the ugh.";
+  let greeting = `${timeGreeting}! 💛 How are you feeling today? Tell me everything — the good, the bad, the ugh.`;
 
   switch (painPref) {
     case "numeric":
@@ -154,7 +155,7 @@ const ChatPage = () => {
   useEffect(() => {
     setMessages((prev) => {
       if (prev.length === 1 && prev[0].id === "initial") {
-        return [makeInitialMessage(prefs?.pain_preference)];
+        return [makeInitialMessage(prefs?.pain_preference, prefs?.buddy_name)];
       }
       return prev;
     });
