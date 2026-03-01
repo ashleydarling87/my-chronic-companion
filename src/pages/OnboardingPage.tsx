@@ -379,7 +379,7 @@ const OnboardingPage = () => {
       try {
         await saveProgress(false);
         setStep(6);
-        saveOnboardingProgress({ step: 6, belongSelection, usageMode, ageRange, painPref, selectedSymptoms, buddyAvatar, buddyName });
+        saveOnboardingProgress({ step: 6, belongSelection, usageMode, diagnosisMode, undiagnosedTags, suspectedConditions, ageRange, painPref, selectedSymptoms, buddyAvatar, buddyName });
       } catch (e: any) {
         toast.error(e.message || "Failed to save");
       } finally {
