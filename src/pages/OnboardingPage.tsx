@@ -147,8 +147,13 @@ const IntakeChat = ({
           setIsLoading(false);
 
           if (intakeData) {
-            // Intake is complete — short delay then proceed
-            setTimeout(() => onComplete(intakeData), 2000);
+            // Store intake data and show "Ready" chip instead of auto-navigating
+            setPendingIntakeData(intakeData);
+            setMessages((prev) =>
+              prev.map((m) =>
+                m.id === assistantId ? { ...m, chips: [READY_CHIP] } : m
+              )
+            );
           }
         },
       });
