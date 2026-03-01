@@ -177,6 +177,7 @@ const saveSession = (userId: string, msgs: DisplayMessage[]) => {
 const ChatPage = () => {
   const { prefs } = useUserPreferences();
   const { user } = useAuth();
+  const navigate = useNavigate();
   const userId = user?.id || "anonymous";
   const [hasExistingEntry, setHasExistingEntry] = useState(false);
   const [messages, setMessages] = useState<DisplayMessage[]>(() => {
