@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { X } from "lucide-react";
-import { UserPreferences, useUserPreferences } from "@/hooks/useUserPreferences";
+import type { UserPreferences } from "@/hooks/useUserPreferences";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 
 const PAIN_OPTIONS: { value: UserPreferences["pain_preference"]; label: string; description: string }[] = [
@@ -59,7 +59,6 @@ const PainScalePreview = ({ type }: { type: UserPreferences["pain_preference"] }
       </div>
     );
   }
-  // adaptive
   return (
     <div className="space-y-3">
       <p className="text-sm text-muted-foreground">Buddy will pick the best way to ask about your pain each time — numbers, words, or faces — based on the conversation.</p>
@@ -71,7 +70,6 @@ const PainScalePreview = ({ type }: { type: UserPreferences["pain_preference"] }
 };
 
 const IDENTITY_OPTIONS = [
-  // Healthcare standard race/ethnicity
   { value: "white", label: "I'm White" },
   { value: "black", label: "I'm Black or African American" },
   { value: "hispanic_latino", label: "I'm Hispanic or Latino/a" },
@@ -80,36 +78,27 @@ const IDENTITY_OPTIONS = [
   { value: "pacific_islander", label: "I'm Native Hawaiian or Pacific Islander" },
   { value: "middle_eastern", label: "I'm Middle Eastern or North African" },
   { value: "multiracial", label: "I'm Multiracial" },
-  // Gender & sexuality
   { value: "lgbtq", label: "I'm LGBTQ+" },
   { value: "trans_ftm", label: "I'm Trans FTM" },
   { value: "trans_mtf", label: "I'm Trans MTF" },
   { value: "man", label: "I'm a Man" },
   { value: "woman", label: "I'm a Woman" },
   { value: "gender_fluid", label: "I'm Gender Fluid" },
-  // Neurodivergence
   { value: "neurodivergent", label: "I'm Neurodivergent" },
 ];
 
-export default function PainPreferencesCard() {
-  const { prefs, loading, savePrefs } = useUserPreferences();
+interface Props {
+  painPref: UserPreferences["pain_preference"];
+  onPainPrefChange: (v: UserPreferences["pain_preference"]) => void;
+  misNote: string;
+  onMisNoteChange: (v: string) => void;
+  identityTags: string[];
+  onIdentityTagsChange: (v: string[]) => void;
+}
 
-  const [painPref, setPainPref] = useState<UserPreferences["pain_preference"]>("numeric");
-  const [misNote, setMisNote] = useState("");
-  const [identityTags, setIdentityTags] = useState<string[]>([]);
-  const [dirty, setDirty] = useState(false);
-
-  // Sheet state
+export default function PainPreferencesCard({ painPref, onPainPrefChange, misNote, onMisNoteChange, identityTags, onIdentityTagsChange }: Props) {
   const [sheetOpen, setSheetOpen] = useState(false);
   const [previewPref, setPreviewPref] = useState<UserPreferences["pain_preference"]>("numeric");
-
-  useEffect(() => {
-    if (prefs) {
-      setPainPref(prefs.pain_preference);
-      setMisNote(prefs.pain_misunderstanding_note);
-      setIdentityTags(prefs.identity_tags);
-    }
-  }, [prefs]);
 
   const openPreview = (value: UserPreferences["pain_preference"]) => {
     setPreviewPref(value);
@@ -117,35 +106,15 @@ export default function PainPreferencesCard() {
   };
 
   const confirmSelection = () => {
-    setPainPref(previewPref);
-    setDirty(true);
+    onPainPrefChange(previewPref);
     setSheetOpen(false);
   };
 
-  const handleSave = () => {
-    savePrefs({
-      pain_preference: painPref,
-      pain_misunderstanding_note: misNote,
-      identity_tags: identityTags,
-    });
-    setDirty(false);
-  };
-
   const toggleIdentity = (tag: string) => {
-    setIdentityTags((prev) =>
-      prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]
+    onIdentityTagsChange(
+      identityTags.includes(tag) ? identityTags.filter((t) => t !== tag) : [...identityTags, tag]
     );
-    setDirty(true);
   };
-
-  if (loading) {
-    return (
-      <section className="rounded-2xl border bg-card p-4 animate-pulse">
-        <div className="h-4 w-48 rounded bg-muted" />
-        <div className="mt-4 h-20 rounded bg-muted" />
-      </section>
-    );
-  }
 
   return (
     <section className="rounded-2xl border bg-card p-4 space-y-5 animate-slide-up">
@@ -153,11 +122,8 @@ export default function PainPreferencesCard() {
         Pain & Communication Preferences
       </h2>
 
-      {/* Pain format */}
       <div className="space-y-2">
-        <label className="text-xs font-semibold text-muted-foreground">
-          Preferred way to talk about pain
-        </label>
+        <label className="text-xs font-semibold text-muted-foreground">Preferred way to talk about pain</label>
         <div className="grid grid-cols-2 gap-2">
           {PAIN_OPTIONS.map((opt) => (
             <button
@@ -176,25 +142,19 @@ export default function PainPreferencesCard() {
         </div>
       </div>
 
-      {/* Misunderstanding note */}
       <div className="space-y-1">
-        <label className="text-xs font-semibold text-muted-foreground">
-          What do people usually misunderstand about your pain?
-        </label>
+        <label className="text-xs font-semibold text-muted-foreground">What do people usually misunderstand about your pain?</label>
         <textarea
           value={misNote}
-          onChange={(e) => { setMisNote(e.target.value); setDirty(true); }}
+          onChange={(e) => onMisNoteChange(e.target.value)}
           placeholder="e.g., They think I'm exaggerating, or that because I'm young it can't be that bad…"
           rows={3}
           className="w-full rounded-xl border bg-background px-3 py-2.5 text-sm outline-none placeholder:text-muted-foreground focus:ring-2 focus:ring-primary/30 resize-none"
         />
       </div>
 
-      {/* Identity tags (opt-in) */}
       <div className="space-y-2">
-        <label className="text-xs font-semibold text-muted-foreground">
-          Optional identity & context
-        </label>
+        <label className="text-xs font-semibold text-muted-foreground">Optional identity & context</label>
         <div className="rounded-xl bg-destructive/10 p-3 flex gap-2 items-start">
           <span className="text-base mt-0.5">❤️</span>
           <p className="text-xs text-muted-foreground leading-relaxed">
@@ -218,17 +178,6 @@ export default function PainPreferencesCard() {
         </div>
       </div>
 
-
-      {/* Save button */}
-      {dirty && (
-        <button
-          onClick={handleSave}
-          className="w-full rounded-xl bg-primary py-2.5 text-sm font-bold text-primary-foreground transition-all hover:opacity-90"
-        >
-          Save Preferences
-        </button>
-      )}
-
       <div className="rounded-xl bg-primary/10 p-3">
         <p className="text-xs text-muted-foreground leading-relaxed">
           🤎 <strong>Your experience matters.</strong> These preferences help Buddy understand how you communicate about pain
@@ -236,7 +185,6 @@ export default function PainPreferencesCard() {
         </p>
       </div>
 
-      {/* Pain scale preview sheet */}
       <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
         <SheetContent side="bottom" className="rounded-t-2xl px-5 pb-6 pt-0">
           <SheetHeader className="relative pt-5 pb-2">
@@ -251,11 +199,9 @@ export default function PainPreferencesCard() {
               {PAIN_OPTIONS.find((o) => o.value === previewPref)?.label}
             </SheetTitle>
           </SheetHeader>
-
           <div className="py-4">
             <PainScalePreview type={previewPref} />
           </div>
-
           <button
             onClick={confirmSelection}
             className="w-full rounded-xl bg-primary py-3 text-sm font-bold text-primary-foreground transition-all hover:opacity-90"

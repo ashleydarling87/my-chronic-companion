@@ -1,4 +1,4 @@
-import { useUserPreferences, type CommunicationStyle } from "@/hooks/useUserPreferences";
+import type { CommunicationStyle } from "@/hooks/useUserPreferences";
 
 const OPTIONS: { key: keyof CommunicationStyle; label: string; choices: { value: string; label: string }[] }[] = [
   {
@@ -53,17 +53,18 @@ const OPTIONS: { key: keyof CommunicationStyle; label: string; choices: { value:
   },
 ];
 
-const CommunicationStyleCard = () => {
-  const { prefs, savePrefs } = useUserPreferences();
-  const style = prefs?.communication_style || {};
+interface Props {
+  style: CommunicationStyle;
+  onStyleChange: (style: CommunicationStyle) => void;
+}
 
-  const updateStyle = async (key: keyof CommunicationStyle, value: string) => {
-    if (!prefs?.id) return;
+const CommunicationStyleCard = ({ style, onStyleChange }: Props) => {
+  const updateStyle = (key: keyof CommunicationStyle, value: string) => {
     const updated = { ...style, [key]: value };
     Object.keys(updated).forEach((k) => {
       if (!updated[k as keyof CommunicationStyle]) delete updated[k as keyof CommunicationStyle];
     });
-    await savePrefs({ communication_style: updated } as any);
+    onStyleChange(updated);
   };
 
   return (
