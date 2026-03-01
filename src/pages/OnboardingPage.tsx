@@ -406,13 +406,13 @@ const OnboardingPage = () => {
     try {
       await saveProgress(true, intakeData);
       clearOnboardingProgress();
-      await refreshPrefs();
       toast.success(`${buddyName} is ready! Let's go 💛`);
       sessionStorage.setItem("just_onboarded", "true");
-      navigate("/log");
+      // Hard navigate to avoid race condition where ProtectedRoute
+      // still sees stale onboarding_complete=false before state updates
+      window.location.replace("/log");
     } catch (e: any) {
       toast.error(e.message || "Failed to complete onboarding");
-    } finally {
       setSaving(false);
     }
   };
