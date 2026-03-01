@@ -278,7 +278,7 @@ const CommunicationPage = () => {
                 </p>
               </div>
               <div className="flex flex-wrap gap-2">
-                {SITUATIONS.map((s) => (
+                {getSituations(audience).map((s) => (
                   <button
                     key={s}
                     onClick={() => handleSituationSelect(s)}
