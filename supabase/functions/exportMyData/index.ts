@@ -35,11 +35,13 @@ Deno.serve(async (req) => {
     }
 
     // Fetch all user data
-    const [entries, reports, preferences, notes] = await Promise.all([
+    const [entries, reports, preferences, notes, savedReports, mentalHealth] = await Promise.all([
       client.from("entries").select("*").eq("user_id", user.id),
       client.from("doctor_reports").select("*").eq("user_id", user.id),
       client.from("user_preferences").select("*").eq("user_id", user.id),
       client.from("encouragement_notes").select("*").eq("user_id", user.id),
+      client.from("saved_reports").select("*").eq("user_id", user.id),
+      client.from("mental_health_scores").select("*").eq("user_id", user.id),
     ]);
 
     const exportData = {
@@ -49,6 +51,8 @@ Deno.serve(async (req) => {
       doctor_reports: reports.data || [],
       preferences: preferences.data || [],
       encouragement_notes: notes.data || [],
+      saved_reports: savedReports.data || [],
+      mental_health_scores: mentalHealth.data || [],
     };
 
     return new Response(JSON.stringify(exportData, null, 2), {
