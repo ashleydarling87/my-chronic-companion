@@ -731,6 +731,39 @@ const OnboardingPage = () => {
                 </button>
               )}
 
+              {/* Diagnosis-aware suggestions from search */}
+              {(() => {
+                const searchLower = symptomSearch.toLowerCase();
+                // Check if search matches a diagnosis keyword
+                const diagnosisMatches = searchLower
+                  ? Object.entries(DIAGNOSIS_SYMPTOM_MAP)
+                      .filter(([key]) => key.toLowerCase().includes(searchLower))
+                      .flatMap(([, symptoms]) => symptoms)
+                      .filter((s, i, arr) => arr.indexOf(s) === i)
+                      .filter((s) => !selectedSymptoms.some((m) => m.toLowerCase() === s.toLowerCase()))
+                  : [];
+
+                if (diagnosisMatches.length > 0) {
+                  return (
+                    <div className="space-y-2">
+                      <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Related symptoms</p>
+                      <div className="flex flex-wrap gap-1.5">
+                        {diagnosisMatches.map((s) => (
+                          <button
+                            key={s}
+                            onClick={() => setSelectedSymptoms((prev) => [...prev, s])}
+                            className="rounded-full border border-primary/30 bg-primary/5 px-3 py-1.5 text-xs font-medium text-foreground transition-all hover:bg-primary/10 hover:border-primary/50"
+                          >
+                            + {s}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                }
+                return null;
+              })()}
+
               {/* Suggestions — prioritized by selected conditions */}
               {(() => {
                 const conditionRelevant = new Set(
@@ -741,23 +774,37 @@ const OnboardingPage = () => {
                     !selectedSymptoms.some((m) => m.toLowerCase() === s.toLowerCase()) &&
                     (!symptomSearch || s.toLowerCase().includes(symptomSearch.toLowerCase()))
                 );
-                // Sort: condition-relevant first, then the rest
                 const sorted = [
                   ...available.filter((s) => conditionRelevant.has(s)),
                   ...available.filter((s) => !conditionRelevant.has(s)),
                 ];
+
+                // Add catch-all meta-tag
+                const CATCH_ALL = "I experience other things that are hard to describe";
+                const showCatchAll = !selectedSymptoms.includes(CATCH_ALL) && !symptomSearch;
+
                 return (
-              <div className="flex flex-wrap gap-1.5">
-                {sorted.map((s) => (
-                  <button
-                    key={s}
-                    onClick={() => setSelectedSymptoms((prev) => [...prev, s])}
-                    className="rounded-full border border-muted bg-secondary/50 px-3 py-1.5 text-xs font-medium text-foreground transition-all hover:bg-primary/10 hover:border-primary/30"
-                  >
-                    + {s}
-                  </button>
-                ))}
-              </div>
+                  <div className="space-y-3">
+                    <div className="flex flex-wrap gap-1.5">
+                      {sorted.map((s) => (
+                        <button
+                          key={s}
+                          onClick={() => setSelectedSymptoms((prev) => [...prev, s])}
+                          className="rounded-full border border-muted bg-secondary/50 px-3 py-1.5 text-xs font-medium text-foreground transition-all hover:bg-primary/10 hover:border-primary/30"
+                        >
+                          + {s}
+                        </button>
+                      ))}
+                    </div>
+                    {showCatchAll && (
+                      <button
+                        onClick={() => setSelectedSymptoms((prev) => [...prev, CATCH_ALL])}
+                        className="rounded-full border border-dashed border-muted-foreground/30 bg-secondary/30 px-3 py-1.5 text-xs font-medium text-muted-foreground transition-all hover:bg-primary/5 hover:border-primary/30 hover:text-foreground"
+                      >
+                        + {CATCH_ALL}
+                      </button>
+                    )}
+                  </div>
                 );
               })()}
             </div>
