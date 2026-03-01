@@ -143,7 +143,7 @@ export default function PainPreferencesCard({ painPref, onPainPrefChange, misNot
       </div>
 
       <div className="space-y-1">
-        <label className="text-xs font-semibold text-muted-foreground">What do people usually misunderstand about your pain?</label>
+        <label className="text-xs font-semibold text-muted-foreground">What do people usually misunderstand about your health?</label>
         <textarea
           value={misNote}
           onChange={(e) => onMisNoteChange(e.target.value)}
