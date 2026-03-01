@@ -1,0 +1,1 @@
+ALTER TABLE public.entries ADD COLUMN IF NOT EXISTS updated_at timestamp with time zone DEFAULT NULL;

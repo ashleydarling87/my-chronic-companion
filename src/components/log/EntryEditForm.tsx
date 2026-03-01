@@ -26,6 +26,7 @@ interface DbEntry {
   experienced_discrimination: boolean;
   context_notes: string | null;
   emergency: boolean;
+  updated_at: string | null;
   share_with_doctor_flags: { includeContextNotes: boolean; includeDiscriminationNotes: boolean };
 }
 

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { format } from "date-fns";
-import { Plus, Edit2, Check, X, Loader2, ChevronDown, ChevronUp, AlertTriangle, Eye, Trash2 } from "lucide-react";
+import { Plus, Edit2, Check, X, Loader2, ChevronDown, ChevronUp, AlertTriangle, Eye, Trash2, RefreshCw } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 import BottomNav from "../components/BottomNav";
@@ -372,6 +372,11 @@ const EntryCard = ({ entry, onExpand }: { entry: DbEntry; onExpand: () => void }
       <div className="flex items-center justify-between mb-2">
         <span className="text-sm font-bold">{format(new Date(entry.created_at), "EEE, MMM d")}</span>
         <div className="flex items-center gap-1.5">
+          {entry.updated_at && (
+            <span className="flex items-center gap-1 rounded-full bg-accent/10 px-2 py-0.5 text-[10px] font-medium text-accent">
+              <RefreshCw size={10} /> Updated
+            </span>
+          )}
           {hasContext && (
             <span className="flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-medium text-primary">
               <Eye size={10} /> Context note

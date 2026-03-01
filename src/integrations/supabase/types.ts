@@ -124,6 +124,7 @@ export type Database = {
           summary: string | null
           symptoms: Json | null
           triggers: Json | null
+          updated_at: string | null
           user_id: string | null
         }
         Insert: {
@@ -151,6 +152,7 @@ export type Database = {
           summary?: string | null
           symptoms?: Json | null
           triggers?: Json | null
+          updated_at?: string | null
           user_id?: string | null
         }
         Update: {
@@ -178,6 +180,7 @@ export type Database = {
           summary?: string | null
           symptoms?: Json | null
           triggers?: Json | null
+          updated_at?: string | null
           user_id?: string | null
         }
         Relationships: []
