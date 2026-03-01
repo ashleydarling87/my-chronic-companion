@@ -61,7 +61,7 @@ const CrisisSheet = ({ open, onClose }: { open: boolean; onClose: () => void }) 
         </button>
       </div>
 
-      <div className="flex-1 overflow-y-auto px-4 py-4">
+      <div className="flex-1 overflow-y-auto px-4 py-4 pb-24">
         <div className="mx-auto max-w-lg">
           <div className="rounded-2xl bg-destructive/10 p-4 mb-4">
             <p className="text-sm leading-relaxed">
