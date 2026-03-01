@@ -321,7 +321,7 @@ const OnboardingPage = () => {
 
   const canAdvance = () => {
     if (step === 0) return !!usageMode;
-    if (step === 1) return belongSelection.length > 0;
+    if (step === 1) return !!diagnosisMode;
     if (step === 2) return !!ageRange;
     if (step === 3) return !!painPref;
     if (step === 4) return true; // symptoms optional
