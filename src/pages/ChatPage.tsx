@@ -145,12 +145,15 @@ const saveSession = (userId: string, msgs: DisplayMessage[]) => {
 
 const ChatPage = () => {
   const { prefs } = useUserPreferences();
+  const { user } = useAuth();
+  const userId = user?.id || "anonymous";
   const [messages, setMessages] = useState<DisplayMessage[]>(() => {
-    const restored = loadSession();
+    const restored = loadSession(userId);
     return restored.length > 0 ? restored : [makeInitialMessage()];
   });
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [selectedChips, setSelectedChips] = useState<string[]>([]);
   const bottomRef = useRef<HTMLDivElement>(null);
 
   // Update initial message chips when preferences load
