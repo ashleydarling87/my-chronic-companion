@@ -179,7 +179,7 @@ const ProfilePage = () => {
   return (
     <div className="flex min-h-screen flex-col bg-background">
       <header className="sticky top-0 z-40 flex items-center gap-3 border-b bg-card/95 px-4 py-3 backdrop-blur-md">
-        <button onClick={() => navigate(-1)} className="flex h-9 w-9 items-center justify-center rounded-full bg-secondary">
+        <button onClick={() => guardedNavigate(() => navigate(-1))} className="flex h-9 w-9 items-center justify-center rounded-full bg-secondary">
           <ArrowLeft size={18} />
         </button>
         <h1 className="text-lg font-bold">Profile & Settings</h1>
