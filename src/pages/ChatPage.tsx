@@ -325,6 +325,7 @@ const ChatPage = () => {
           care_recipient_name: prefs.care_recipient_name,
           care_recipient_age_range: prefs.care_recipient_age_range,
         } : undefined,
+        hasExistingEntry,
         onDelta: (chunk) => upsertAssistant(chunk),
         onDone: async () => {
           // Parse the final text for chips and entry data
