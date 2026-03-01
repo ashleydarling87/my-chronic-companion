@@ -328,6 +328,16 @@ const ProfilePage = () => {
           <DeleteAccountSection />
         </div>
       </main>
+
+      {/* Settings Sheets */}
+      <NotificationsSheet open={activeSheet === "notifications"} onClose={() => setActiveSheet(null)} />
+      <DataPrivacySheet open={activeSheet === "data-privacy"} onClose={() => setActiveSheet(null)} />
+      <HelpSupportSheet open={activeSheet === "help"} onClose={() => setActiveSheet(null)} />
+      <AboutSheet
+        open={activeSheet === "about"}
+        onClose={() => setActiveSheet(null)}
+        onOpenPrivacy={() => setActiveSheet("data-privacy")}
+      />
     </div>
   );
 };
