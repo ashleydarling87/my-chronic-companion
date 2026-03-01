@@ -302,11 +302,11 @@ const OnboardingPage = () => {
   const [buddyName, setBuddyName] = useState(saved?.buddyName ?? "Buddy");
   const [saving, setSaving] = useState(false);
 
-  const totalSteps = 7; // belong → usage mode → age → pain pref → symptoms → buddy setup → intake chat
+  const totalSteps = 7; // usage mode → belong → age → pain pref → symptoms → buddy setup → intake chat
 
   const canAdvance = () => {
-    if (step === 0) return belongSelection.length > 0;
-    if (step === 1) return !!usageMode;
+    if (step === 0) return !!usageMode;
+    if (step === 1) return belongSelection.length > 0;
     if (step === 2) return !!ageRange;
     if (step === 3) return !!painPref;
     if (step === 4) return true; // symptoms optional
