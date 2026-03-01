@@ -97,8 +97,7 @@ export default function PainPreferencesCard() {
   const [painPref, setPainPref] = useState<UserPreferences["pain_preference"]>("numeric");
   const [misNote, setMisNote] = useState("");
   const [identityTags, setIdentityTags] = useState<string[]>([]);
-  const [includeDiscrimination, setIncludeDiscrimination] = useState(false);
-  const [includeEmotional, setIncludeEmotional] = useState(false);
+  const [dirty, setDirty] = useState(false);
   const [dirty, setDirty] = useState(false);
 
   // Sheet state
