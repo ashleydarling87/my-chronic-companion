@@ -23,6 +23,10 @@ const CONDITION_OPTIONS = [
   { label: "ADHD", emoji: "🧠" },
   { label: "Bipolar disorder", emoji: "🎭" },
   { label: "OCD", emoji: "🔁" },
+  { label: "Autism", emoji: "♾️" },
+  { label: "POTS", emoji: "💓" },
+  { label: "PCOS", emoji: "🩺" },
+  { label: "Cancer", emoji: "🎗️" },
 ];
 
 const UNDIAGNOSED_TAGS = [
