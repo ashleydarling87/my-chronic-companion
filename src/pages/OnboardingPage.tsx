@@ -649,9 +649,9 @@ const OnboardingPage = () => {
               <div className="text-center space-y-2">
                 <span className="text-4xl">📊</span>
                 <h2 className="text-xl font-extrabold">
-                  {usageMode === "caretaker" ? "How do they describe pain?" : "How do you describe pain?"}
+                  {usageMode === "caretaker" ? "How do they like to rate how they're feeling?" : "How do you like to rate how you're feeling?"}
                 </h2>
-                <p className="text-sm text-muted-foreground">Choose the scale that feels most natural</p>
+                <p className="text-sm text-muted-foreground">We'll use this for pain and other symptoms.</p>
               </div>
               <div className="space-y-2">
                 {PAIN_PREFS.map((p) => (
