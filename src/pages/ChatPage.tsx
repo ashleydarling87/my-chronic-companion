@@ -98,7 +98,7 @@ const ChatBubble = ({ message, onChipSelect, isLatest, isLoading, buddyEmoji, us
           </p>
         )}
         {!isUser && isLatest && message.chips && message.chips.length > 0 && (
-          <QuickChips chips={message.chips} onSelect={onChipSelect} disabled={isLoading} />
+          <QuickChips chips={message.chips} onSelect={onChipSelect} disabled={isLoading} selectedChips={selectedChips} onSend={onSendChips} />
         )}
       </div>
     </div>
