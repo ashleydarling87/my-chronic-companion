@@ -205,6 +205,7 @@ export function useUserPreferences() {
         usage_mode: (data as any).usage_mode ?? "self",
         care_recipient_name: (data as any).care_recipient_name ?? null,
         care_recipient_age_range: (data as any).care_recipient_age_range ?? null,
+        notification_preferences: (data as any).notification_preferences ?? DEFAULT_NOTIFICATION_PREFS,
       });
       toast.success("Preferences saved");
     }
