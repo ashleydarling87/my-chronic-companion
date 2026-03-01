@@ -350,7 +350,20 @@ const OnboardingPage = () => {
       row.intake_body_regions = intakeData.body_regions || intakeData.areas || [];
       row.intake_treatments = intakeData.treatments || intakeData.treatments_tried || [];
       row.intake_goals = intakeData.goals || intakeData.goal || null;
-      row.intake_raw = intakeData;
+      row.intake_raw = {
+        ...intakeData,
+        diagnosis_mode: diagnosisMode,
+        undiagnosed_tags: undiagnosedTags,
+        suspected_conditions: suspectedConditions || null,
+        selected_conditions: belongSelection,
+      };
+    } else {
+      row.intake_raw = {
+        diagnosis_mode: diagnosisMode,
+        undiagnosed_tags: undiagnosedTags,
+        suspected_conditions: suspectedConditions || null,
+        selected_conditions: belongSelection,
+      };
     }
 
     const { data: existing } = await supabase
