@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 
-import { ArrowLeft, ChevronRight, LogOut, Camera, Loader2, Sun, Moon, Monitor } from "lucide-react";
+import { ArrowLeft, ChevronRight, LogOut, Camera, Loader2, Sun, Moon, Monitor, Bell, ShieldCheck, LifeBuoy, Info } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "next-themes";
 import { BUDDY_AVATARS, getBuddyEmoji } from "../lib/data";
@@ -9,10 +9,16 @@ import CommunicationStyleCard from "../components/CommunicationStyleCard";
 import SymptomsCard from "../components/SymptomsCard";
 import DeleteAccountSection from "../components/DeleteAccountSection";
 import CropSheet from "../components/CropSheet";
+import NotificationsSheet from "../components/settings/NotificationsSheet";
+import DataPrivacySheet from "../components/settings/DataPrivacySheet";
+import HelpSupportSheet from "../components/settings/HelpSupportSheet";
+import AboutSheet from "../components/settings/AboutSheet";
 import { useAuth } from "@/contexts/AuthContext";
 import { useUserPreferences } from "@/hooks/useUserPreferences";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+
+type SettingsSheet = "notifications" | "data-privacy" | "help" | "about" | null;
 
 const ProfilePage = () => {
   const { signOut, user } = useAuth();
@@ -27,6 +33,7 @@ const ProfilePage = () => {
   const [cropSrc, setCropSrc] = useState<string | null>(null);
   const [careRecipientName, setCareRecipientName] = useState("");
   const [careRecipientAgeRange, setCareRecipientAgeRange] = useState("");
+  const [activeSheet, setActiveSheet] = useState<SettingsSheet>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -287,9 +294,21 @@ const ProfilePage = () => {
           {/* Settings */}
           <section className="rounded-2xl border bg-card divide-y animate-slide-up">
             <h2 className="text-sm font-bold text-muted-foreground uppercase tracking-wider px-4 pt-4 pb-2">Settings</h2>
-            {["Notifications", "Data Export", "Privacy", "Help & Support", "About"].map((item) => (
-              <button key={item} className="flex w-full items-center justify-between px-4 py-3.5 text-sm font-medium hover:bg-secondary/50 transition-colors">
-                {item}
+            {([
+              { key: "notifications" as const, label: "Notifications", icon: Bell },
+              { key: "data-privacy" as const, label: "Data & Privacy", icon: ShieldCheck },
+              { key: "help" as const, label: "Help & Support", icon: LifeBuoy },
+              { key: "about" as const, label: "About", icon: Info },
+            ]).map(({ key, label, icon: Icon }) => (
+              <button
+                key={key}
+                onClick={() => setActiveSheet(key)}
+                className="flex w-full items-center justify-between px-4 py-3.5 text-sm font-medium hover:bg-secondary/50 transition-colors"
+              >
+                <span className="flex items-center gap-2.5">
+                  <Icon size={16} className="text-muted-foreground" />
+                  {label}
+                </span>
                 <ChevronRight size={16} className="text-muted-foreground" />
               </button>
             ))}
@@ -309,6 +328,16 @@ const ProfilePage = () => {
           <DeleteAccountSection />
         </div>
       </main>
+
+      {/* Settings Sheets */}
+      <NotificationsSheet open={activeSheet === "notifications"} onClose={() => setActiveSheet(null)} />
+      <DataPrivacySheet open={activeSheet === "data-privacy"} onClose={() => setActiveSheet(null)} />
+      <HelpSupportSheet open={activeSheet === "help"} onClose={() => setActiveSheet(null)} />
+      <AboutSheet
+        open={activeSheet === "about"}
+        onClose={() => setActiveSheet(null)}
+        onOpenPrivacy={() => setActiveSheet("data-privacy")}
+      />
     </div>
   );
 };
