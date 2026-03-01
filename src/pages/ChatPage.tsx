@@ -121,23 +121,25 @@ const getChatDay = (): string => {
   return now.toISOString().slice(0, 10);
 };
 
-const STORAGE_KEY = "buddy_chat_session";
+const STORAGE_KEY_PREFIX = "buddy_chat_session_";
 
-const loadSession = (): DisplayMessage[] => {
+const getStorageKey = (userId: string) => `${STORAGE_KEY_PREFIX}${userId}`;
+
+const loadSession = (userId: string): DisplayMessage[] => {
   try {
-    const raw = sessionStorage.getItem(STORAGE_KEY);
+    const raw = sessionStorage.getItem(getStorageKey(userId));
     if (!raw) return [];
     const { day, messages } = JSON.parse(raw);
-    if (day !== getChatDay()) return []; // reset at 3am boundary
+    if (day !== getChatDay()) return [];
     return messages.map((m: DisplayMessage) => ({ ...m, timestamp: new Date(m.timestamp) }));
   } catch {
     return [];
   }
 };
 
-const saveSession = (msgs: DisplayMessage[]) => {
+const saveSession = (userId: string, msgs: DisplayMessage[]) => {
   try {
-    sessionStorage.setItem(STORAGE_KEY, JSON.stringify({ day: getChatDay(), messages: msgs }));
+    sessionStorage.setItem(getStorageKey(userId), JSON.stringify({ day: getChatDay(), messages: msgs }));
   } catch { /* quota exceeded — non-critical */ }
 };
 
