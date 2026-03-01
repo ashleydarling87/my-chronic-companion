@@ -395,6 +395,10 @@ const ChatPage = () => {
 
   const handleSend = () => sendMessage(input);
   const handleChipSelect = (chip: string) => {
+    if (chip.toLowerCase().includes("take me to resources")) {
+      navigate("/resources");
+      return;
+    }
     setSelectedChips((prev) =>
       prev.includes(chip) ? prev.filter((c) => c !== chip) : [...prev, chip]
     );
