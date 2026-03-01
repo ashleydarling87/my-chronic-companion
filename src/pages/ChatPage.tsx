@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { Send, Mic } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import Header from "../components/Header";
 import BottomNav from "../components/BottomNav";
