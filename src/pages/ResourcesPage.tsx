@@ -59,38 +59,6 @@ const categories = [
   },
 ];
 
-const ADVOCACY_RESOURCES = [
-  {
-    title: "Advocating for Pain Treatment",
-    description: "How to effectively communicate your pain to healthcare providers and push for the care you deserve.",
-    emoji: "🗣️",
-  },
-  {
-    title: "When Your Pain Is Dismissed",
-    description: "What to do when a doctor doesn't take your pain seriously — your experience is valid.",
-    emoji: "✊",
-  },
-  {
-    title: "Pain Bias in Healthcare",
-    description: "Understanding how racial and gender bias affects pain treatment, especially for Black and Indigenous patients.",
-    emoji: "📊",
-  },
-  {
-    title: "Finding Culturally Competent Care",
-    description: "Resources to help you find providers who understand your identity and lived experience.",
-    emoji: "🤝",
-  },
-  {
-    title: "Your Rights as a Patient",
-    description: "Know your rights when seeking pain treatment. You deserve to be heard and believed.",
-    emoji: "⚖️",
-  },
-  {
-    title: "Preparing for Doctor Visits",
-    description: "Templates and scripts to help you communicate your symptoms clearly and get taken seriously.",
-    emoji: "📋",
-  },
-];
 
 const ResourcesPage = () => {
   const navigate = useNavigate();
