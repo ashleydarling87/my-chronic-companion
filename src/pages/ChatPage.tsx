@@ -87,7 +87,7 @@ const ChatBubble = ({ message, onChipSelect, isLatest, isLoading, buddyEmoji, us
 const makeInitialMessage = (painPref?: string): DisplayMessage => {
   // Tailor the pain question to the user's preferred description style
   let painChip = "Symptoms are really bad";
-  let greeting = "Hey bestie! 💛 How are you feeling today? Tell me everything — the good, the bad, the ugh.";
+  let greeting = "Hey! 💛 How are you feeling today? Tell me everything — the good, the bad, the ugh.";
 
   switch (painPref) {
     case "numeric":
