@@ -294,9 +294,21 @@ const ProfilePage = () => {
           {/* Settings */}
           <section className="rounded-2xl border bg-card divide-y animate-slide-up">
             <h2 className="text-sm font-bold text-muted-foreground uppercase tracking-wider px-4 pt-4 pb-2">Settings</h2>
-            {["Notifications", "Data Export", "Privacy", "Help & Support", "About"].map((item) => (
-              <button key={item} className="flex w-full items-center justify-between px-4 py-3.5 text-sm font-medium hover:bg-secondary/50 transition-colors">
-                {item}
+            {([
+              { key: "notifications" as const, label: "Notifications", icon: Bell },
+              { key: "data-privacy" as const, label: "Data & Privacy", icon: ShieldCheck },
+              { key: "help" as const, label: "Help & Support", icon: LifeBuoy },
+              { key: "about" as const, label: "About", icon: Info },
+            ]).map(({ key, label, icon: Icon }) => (
+              <button
+                key={key}
+                onClick={() => setActiveSheet(key)}
+                className="flex w-full items-center justify-between px-4 py-3.5 text-sm font-medium hover:bg-secondary/50 transition-colors"
+              >
+                <span className="flex items-center gap-2.5">
+                  <Icon size={16} className="text-muted-foreground" />
+                  {label}
+                </span>
                 <ChevronRight size={16} className="text-muted-foreground" />
               </button>
             ))}
