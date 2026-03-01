@@ -128,10 +128,6 @@ export default function PainPreferencesCard() {
       pain_preference: painPref,
       pain_misunderstanding_note: misNote,
       identity_tags: identityTags,
-      report_sharing_defaults: {
-        includeDiscrimination,
-        includeEmotionalImpact: includeEmotional,
-      },
     });
     setDirty(false);
   };
