@@ -11,6 +11,7 @@ import WeeklyPage from "./pages/WeeklyPage";
 import ResourcesPage from "./pages/ResourcesPage";
 import ArticlesPage from "./pages/ArticlesPage";
 import MindfulnessPage from "./pages/MindfulnessPage";
+import CommunicationPage from "./pages/CommunicationPage";
 import ProfilePage from "./pages/ProfilePage";
 import SummaryPage from "./pages/SummaryPage";
 import AuthPage from "./pages/AuthPage";
