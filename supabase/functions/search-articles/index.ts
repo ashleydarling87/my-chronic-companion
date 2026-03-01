@@ -50,7 +50,7 @@ You MUST return a JSON array using the tool provided. Each article must have:
 - source: The name of the source (one of: ${TRUSTED_SOURCES.map(s => s.name).join(", ")})
 - topic: One of: Pain Management, Sleep, Mental Health, Mindfulness, Nutrition, Exercise, Advocacy
 
-Make titles specific and actionable. Vary the sources across recommendations. Focus on practical, evidence-based content.`;
+Make titles specific and actionable. Use titles that closely match real, well-known articles on these sites so the search results will find the actual article. Vary the sources across recommendations. Focus on practical, evidence-based content.`;
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",

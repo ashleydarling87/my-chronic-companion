@@ -226,17 +226,36 @@ const IntakeChat = ({
   );
 };
 
+const ONBOARDING_STORAGE_KEY = "onboarding_progress";
+
+const loadOnboardingProgress = () => {
+  try {
+    const raw = sessionStorage.getItem(ONBOARDING_STORAGE_KEY);
+    if (!raw) return null;
+    return JSON.parse(raw);
+  } catch { return null; }
+};
+
+const saveOnboardingProgress = (data: Record<string, unknown>) => {
+  try { sessionStorage.setItem(ONBOARDING_STORAGE_KEY, JSON.stringify(data)); } catch {}
+};
+
+const clearOnboardingProgress = () => {
+  sessionStorage.removeItem(ONBOARDING_STORAGE_KEY);
+};
+
 const OnboardingPage = () => {
   const navigate = useNavigate();
-  const [step, setStep] = useState(0);
-  const [belongSelection, setBelongSelection] = useState<string[]>([]);
-  const [usageMode, setUsageMode] = useState("self");
-  const [ageRange, setAgeRange] = useState("");
-  const [painPref, setPainPref] = useState("numeric");
-  const [selectedSymptoms, setSelectedSymptoms] = useState<string[]>([]);
+  const saved = loadOnboardingProgress();
+  const [step, setStep] = useState(saved?.step ?? 0);
+  const [belongSelection, setBelongSelection] = useState<string[]>(saved?.belongSelection ?? []);
+  const [usageMode, setUsageMode] = useState(saved?.usageMode ?? "self");
+  const [ageRange, setAgeRange] = useState(saved?.ageRange ?? "");
+  const [painPref, setPainPref] = useState(saved?.painPref ?? "numeric");
+  const [selectedSymptoms, setSelectedSymptoms] = useState<string[]>(saved?.selectedSymptoms ?? []);
   const [symptomSearch, setSymptomSearch] = useState("");
-  const [buddyAvatar, setBuddyAvatar] = useState("bear");
-  const [buddyName, setBuddyName] = useState("Buddy");
+  const [buddyAvatar, setBuddyAvatar] = useState(saved?.buddyAvatar ?? "bear");
+  const [buddyName, setBuddyName] = useState(saved?.buddyName ?? "Buddy");
   const [saving, setSaving] = useState(false);
 
   const totalSteps = 7; // belong → usage mode → age → pain pref → symptoms → buddy setup → intake chat
@@ -291,14 +310,17 @@ const OnboardingPage = () => {
   };
 
   const handleNext = async () => {
+    const nextStep = step + 1;
     if (step < 5) {
-      setStep(step + 1);
+      setStep(nextStep);
+      saveOnboardingProgress({ step: nextStep, belongSelection, usageMode, ageRange, painPref, selectedSymptoms, buddyAvatar, buddyName });
     } else if (step === 5) {
       // Save buddy setup then enter intake chat
       setSaving(true);
       try {
         await saveProgress(false);
         setStep(6);
+        saveOnboardingProgress({ step: 6, belongSelection, usageMode, ageRange, painPref, selectedSymptoms, buddyAvatar, buddyName });
       } catch (e: any) {
         toast.error(e.message || "Failed to save");
       } finally {
@@ -312,6 +334,7 @@ const OnboardingPage = () => {
     try {
       await saveProgress(true, intakeData);
       toast.success(`${buddyName} is ready! Let's go 💛`);
+      clearOnboardingProgress();
       sessionStorage.setItem("just_onboarded", "true");
       navigate("/");
     } catch (e: any) {

@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { Send, Mic } from "lucide-react";
 import { toast } from "sonner";
 import Header from "../components/Header";
@@ -28,28 +28,49 @@ const TypingIndicator = () => (
   </div>
 );
 
-const QuickChips = ({ chips, onSelect, disabled }: { chips: string[]; onSelect: (c: string) => void; disabled: boolean }) => (
-  <div className="flex flex-wrap gap-1.5 mt-2 animate-slide-up">
-    {chips.map((chip) => (
+const QuickChips = ({ chips, onSelect, disabled, selectedChips, onSend }: { chips: string[]; onSelect: (c: string) => void; disabled: boolean; selectedChips: string[]; onSend: () => void }) => (
+  <div className="space-y-2 mt-2 animate-slide-up">
+    <div className="flex flex-wrap gap-1.5">
+      {chips.map((chip) => {
+        const isSelected = selectedChips.includes(chip);
+        return (
+          <button
+            key={chip}
+            onClick={() => onSelect(chip)}
+            disabled={disabled}
+            className={`rounded-full border px-3 py-1.5 text-xs font-medium transition-all disabled:opacity-40 ${
+              isSelected
+                ? "border-primary bg-primary text-primary-foreground"
+                : "border-primary/30 bg-primary/5 text-foreground hover:bg-primary/15 hover:border-primary/50"
+            }`}
+          >
+            {chip}
+          </button>
+        );
+      })}
+    </div>
+    {selectedChips.length > 0 && (
       <button
-        key={chip}
-        onClick={() => onSelect(chip)}
+        onClick={onSend}
         disabled={disabled}
-        className="rounded-full border border-primary/30 bg-primary/5 px-3 py-1.5 text-xs font-medium text-foreground transition-all hover:bg-primary/15 hover:border-primary/50 disabled:opacity-40"
+        className="flex items-center gap-1.5 rounded-full bg-primary px-4 py-1.5 text-xs font-semibold text-primary-foreground transition-all active:scale-95 disabled:opacity-40"
       >
-        {chip}
+        <Send size={12} />
+        Send {selectedChips.length > 1 ? `(${selectedChips.length})` : ""}
       </button>
-    ))}
+    )}
   </div>
 );
 
-const ChatBubble = ({ message, onChipSelect, isLatest, isLoading, buddyEmoji, userProfilePic }: {
+const ChatBubble = ({ message, onChipSelect, isLatest, isLoading, buddyEmoji, userProfilePic, selectedChips, onSendChips }: {
   message: DisplayMessage;
   onChipSelect: (c: string) => void;
   isLatest: boolean;
   isLoading: boolean;
   buddyEmoji: string;
   userProfilePic: string | null;
+  selectedChips: string[];
+  onSendChips: () => void;
 }) => {
   const isUser = message.role === "user";
 
@@ -77,7 +98,7 @@ const ChatBubble = ({ message, onChipSelect, isLatest, isLoading, buddyEmoji, us
           </p>
         )}
         {!isUser && isLatest && message.chips && message.chips.length > 0 && (
-          <QuickChips chips={message.chips} onSelect={onChipSelect} disabled={isLoading} />
+          <QuickChips chips={message.chips} onSelect={onChipSelect} disabled={isLoading} selectedChips={selectedChips} onSend={onSendChips} />
         )}
       </div>
     </div>
@@ -121,34 +142,39 @@ const getChatDay = (): string => {
   return now.toISOString().slice(0, 10);
 };
 
-const STORAGE_KEY = "buddy_chat_session";
+const STORAGE_KEY_PREFIX = "buddy_chat_session_";
 
-const loadSession = (): DisplayMessage[] => {
+const getStorageKey = (userId: string) => `${STORAGE_KEY_PREFIX}${userId}`;
+
+const loadSession = (userId: string): DisplayMessage[] => {
   try {
-    const raw = sessionStorage.getItem(STORAGE_KEY);
+    const raw = sessionStorage.getItem(getStorageKey(userId));
     if (!raw) return [];
     const { day, messages } = JSON.parse(raw);
-    if (day !== getChatDay()) return []; // reset at 3am boundary
+    if (day !== getChatDay()) return [];
     return messages.map((m: DisplayMessage) => ({ ...m, timestamp: new Date(m.timestamp) }));
   } catch {
     return [];
   }
 };
 
-const saveSession = (msgs: DisplayMessage[]) => {
+const saveSession = (userId: string, msgs: DisplayMessage[]) => {
   try {
-    sessionStorage.setItem(STORAGE_KEY, JSON.stringify({ day: getChatDay(), messages: msgs }));
+    sessionStorage.setItem(getStorageKey(userId), JSON.stringify({ day: getChatDay(), messages: msgs }));
   } catch { /* quota exceeded — non-critical */ }
 };
 
 const ChatPage = () => {
   const { prefs } = useUserPreferences();
+  const { user } = useAuth();
+  const userId = user?.id || "anonymous";
   const [messages, setMessages] = useState<DisplayMessage[]>(() => {
-    const restored = loadSession();
+    const restored = loadSession(userId);
     return restored.length > 0 ? restored : [makeInitialMessage()];
   });
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [selectedChips, setSelectedChips] = useState<string[]>([]);
   const bottomRef = useRef<HTMLDivElement>(null);
 
   // Update initial message chips when preferences load
@@ -165,10 +191,10 @@ const ChatPage = () => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isLoading]);
 
-  // Persist messages to sessionStorage
+  // Persist messages to sessionStorage (user-scoped)
   useEffect(() => {
-    saveSession(messages);
-  }, [messages]);
+    saveSession(userId, messages);
+  }, [messages, userId]);
 
   const saveEntryToDb = async (entryData: Record<string, unknown>) => {
     const { data: { user: currentUser } } = await supabase.auth.getUser();
@@ -303,7 +329,16 @@ const ChatPage = () => {
   };
 
   const handleSend = () => sendMessage(input);
-  const handleChipSelect = (chip: string) => sendMessage(chip);
+  const handleChipSelect = (chip: string) => {
+    setSelectedChips((prev) =>
+      prev.includes(chip) ? prev.filter((c) => c !== chip) : [...prev, chip]
+    );
+  };
+  const handleSendChips = () => {
+    if (selectedChips.length === 0) return;
+    sendMessage(selectedChips.join(", "));
+    setSelectedChips([]);
+  };
 
   const latestAssistantId = [...messages].reverse().find((m) => m.role === "assistant")?.id;
 
@@ -323,6 +358,8 @@ const ChatPage = () => {
               isLoading={isLoading}
               buddyEmoji={getBuddyEmoji(prefs?.buddy_avatar || "bear")}
               userProfilePic={prefs?.profile_picture_url || null}
+              selectedChips={selectedChips}
+              onSendChips={handleSendChips}
             />
           ))}
           {isLoading && !messages.some((m) => m.id === (Date.now() + 1).toString()) && (
