@@ -308,7 +308,16 @@ const ChatPage = () => {
   };
 
   const handleSend = () => sendMessage(input);
-  const handleChipSelect = (chip: string) => sendMessage(chip);
+  const handleChipSelect = (chip: string) => {
+    setSelectedChips((prev) =>
+      prev.includes(chip) ? prev.filter((c) => c !== chip) : [...prev, chip]
+    );
+  };
+  const handleSendChips = () => {
+    if (selectedChips.length === 0) return;
+    sendMessage(selectedChips.join(", "));
+    setSelectedChips([]);
+  };
 
   const latestAssistantId = [...messages].reverse().find((m) => m.role === "assistant")?.id;
 
