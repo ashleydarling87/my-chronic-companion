@@ -166,6 +166,11 @@ const EncouragementSheet = ({ open, onClose }: { open: boolean; onClose: () => v
 
       {/* Feed */}
       <div className="flex-1 overflow-y-auto px-4 py-4">
+        <div className="mx-auto max-w-lg">
+          <p className="text-sm text-muted-foreground leading-relaxed mb-4">
+            These are messages from our community for when you need a little extra encouragement. You're not alone in this. 💛 Feel free to leave your own message too.
+          </p>
+        </div>
         {loading ? (
           <div className="flex items-center justify-center py-12">
             <Loader2 size={24} className="animate-spin text-muted-foreground" />
