@@ -277,7 +277,7 @@ const ChatPage = () => {
       // Update the existing entry — merge new data in
       const { id: _id, ...updateRow } = row;
       delete updateRow.user_id;
-      ({ error } = await supabase.from("entries").update(updateRow).eq("id", existing.id));
+      ({ error } = await supabase.from("entries").update({ ...updateRow, updated_at: new Date().toISOString() }).eq("id", existing.id));
     } else {
       ({ error } = await supabase.from("entries").insert(row));
     }
