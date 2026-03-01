@@ -177,6 +177,7 @@ const ChatPage = () => {
   const { prefs } = useUserPreferences();
   const { user } = useAuth();
   const userId = user?.id || "anonymous";
+  const [hasExistingEntry, setHasExistingEntry] = useState(false);
   const [messages, setMessages] = useState<DisplayMessage[]>(() => {
     const restored = loadSession(userId);
     return restored.length > 0 ? restored : [makeInitialMessage()];
@@ -186,15 +187,32 @@ const ChatPage = () => {
   const [selectedChips, setSelectedChips] = useState<string[]>([]);
   const bottomRef = useRef<HTMLDivElement>(null);
 
-  // Update initial message chips when preferences load
+  // Check if user already has an entry today
+  useEffect(() => {
+    const checkTodayEntry = async () => {
+      if (!user?.id) return;
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const { count } = await supabase
+        .from("entries")
+        .select("id", { count: "exact", head: true })
+        .eq("user_id", user.id)
+        .gte("created_at", today.toISOString());
+      const exists = (count ?? 0) > 0;
+      setHasExistingEntry(exists);
+    };
+    checkTodayEntry();
+  }, [user?.id]);
+
+  // Update initial message chips when preferences or entry status load
   useEffect(() => {
     setMessages((prev) => {
       if (prev.length === 1 && prev[0].id === "initial") {
-        return [makeInitialMessage(prefs?.pain_preference, prefs?.buddy_name)];
+        return [makeInitialMessage(prefs?.pain_preference, prefs?.buddy_name, hasExistingEntry)];
       }
       return prev;
     });
-  }, [prefs?.pain_preference]);
+  }, [prefs?.pain_preference, hasExistingEntry]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
