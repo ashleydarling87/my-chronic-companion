@@ -59,9 +59,9 @@ const USAGE_MODES = [
 ];
 
 const PAIN_PREFS = [
-  { value: "numeric", label: "0–10 Scale", desc: "Classic slider from 0 to 10", emoji: "🔢" },
-  { value: "verbal", label: "Word Scale", desc: "None, mild, moderate, severe", emoji: "💬" },
-  { value: "faces", label: "Faces", desc: "Emoji faces to express pain", emoji: "😊" },
+  { value: "numeric", label: "Numbers (0–10)", desc: "Rate how you're feeling on a scale", emoji: "🔢" },
+  { value: "verbal", label: "Words (none → severe)", desc: "None, mild, moderate, severe", emoji: "💬" },
+  { value: "faces", label: "Faces (emoji)", desc: "Emoji faces to express how you feel", emoji: "😊" },
 ];
 
 interface IntakeMessage {
