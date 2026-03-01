@@ -36,17 +36,12 @@ const CRISIS_LINES = [
   },
   {
     name: "Trevor Project (LGBTQ+ Youth)",
-    description: "Crisis intervention for LGBTQ+ young people.",
+    description: "Crisis intervention for LGBTQ+ young people. Call or text START to 678-678.",
     phone: "18664887386",
     displayPhone: "1-866-488-7386",
-    type: "call" as const,
-  },
-  {
-    name: "Trevor Project Text Line",
-    description: "Text START to 678-678 for LGBTQ+ crisis support.",
     sms: "678678",
     smsBody: "START",
-    type: "text" as const,
+    type: "both" as const,
   },
 ];
 
