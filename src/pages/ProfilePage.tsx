@@ -97,6 +97,29 @@ const ProfilePage = () => {
     JSON.stringify(commStyle) !== JSON.stringify(prefs.communication_style)
   ) : false;
 
+  // Browser tab close / refresh warning
+  useEffect(() => {
+    if (!isDirty) return;
+    const handler = (e: BeforeUnloadEvent) => { e.preventDefault(); };
+    window.addEventListener("beforeunload", handler);
+    return () => window.removeEventListener("beforeunload", handler);
+  }, [isDirty]);
+
+  const guardedNavigate = useCallback((action: () => void) => {
+    if (isDirty) {
+      pendingNavigationRef.current = action;
+      setShowUnsavedDialog(true);
+    } else {
+      action();
+    }
+  }, [isDirty]);
+
+  const confirmDiscard = () => {
+    setShowUnsavedDialog(false);
+    pendingNavigationRef.current?.();
+    pendingNavigationRef.current = null;
+  };
+
   const handleSaveAll = useCallback(async () => {
     if (!prefs || saving) return;
     setSaving(true);
