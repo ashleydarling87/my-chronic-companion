@@ -155,7 +155,7 @@ const ChatPage = () => {
   useEffect(() => {
     setMessages((prev) => {
       if (prev.length === 1 && prev[0].id === "initial") {
-        return [makeInitialMessage(prefs?.pain_preference)];
+        return [makeInitialMessage(prefs?.pain_preference, prefs?.buddy_name)];
       }
       return prev;
     });
