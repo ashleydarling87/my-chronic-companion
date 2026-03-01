@@ -33,6 +33,7 @@ const ProfilePage = () => {
   const [cropSrc, setCropSrc] = useState<string | null>(null);
   const [careRecipientName, setCareRecipientName] = useState("");
   const [careRecipientAgeRange, setCareRecipientAgeRange] = useState("");
+  const [activeSheet, setActiveSheet] = useState<SettingsSheet>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
