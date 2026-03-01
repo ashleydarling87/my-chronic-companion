@@ -17,6 +17,16 @@ import { useUserPreferences } from "@/hooks/useUserPreferences";
 import type { UserPreferences, CommunicationStyle } from "@/hooks/useUserPreferences";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 type SettingsSheet = "notifications" | "data-privacy" | "help" | "about" | null;
 
