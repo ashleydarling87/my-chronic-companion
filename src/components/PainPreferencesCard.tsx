@@ -98,7 +98,6 @@ export default function PainPreferencesCard() {
   const [misNote, setMisNote] = useState("");
   const [identityTags, setIdentityTags] = useState<string[]>([]);
   const [dirty, setDirty] = useState(false);
-  const [dirty, setDirty] = useState(false);
 
   // Sheet state
   const [sheetOpen, setSheetOpen] = useState(false);
