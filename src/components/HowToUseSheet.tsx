@@ -4,6 +4,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
+import { Button } from "@/components/ui/button";
 
 const tips = [
   {
@@ -38,7 +39,7 @@ const tips = [
   },
 ];
 
-const HowToUseSheet = ({ open, onClose }: { open: boolean; onClose: () => void }) => (
+const HowToUseSheet = ({ open, onClose, ctaLabel }: { open: boolean; onClose: () => void; ctaLabel?: string }) => (
   <Sheet open={open} onOpenChange={(v) => !v && onClose()}>
     <SheetContent side="bottom" className="max-h-[85vh] overflow-y-auto rounded-t-2xl">
       <SheetHeader className="text-left mb-4">
@@ -55,6 +56,11 @@ const HowToUseSheet = ({ open, onClose }: { open: boolean; onClose: () => void }
             </div>
           </div>
         ))}
+      </div>
+      <div className="pb-4">
+        <Button onClick={onClose} className="w-full rounded-2xl font-bold">
+          {ctaLabel || "Close"}
+        </Button>
       </div>
     </SheetContent>
   </Sheet>

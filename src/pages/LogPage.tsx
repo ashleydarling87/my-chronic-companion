@@ -12,6 +12,7 @@ import type { DbEntry } from "@/components/log/EntryEditForm";
 import { useMentalHealthScores } from "@/hooks/useMentalHealthScores";
 import PHQ4CheckIn from "@/components/mental-health/PHQ4CheckIn";
 import PHQ4ScoreCard from "@/components/mental-health/PHQ4ScoreCard";
+import HowToUseSheet from "@/components/HowToUseSheet";
 
 const IMPACT_LABELS: Record<string, string> = {
   sleep: "Sleep",
@@ -408,6 +409,16 @@ const LogPage = () => {
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const { latest: latestMH, needsWeeklyPrompt, saveScore, refetch: refetchMH } = useMentalHealthScores();
 
+  // Show how-to sheet after onboarding
+  const [showHowTo, setShowHowTo] = useState(() => {
+    const justOnboarded = sessionStorage.getItem("just_onboarded");
+    if (justOnboarded) {
+      sessionStorage.removeItem("just_onboarded");
+      return true;
+    }
+    return false;
+  });
+
   const fetchEntries = async () => {
     setLoading(true);
     const { data, error } = await supabase
@@ -504,6 +515,7 @@ const LogPage = () => {
       </main>
 
       <BottomNav />
+      <HowToUseSheet open={showHowTo} onClose={() => setShowHowTo(false)} ctaLabel="Got it, Let's Go!" />
     </div>
   );
 };
