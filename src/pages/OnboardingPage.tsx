@@ -437,8 +437,38 @@ const OnboardingPage = () => {
 
       <main className="flex-1 flex flex-col justify-center px-6 py-8">
         <div className="mx-auto w-full max-w-sm space-y-6">
-          {/* Step 0: Do I belong here? */}
+          {/* Step 0: Self or caretaker */}
           {step === 0 && (
+            <div className="space-y-6 animate-slide-up">
+              <div className="text-center space-y-2">
+                <span className="text-4xl">🤗</span>
+                <h2 className="text-xl font-extrabold">Who is this for?</h2>
+                <p className="text-sm text-muted-foreground">Are you tracking for yourself or helping someone else?</p>
+              </div>
+              <div className="space-y-2">
+                {USAGE_MODES.map((m) => (
+                  <button
+                    key={m.value}
+                    onClick={() => setUsageMode(m.value)}
+                    className={`flex w-full items-center gap-3 rounded-xl px-4 py-3.5 text-left transition-all ${
+                      usageMode === m.value
+                        ? "bg-primary text-primary-foreground scale-[1.02]"
+                        : "bg-card border text-foreground hover:bg-primary/10"
+                    }`}
+                  >
+                    <span className="text-2xl">{m.emoji}</span>
+                    <div>
+                      <span className="text-sm font-bold">{m.label}</span>
+                      <p className={`text-xs ${usageMode === m.value ? "text-primary-foreground/70" : "text-muted-foreground"}`}>{m.desc}</p>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Step 1: Do I belong here? */}
+          {step === 1 && (
             <div className="space-y-6 animate-slide-up">
               <div className="text-center space-y-2">
                 <span className="text-4xl">💛</span>
@@ -469,36 +499,6 @@ const OnboardingPage = () => {
                 })}
               </div>
               <p className="text-xs text-muted-foreground text-center">Select all that apply</p>
-            </div>
-          )}
-
-          {/* Step 1: Self or caretaker */}
-          {step === 1 && (
-            <div className="space-y-6 animate-slide-up">
-              <div className="text-center space-y-2">
-                <span className="text-4xl">🤗</span>
-                <h2 className="text-xl font-extrabold">Who is this for?</h2>
-                <p className="text-sm text-muted-foreground">Are you tracking for yourself or helping someone else?</p>
-              </div>
-              <div className="space-y-2">
-                {USAGE_MODES.map((m) => (
-                  <button
-                    key={m.value}
-                    onClick={() => setUsageMode(m.value)}
-                    className={`flex w-full items-center gap-3 rounded-xl px-4 py-3.5 text-left transition-all ${
-                      usageMode === m.value
-                        ? "bg-primary text-primary-foreground scale-[1.02]"
-                        : "bg-card border text-foreground hover:bg-primary/10"
-                    }`}
-                  >
-                    <span className="text-2xl">{m.emoji}</span>
-                    <div>
-                      <span className="text-sm font-bold">{m.label}</span>
-                      <p className={`text-xs ${usageMode === m.value ? "text-primary-foreground/70" : "text-muted-foreground"}`}>{m.desc}</p>
-                    </div>
-                  </button>
-                ))}
-              </div>
             </div>
           )}
 
