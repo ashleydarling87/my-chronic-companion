@@ -11,7 +11,7 @@ export async function streamChat({
 }: {
   messages: ChatMsg[];
   preferences?: Record<string, unknown>;
-  mode?: "intake" | "chat";
+  mode?: "intake" | "chat" | "communication";
   onDelta: (chunk: string) => void;
   onDone: () => void;
 }) {

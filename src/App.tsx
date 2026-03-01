@@ -11,6 +11,7 @@ import WeeklyPage from "./pages/WeeklyPage";
 import ResourcesPage from "./pages/ResourcesPage";
 import ArticlesPage from "./pages/ArticlesPage";
 import MindfulnessPage from "./pages/MindfulnessPage";
+import CommunicationPage from "./pages/CommunicationPage";
 import ProfilePage from "./pages/ProfilePage";
 import SummaryPage from "./pages/SummaryPage";
 import AuthPage from "./pages/AuthPage";
@@ -68,6 +69,7 @@ const AppRoutes = () => (
     <Route path="/weekly" element={<ProtectedRoute><WeeklyPage /></ProtectedRoute>} />
     <Route path="/resources" element={<ProtectedRoute><ResourcesPage /></ProtectedRoute>} />
     <Route path="/resources/articles" element={<ProtectedRoute><ArticlesPage /></ProtectedRoute>} />
+    <Route path="/resources/communication" element={<ProtectedRoute><CommunicationPage /></ProtectedRoute>} />
     <Route path="/resources/mindfulness" element={<ProtectedRoute><MindfulnessPage /></ProtectedRoute>} />
     <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
     <Route path="/summary" element={<ProtectedRoute><SummaryPage /></ProtectedRoute>} />
