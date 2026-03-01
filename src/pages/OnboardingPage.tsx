@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { useUserPreferencesContext } from "@/contexts/UserPreferencesContext";
 import { toast } from "sonner";
 import { ChevronRight, ChevronLeft, Loader2, Send } from "lucide-react";
 import { streamChat, parseIntakeResponse, type ChatMsg } from "@/lib/chatStream";
@@ -60,6 +61,8 @@ interface IntakeMessage {
   timestamp: Date;
 }
 
+const READY_CHIP = "Ready to explore the app ✨";
+
 const IntakeChat = ({
   buddyName,
   buddyAvatar,
@@ -83,6 +86,8 @@ const IntakeChat = ({
   ]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [selectedChips, setSelectedChips] = useState<string[]>([]);
+  const [pendingIntakeData, setPendingIntakeData] = useState<Record<string, unknown> | null>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -143,8 +148,13 @@ const IntakeChat = ({
           setIsLoading(false);
 
           if (intakeData) {
-            // Intake is complete — short delay then proceed
-            setTimeout(() => onComplete(intakeData), 2000);
+            // Store intake data and show "Ready" chip instead of auto-navigating
+            setPendingIntakeData(intakeData);
+            setMessages((prev) =>
+              prev.map((m) =>
+                m.id === assistantId ? { ...m, chips: [READY_CHIP] } : m
+              )
+            );
           }
         },
       });
@@ -171,17 +181,50 @@ const IntakeChat = ({
                   <p className="text-[15px] leading-relaxed whitespace-pre-wrap">{msg.content}</p>
                 </div>
                 {!isUser && isLatest && msg.chips && msg.chips.length > 0 && (
-                  <div className="flex flex-wrap gap-1.5 mt-2 animate-slide-up">
-                    {msg.chips.map((chip) => (
+                  <div className="space-y-2 mt-2 animate-slide-up">
+                    <div className="flex flex-wrap gap-1.5">
+                      {msg.chips.map((chip) => {
+                        const isReady = chip === READY_CHIP;
+                        const isSelected = selectedChips.includes(chip);
+                        return (
+                          <button
+                            key={chip}
+                            onClick={() => {
+                              if (isReady) {
+                                onComplete(pendingIntakeData);
+                                return;
+                              }
+                              setSelectedChips((prev) =>
+                                isSelected ? prev.filter((c) => c !== chip) : [...prev, chip]
+                              );
+                            }}
+                            disabled={isLoading}
+                            className={`rounded-full border px-3 py-1.5 text-xs font-medium transition-all disabled:opacity-40 ${
+                              isReady
+                                ? "bg-primary text-primary-foreground border-primary hover:opacity-90"
+                                : isSelected
+                                ? "bg-primary/20 border-primary/50 text-foreground"
+                                : "border-primary/30 bg-primary/5 text-foreground hover:bg-primary/15 hover:border-primary/50"
+                            }`}
+                          >
+                            {chip}
+                          </button>
+                        );
+                      })}
+                    </div>
+                    {selectedChips.length > 0 && (
                       <button
-                        key={chip}
-                        onClick={() => sendMessage(chip)}
-                        disabled={isLoading}
-                        className="rounded-full border border-primary/30 bg-primary/5 px-3 py-1.5 text-xs font-medium text-foreground transition-all hover:bg-primary/15 hover:border-primary/50 disabled:opacity-40"
+                        onClick={() => {
+                          const combined = selectedChips.join(", ");
+                          setSelectedChips([]);
+                          sendMessage(combined);
+                        }}
+                        className="flex items-center gap-1.5 rounded-full bg-primary text-primary-foreground px-4 py-1.5 text-xs font-bold transition-all hover:opacity-90"
                       >
-                        {chip}
+                        <Send size={12} />
+                        Send ({selectedChips.length})
                       </button>
-                    ))}
+                    )}
                   </div>
                 )}
               </div>
@@ -246,6 +289,7 @@ const clearOnboardingProgress = () => {
 
 const OnboardingPage = () => {
   const navigate = useNavigate();
+  const { refreshPrefs } = useUserPreferencesContext();
   const saved = loadOnboardingProgress();
   const [step, setStep] = useState(saved?.step ?? 0);
   const [belongSelection, setBelongSelection] = useState<string[]>(saved?.belongSelection ?? []);
@@ -333,8 +377,9 @@ const OnboardingPage = () => {
     setSaving(true);
     try {
       await saveProgress(true, intakeData);
-      toast.success(`${buddyName} is ready! Let's go 💛`);
       clearOnboardingProgress();
+      await refreshPrefs();
+      toast.success(`${buddyName} is ready! Let's go 💛`);
       sessionStorage.setItem("just_onboarded", "true");
       navigate("/");
     } catch (e: any) {

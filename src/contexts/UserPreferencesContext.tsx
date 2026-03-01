@@ -42,6 +42,7 @@ interface UserPreferencesContextValue {
   prefs: UserPreferences | null;
   loading: boolean;
   savePrefs: (updated: Partial<Omit<UserPreferences, "id">>) => Promise<void>;
+  refreshPrefs: () => Promise<void>;
 }
 
 const UserPreferencesContext = createContext<UserPreferencesContextValue | null>(null);
@@ -101,6 +102,16 @@ export function UserPreferencesProvider({ children }: { children: ReactNode }) {
     })();
   }, [user]);
 
+  const refreshPrefs = useCallback(async () => {
+    if (!user) return;
+    const { data, error } = await supabase
+      .from("user_preferences")
+      .select("*")
+      .eq("user_id", user.id)
+      .maybeSingle();
+    if (!error && data) setPrefs(parseRow(data));
+  }, [user]);
+
   const savePrefs = useCallback(async (updated: Partial<Omit<UserPreferences, "id">>) => {
     if (!user) return;
 
@@ -140,7 +151,7 @@ export function UserPreferencesProvider({ children }: { children: ReactNode }) {
   }, [prefs, user]);
 
   return (
-    <UserPreferencesContext.Provider value={{ prefs, loading, savePrefs }}>
+    <UserPreferencesContext.Provider value={{ prefs, loading, savePrefs, refreshPrefs }}>
       {children}
     </UserPreferencesContext.Provider>
   );

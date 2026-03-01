@@ -382,17 +382,19 @@ const ProfilePage = () => {
         </div>
       </main>
 
-      {/* Sticky Save Button */}
-      {(isDirty || showSaved) && (
-        <div className="fixed bottom-0 left-0 right-0 z-50 px-4 pb-4 pt-2 bg-gradient-to-t from-background via-background to-transparent animate-fade-in">
+      {/* Sticky Save Button — always visible when prefs loaded */}
+      {prefs && (
+        <div className="fixed bottom-0 left-0 right-0 z-50 px-4 pb-4 pt-2 bg-gradient-to-t from-background via-background to-transparent">
           <div className="mx-auto max-w-lg">
             <button
               onClick={handleSaveAll}
-              disabled={saving || showSaved}
+              disabled={saving || showSaved || !isDirty}
               className={`flex w-full items-center justify-center gap-2 rounded-2xl py-3.5 text-sm font-bold transition-all duration-300 shadow-lg ${
                 showSaved
                   ? "bg-green-600 text-white scale-[1.02]"
-                  : "bg-primary text-primary-foreground hover:opacity-90 active:scale-[0.98]"
+                  : isDirty
+                  ? "bg-primary text-primary-foreground hover:opacity-90 active:scale-[0.98]"
+                  : "bg-muted text-muted-foreground cursor-not-allowed"
               }`}
             >
               {saving ? (
