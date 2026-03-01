@@ -11,6 +11,13 @@ export interface CommunicationStyle {
   humor?: string;
 }
 
+export interface NotificationPreferences {
+  dailyReminder: boolean;
+  weeklyReport: boolean;
+  encouragement: boolean;
+  crisisUpdates: boolean;
+}
+
 export interface UserPreferences {
   id: string;
   pain_preference: "numeric" | "verbal" | "faces" | "adaptive";
@@ -36,7 +43,15 @@ export interface UserPreferences {
   usage_mode: string;
   care_recipient_name: string | null;
   care_recipient_age_range: string | null;
+  notification_preferences: NotificationPreferences;
 }
+
+const DEFAULT_NOTIFICATION_PREFS: NotificationPreferences = {
+  dailyReminder: true,
+  weeklyReport: true,
+  encouragement: false,
+  crisisUpdates: true,
+};
 
 const DEFAULT_PREFS: Omit<UserPreferences, "id"> = {
   pain_preference: "numeric",
@@ -62,6 +77,7 @@ const DEFAULT_PREFS: Omit<UserPreferences, "id"> = {
   usage_mode: "self",
   care_recipient_name: null,
   care_recipient_age_range: null,
+  notification_preferences: DEFAULT_NOTIFICATION_PREFS,
 };
 
 export function useUserPreferences() {
@@ -115,6 +131,7 @@ export function useUserPreferences() {
         usage_mode: (data as any).usage_mode ?? "self",
         care_recipient_name: (data as any).care_recipient_name ?? null,
         care_recipient_age_range: (data as any).care_recipient_age_range ?? null,
+        notification_preferences: (data as any).notification_preferences ?? DEFAULT_NOTIFICATION_PREFS,
       });
     }
     setLoading(false);
@@ -188,6 +205,7 @@ export function useUserPreferences() {
         usage_mode: (data as any).usage_mode ?? "self",
         care_recipient_name: (data as any).care_recipient_name ?? null,
         care_recipient_age_range: (data as any).care_recipient_age_range ?? null,
+        notification_preferences: (data as any).notification_preferences ?? DEFAULT_NOTIFICATION_PREFS,
       });
       toast.success("Preferences saved");
     }
