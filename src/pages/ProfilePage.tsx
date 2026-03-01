@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 
-import { ArrowLeft, ChevronRight, LogOut, Camera, Loader2, Sun, Moon, Monitor } from "lucide-react";
+import { ArrowLeft, ChevronRight, LogOut, Camera, Loader2, Sun, Moon, Monitor, Bell, ShieldCheck, LifeBuoy, Info } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "next-themes";
 import { BUDDY_AVATARS, getBuddyEmoji } from "../lib/data";
@@ -9,10 +9,16 @@ import CommunicationStyleCard from "../components/CommunicationStyleCard";
 import SymptomsCard from "../components/SymptomsCard";
 import DeleteAccountSection from "../components/DeleteAccountSection";
 import CropSheet from "../components/CropSheet";
+import NotificationsSheet from "../components/settings/NotificationsSheet";
+import DataPrivacySheet from "../components/settings/DataPrivacySheet";
+import HelpSupportSheet from "../components/settings/HelpSupportSheet";
+import AboutSheet from "../components/settings/AboutSheet";
 import { useAuth } from "@/contexts/AuthContext";
 import { useUserPreferences } from "@/hooks/useUserPreferences";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+
+type SettingsSheet = "notifications" | "data-privacy" | "help" | "about" | null;
 
 const ProfilePage = () => {
   const { signOut, user } = useAuth();
