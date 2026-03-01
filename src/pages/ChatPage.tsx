@@ -117,12 +117,6 @@ const makeInitialMessage = (painPref?: string): DisplayMessage => {
 /** Returns the "chat day" string (YYYY-MM-DD) where the day flips at 3 AM local time. */
 const getChatDay = (): string => {
   const now = new Date();
-  // If before 3 AM, it's still "yesterday's" chat day
-  if (now.getHours() < 3) {
-    const yesterday = new Date(now);
-    yesterday.setDate(yesterday.getDate() - 1);
-    return yesterday.toISOString().slice(0, 10);
-  }
   return now.toISOString().slice(0, 10);
 };
 
