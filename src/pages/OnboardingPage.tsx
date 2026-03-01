@@ -334,6 +334,7 @@ const OnboardingPage = () => {
     try {
       await saveProgress(true, intakeData);
       toast.success(`${buddyName} is ready! Let's go 💛`);
+      clearOnboardingProgress();
       sessionStorage.setItem("just_onboarded", "true");
       navigate("/");
     } catch (e: any) {
