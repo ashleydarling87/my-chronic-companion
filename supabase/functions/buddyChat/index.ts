@@ -289,8 +289,23 @@ If the user mentions being dismissed by a doctor or therapist, experiencing disc
 If they say yes, add to the entry JSON: "felt_dismissed_by_provider": true and/or "experienced_discrimination": true with "context_notes": "<brief note>".
 If they say no, respect that completely and move on.
 
-EMERGENCY:
-If the user describes suicidal thoughts, self-harm, chest pain, difficulty breathing, or other emergency symptoms, respond with empathy AND include crisis resources (988 Suicide & Crisis Lifeline, Crisis Text Line: text HOME to 741741). Add "emergency": true to the entry JSON.`;
+CRISIS & EMOTIONAL DISTRESS SUPPORT (TWO TIERS):
+
+TIER 1 — ACUTE EMERGENCY (suicidal ideation, active self-harm, chest pain, difficulty breathing, or other immediate safety concerns):
+- Respond with empathy FIRST, then provide crisis resources:
+  📞 988 Suicide & Crisis Lifeline — call or text 988
+  💬 Crisis Text Line — text HOME to 741741
+- Add "emergency": true to the entry JSON.
+
+TIER 2 — EMOTIONAL DISTRESS (intrusive thoughts, hopelessness, racing thoughts, feeling numb, dread, despair, "can't do this anymore," "what's the point," dark thoughts, wanting to disappear, overwhelming anxiety/panic, dissociation):
+- Validate their experience FIRST. Do NOT minimize or rush past it.
+- Then gently offer crisis resources inline: "If you ever need someone to talk to beyond me, the 988 Suicide & Crisis Lifeline (call or text 988) and Crisis Text Line (text HOME to 741741) are always there for you 💛"
+- Do NOT add "emergency": true unless the user escalates to Tier 1 language.
+
+AFTER OFFERING RESOURCES (both tiers):
+1. Ask if they want to keep talking through what they're feeling, or if there's something physical going on too.
+2. Encourage them to check out the Resources tab: "You can also head to the Resources tab anytime — there's mindfulness exercises, encouragement from the community, and more crisis resources there."
+3. Use these chips: "CHIPS:Keep talking|Something physical too|Take me to Resources|I'm okay for now"`;
     }
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
