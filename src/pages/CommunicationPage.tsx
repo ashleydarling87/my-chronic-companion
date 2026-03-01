@@ -23,7 +23,9 @@ const AUDIENCES = [
   { label: "Other", emoji: "✉️" },
 ];
 
-const SITUATIONS = [
+const PERSONAL_AUDIENCES = ["Friend", "Family", "Partner", "Other"];
+
+const BASE_SITUATIONS = [
   "Explaining my condition",
   "Requesting accommodations",
   "Setting boundaries",
@@ -31,6 +33,19 @@ const SITUATIONS = [
   "Asking for help",
   "Other",
 ];
+
+const PERSONAL_SITUATIONS = [
+  "Checking in / sharing an update",
+  "Explaining my condition",
+  "Setting boundaries",
+  "Canceling plans",
+  "Asking for help",
+  "Sharing good news about my health",
+  "Other",
+];
+
+const getSituations = (audience: string) =>
+  PERSONAL_AUDIENCES.includes(audience) ? PERSONAL_SITUATIONS : BASE_SITUATIONS;
 
 const TypingIndicator = () => (
   <div className="flex items-center gap-1 chat-bubble-ai w-fit">
@@ -263,7 +278,7 @@ const CommunicationPage = () => {
                 </p>
               </div>
               <div className="flex flex-wrap gap-2">
-                {SITUATIONS.map((s) => (
+                {getSituations(audience).map((s) => (
                   <button
                     key={s}
                     onClick={() => handleSituationSelect(s)}
