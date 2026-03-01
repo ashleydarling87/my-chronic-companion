@@ -2,7 +2,7 @@ import { createContext, useContext, useState, useEffect, useCallback, type React
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
-import type { UserPreferences, NotificationPreferences } from "@/hooks/useUserPreferences";
+import type { UserPreferences, NotificationPreferences } from "@/hooks/useUserPreferences.types";
 
 const DEFAULT_NOTIFICATION_PREFS: NotificationPreferences = {
   dailyReminder: true,
