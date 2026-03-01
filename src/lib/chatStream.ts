@@ -6,12 +6,14 @@ export async function streamChat({
   messages,
   preferences,
   mode,
+  hasExistingEntry,
   onDelta,
   onDone,
 }: {
   messages: ChatMsg[];
   preferences?: Record<string, unknown>;
   mode?: "intake" | "chat" | "communication";
+  hasExistingEntry?: boolean;
   onDelta: (chunk: string) => void;
   onDone: () => void;
 }) {
