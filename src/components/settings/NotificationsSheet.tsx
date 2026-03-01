@@ -7,8 +7,9 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { Switch } from "@/components/ui/switch";
+import { useUserPreferences, type NotificationPreferences } from "@/hooks/useUserPreferences";
 
-type NotifKey = "dailyReminder" | "weeklyReport" | "encouragement" | "crisisUpdates";
+type NotifKey = keyof NotificationPreferences;
 
 const NOTIF_OPTIONS: { key: NotifKey; label: string; desc: string }[] = [
   { key: "dailyReminder", label: "Daily check-in reminder", desc: "A gentle nudge to log how you're feeling" },
@@ -17,25 +18,35 @@ const NOTIF_OPTIONS: { key: NotifKey; label: string; desc: string }[] = [
   { key: "crisisUpdates", label: "Crisis resource updates", desc: "Important updates to crisis support info" },
 ];
 
+const DEFAULT_TOGGLES: NotificationPreferences = {
+  dailyReminder: true,
+  weeklyReport: true,
+  encouragement: false,
+  crisisUpdates: true,
+};
+
 interface Props {
   open: boolean;
   onClose: () => void;
 }
 
 const NotificationsSheet = ({ open, onClose }: Props) => {
+  const { prefs, savePrefs } = useUserPreferences();
   const [permission, setPermission] = useState<NotificationPermission>("default");
-  const [toggles, setToggles] = useState<Record<NotifKey, boolean>>({
-    dailyReminder: true,
-    weeklyReport: true,
-    encouragement: false,
-    crisisUpdates: true,
-  });
+  const [toggles, setToggles] = useState<NotificationPreferences>(DEFAULT_TOGGLES);
 
   useEffect(() => {
     if ("Notification" in window) {
       setPermission(Notification.permission);
     }
   }, [open]);
+
+  // Sync from prefs when loaded
+  useEffect(() => {
+    if (prefs?.notification_preferences) {
+      setToggles(prefs.notification_preferences);
+    }
+  }, [prefs?.notification_preferences]);
 
   const requestPermission = async () => {
     if (!("Notification" in window)) return;
@@ -44,7 +55,9 @@ const NotificationsSheet = ({ open, onClose }: Props) => {
   };
 
   const handleToggle = (key: NotifKey, value: boolean) => {
-    setToggles((prev) => ({ ...prev, [key]: value }));
+    const updated = { ...toggles, [key]: value };
+    setToggles(updated);
+    savePrefs({ notification_preferences: updated } as any);
   };
 
   return (
