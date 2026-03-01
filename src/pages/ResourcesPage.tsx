@@ -142,7 +142,7 @@ const ResourcesPage = () => {
                   key={cat.id}
                   onClick={() => {
                     if (isCommunication) {
-                      setShowAdvocacy(!showAdvocacy);
+                      navigate("/resources/communication");
                     } else if (cat.id === "encouragement") {
                       setShowEncouragement(true);
                     } else if (cat.id === "crisis") {
