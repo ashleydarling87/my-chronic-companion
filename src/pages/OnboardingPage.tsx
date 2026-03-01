@@ -409,7 +409,7 @@ const OnboardingPage = () => {
       await refreshPrefs();
       toast.success(`${buddyName} is ready! Let's go 💛`);
       sessionStorage.setItem("just_onboarded", "true");
-      navigate("/");
+      navigate("/log");
     } catch (e: any) {
       toast.error(e.message || "Failed to complete onboarding");
     } finally {
