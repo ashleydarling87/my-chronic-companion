@@ -225,20 +225,45 @@ const ChatPage = () => {
 
   const saveEntryToDb = async (entryData: Record<string, unknown>) => {
     const { data: { user: currentUser } } = await supabase.auth.getUser();
+    if (!currentUser?.id) return false;
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+
+    // Check for an existing entry today
+    const { data: existing } = await supabase
+      .from("entries")
+      .select("id, symptoms, triggers, body_regions, qualities, reliefs")
+      .eq("user_id", currentUser.id)
+      .gte("created_at", today.toISOString())
+      .lt("created_at", tomorrow.toISOString())
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    // Merge array fields with existing data
+    const mergeArrays = (existing: unknown, incoming: unknown): unknown[] => {
+      const arr1 = Array.isArray(existing) ? existing : [];
+      const arr2 = Array.isArray(incoming) ? incoming : [];
+      return [...new Set([...arr1, ...arr2])];
+    };
+
     const row: Record<string, unknown> = {
-      user_id: currentUser?.id,
+      user_id: currentUser.id,
       pain_level: entryData.pain_level ?? null,
       pain_verbal: entryData.pain_verbal ?? null,
       energy_level: entryData.energy_level ?? null,
       mood: entryData.mood ?? null,
-      body_regions: entryData.body_regions ?? [],
-      qualities: entryData.qualities ?? [],
+      body_regions: mergeArrays(existing?.body_regions, entryData.body_regions),
+      qualities: mergeArrays(existing?.qualities, entryData.qualities),
       impacts: entryData.impacts ?? {},
-      triggers: entryData.triggers ?? [],
-      reliefs: entryData.reliefs ?? [],
+      triggers: mergeArrays(existing?.triggers, entryData.triggers),
+      reliefs: mergeArrays(existing?.reliefs, entryData.reliefs),
       journal_text: entryData.journal_text ?? null,
       summary: entryData.summary ?? null,
-      symptoms: entryData.symptoms ?? [],
+      symptoms: mergeArrays(existing?.symptoms, entryData.symptoms),
       severity: entryData.severity ?? null,
       raw_text: entryData.journal_text ?? null,
       felt_dismissed_by_provider: entryData.felt_dismissed_by_provider ?? false,
@@ -247,7 +272,16 @@ const ChatPage = () => {
       emergency: entryData.emergency ?? false,
     };
 
-    const { error } = await supabase.from("entries").insert(row);
+    let error;
+    if (existing?.id) {
+      // Update the existing entry — merge new data in
+      const { id: _id, ...updateRow } = row;
+      delete updateRow.user_id;
+      ({ error } = await supabase.from("entries").update(updateRow).eq("id", existing.id));
+    } else {
+      ({ error } = await supabase.from("entries").insert(row));
+    }
+
     if (error) {
       console.error("Failed to save entry:", error);
       toast.error("Couldn't save entry to your log");
