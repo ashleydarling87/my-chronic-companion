@@ -259,6 +259,31 @@ const ProfilePage = () => {
           {/* Communication Style */}
           <CommunicationStyleCard />
 
+          {/* Appearance */}
+          <section className="rounded-2xl border bg-card p-4 space-y-3 animate-slide-up">
+            <h2 className="text-sm font-bold text-muted-foreground uppercase tracking-wider">Appearance</h2>
+            <div className="grid grid-cols-3 gap-2">
+              {([
+                { value: "light", label: "Light", icon: Sun },
+                { value: "dark", label: "Dark", icon: Moon },
+                { value: "system", label: "System", icon: Monitor },
+              ] as const).map(({ value, label, icon: Icon }) => (
+                <button
+                  key={value}
+                  onClick={() => setTheme(value)}
+                  className={`flex flex-col items-center gap-1.5 rounded-xl py-3 transition-all ${
+                    theme === value
+                      ? "bg-primary/15 border-2 border-primary"
+                      : "bg-secondary hover:bg-primary/10 border border-transparent"
+                  }`}
+                >
+                  <Icon size={18} />
+                  <span className="text-xs font-semibold">{label}</span>
+                </button>
+              ))}
+            </div>
+          </section>
+
           {/* Settings */}
           <section className="rounded-2xl border bg-card divide-y animate-slide-up">
             <h2 className="text-sm font-bold text-muted-foreground uppercase tracking-wider px-4 pt-4 pb-2">Settings</h2>
