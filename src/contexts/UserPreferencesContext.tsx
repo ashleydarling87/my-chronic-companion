@@ -42,6 +42,7 @@ interface UserPreferencesContextValue {
   prefs: UserPreferences | null;
   loading: boolean;
   savePrefs: (updated: Partial<Omit<UserPreferences, "id">>) => Promise<void>;
+  refreshPrefs: () => Promise<void>;
 }
 
 const UserPreferencesContext = createContext<UserPreferencesContextValue | null>(null);
