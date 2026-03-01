@@ -151,7 +151,7 @@ export function UserPreferencesProvider({ children }: { children: ReactNode }) {
   }, [prefs, user]);
 
   return (
-    <UserPreferencesContext.Provider value={{ prefs, loading, savePrefs }}>
+    <UserPreferencesContext.Provider value={{ prefs, loading, savePrefs, refreshPrefs }}>
       {children}
     </UserPreferencesContext.Provider>
   );
