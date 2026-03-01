@@ -18,6 +18,7 @@ const ProfilePage = () => {
   const { signOut, user } = useAuth();
   const navigate = useNavigate();
   const { prefs, savePrefs } = useUserPreferences();
+  const { theme, setTheme } = useTheme();
   const [name, setName] = useState("");
   const [buddyName, setBuddyName] = useState("Buddy");
   const [selectedAvatarId, setSelectedAvatarId] = useState("bear");
