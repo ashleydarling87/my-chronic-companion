@@ -109,8 +109,6 @@ export default function PainPreferencesCard() {
       setPainPref(prefs.pain_preference);
       setMisNote(prefs.pain_misunderstanding_note);
       setIdentityTags(prefs.identity_tags);
-      setIncludeDiscrimination(prefs.report_sharing_defaults.includeDiscrimination);
-      setIncludeEmotional(prefs.report_sharing_defaults.includeEmotionalImpact);
     }
   }, [prefs]);
 
