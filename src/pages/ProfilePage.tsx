@@ -60,6 +60,10 @@ const ProfilePage = () => {
   const [saving, setSaving] = useState(false);
   const [showSaved, setShowSaved] = useState(false);
 
+  // Unsaved changes dialog
+  const [showUnsavedDialog, setShowUnsavedDialog] = useState(false);
+  const pendingNavigationRef = useRef<(() => void) | null>(null);
+
   // Sync from prefs on load
   useEffect(() => {
     if (prefs) {
