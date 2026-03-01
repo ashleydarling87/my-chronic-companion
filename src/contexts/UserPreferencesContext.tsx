@@ -102,6 +102,16 @@ export function UserPreferencesProvider({ children }: { children: ReactNode }) {
     })();
   }, [user]);
 
+  const refreshPrefs = useCallback(async () => {
+    if (!user) return;
+    const { data, error } = await supabase
+      .from("user_preferences")
+      .select("*")
+      .eq("user_id", user.id)
+      .maybeSingle();
+    if (!error && data) setPrefs(parseRow(data));
+  }, [user]);
+
   const savePrefs = useCallback(async (updated: Partial<Omit<UserPreferences, "id">>) => {
     if (!user) return;
 
