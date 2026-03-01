@@ -356,18 +356,6 @@ const EntryDetailView = ({ entry, onClose, onUpdated, onDeleted }: { entry: DbEn
         </div>
       )}
 
-      {/* Sharing toggles */}
-      <div className="space-y-2 border-t pt-3">
-        <span className="text-xs font-semibold text-muted-foreground">Doctor report sharing</span>
-        <label className="flex items-center gap-2 cursor-pointer">
-          <input type="checkbox" checked={flags.includeContextNotes} onChange={() => handleToggleFlag("includeContextNotes")} className="h-3.5 w-3.5 rounded accent-primary" />
-          <span className="text-xs">Include context notes</span>
-        </label>
-        <label className="flex items-center gap-2 cursor-pointer">
-          <input type="checkbox" checked={flags.includeDiscriminationNotes} onChange={() => handleToggleFlag("includeDiscriminationNotes")} className="h-3.5 w-3.5 rounded accent-primary" />
-          <span className="text-xs">Include discrimination notes</span>
-        </label>
-      </div>
     </div>
   );
 };

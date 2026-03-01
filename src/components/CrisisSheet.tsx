@@ -74,7 +74,24 @@ const CrisisSheet = ({ open, onClose }: { open: boolean; onClose: () => void }) 
               <div key={i} className="rounded-2xl border bg-card p-4 animate-slide-up">
                 <h3 className="text-sm font-bold">{line.name}</h3>
                 <p className="text-xs text-muted-foreground mt-1 leading-relaxed">{line.description}</p>
-                {line.type === "call" ? (
+                {line.type === "both" ? (
+                  <div className="mt-3 flex gap-2">
+                    <a
+                      href={`tel:${line.phone}`}
+                      className="flex flex-1 items-center justify-center gap-2 rounded-full bg-destructive px-3 py-2.5 text-xs font-semibold text-destructive-foreground transition-all active:scale-95"
+                    >
+                      <Phone size={14} />
+                      Call{line.displayPhone ? ` · ${line.displayPhone}` : ""}
+                    </a>
+                    <a
+                      href={`sms:${line.sms}${line.smsBody ? `?body=${encodeURIComponent(line.smsBody)}` : ""}`}
+                      className="flex flex-1 items-center justify-center gap-2 rounded-full bg-primary px-3 py-2.5 text-xs font-semibold text-primary-foreground transition-all active:scale-95"
+                    >
+                      <MessageSquare size={14} />
+                      Text · {line.sms}
+                    </a>
+                  </div>
+                ) : line.type === "call" ? (
                   <a
                     href={`tel:${line.phone}`}
                     className="mt-3 flex items-center justify-center gap-2 rounded-full bg-destructive px-4 py-2.5 text-xs font-semibold text-destructive-foreground transition-all active:scale-95"

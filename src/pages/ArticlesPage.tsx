@@ -169,6 +169,7 @@ const ArticlesPage = () => {
                       {article.topic}
                     </Badge>
                   </div>
+                  <p className="text-[10px] text-muted-foreground/60 mt-2">Opens search results on {article.source}</p>
                 </a>
               ))}
             </div>

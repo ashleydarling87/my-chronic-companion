@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { Send, Mic } from "lucide-react";
 import { toast } from "sonner";
 import Header from "../components/Header";
