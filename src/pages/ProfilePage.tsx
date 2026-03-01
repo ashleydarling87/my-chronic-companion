@@ -17,6 +17,16 @@ import { useUserPreferences } from "@/hooks/useUserPreferences";
 import type { UserPreferences, CommunicationStyle } from "@/hooks/useUserPreferences";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 type SettingsSheet = "notifications" | "data-privacy" | "help" | "about" | null;
 
@@ -50,6 +60,10 @@ const ProfilePage = () => {
   const [saving, setSaving] = useState(false);
   const [showSaved, setShowSaved] = useState(false);
 
+  // Unsaved changes dialog
+  const [showUnsavedDialog, setShowUnsavedDialog] = useState(false);
+  const pendingNavigationRef = useRef<(() => void) | null>(null);
+
   // Sync from prefs on load
   useEffect(() => {
     if (prefs) {
@@ -82,6 +96,29 @@ const ProfilePage = () => {
     JSON.stringify(mySymptoms) !== JSON.stringify(prefs.my_symptoms) ||
     JSON.stringify(commStyle) !== JSON.stringify(prefs.communication_style)
   ) : false;
+
+  // Browser tab close / refresh warning
+  useEffect(() => {
+    if (!isDirty) return;
+    const handler = (e: BeforeUnloadEvent) => { e.preventDefault(); };
+    window.addEventListener("beforeunload", handler);
+    return () => window.removeEventListener("beforeunload", handler);
+  }, [isDirty]);
+
+  const guardedNavigate = useCallback((action: () => void) => {
+    if (isDirty) {
+      pendingNavigationRef.current = action;
+      setShowUnsavedDialog(true);
+    } else {
+      action();
+    }
+  }, [isDirty]);
+
+  const confirmDiscard = () => {
+    setShowUnsavedDialog(false);
+    pendingNavigationRef.current?.();
+    pendingNavigationRef.current = null;
+  };
 
   const handleSaveAll = useCallback(async () => {
     if (!prefs || saving) return;
@@ -137,12 +174,12 @@ const ProfilePage = () => {
     setUploading(false);
   };
 
-  const handleSignOut = async () => { await signOut(); navigate("/auth"); };
+  const handleSignOut = () => guardedNavigate(async () => { await signOut(); navigate("/auth"); });
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
       <header className="sticky top-0 z-40 flex items-center gap-3 border-b bg-card/95 px-4 py-3 backdrop-blur-md">
-        <button onClick={() => navigate(-1)} className="flex h-9 w-9 items-center justify-center rounded-full bg-secondary">
+        <button onClick={() => guardedNavigate(() => navigate(-1))} className="flex h-9 w-9 items-center justify-center rounded-full bg-secondary">
           <ArrowLeft size={18} />
         </button>
         <h1 className="text-lg font-bold">Profile & Settings</h1>
@@ -385,6 +422,26 @@ const ProfilePage = () => {
         onClose={() => setActiveSheet(null)}
         onOpenPrivacy={() => setActiveSheet("data-privacy")}
       />
+
+      {/* Unsaved Changes Dialog */}
+      <AlertDialog open={showUnsavedDialog} onOpenChange={setShowUnsavedDialog}>
+        <AlertDialogContent className="max-w-sm rounded-2xl">
+          <AlertDialogHeader>
+            <AlertDialogTitle>Unsaved Changes</AlertDialogTitle>
+            <AlertDialogDescription>
+              You have unsaved changes. Do you want to discard them and leave this page?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => { setShowUnsavedDialog(false); pendingNavigationRef.current = null; }}>
+              Keep Editing
+            </AlertDialogCancel>
+            <AlertDialogAction onClick={confirmDiscard} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+              Discard Changes
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
