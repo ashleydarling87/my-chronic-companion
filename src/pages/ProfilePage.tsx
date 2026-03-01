@@ -174,7 +174,7 @@ const ProfilePage = () => {
     setUploading(false);
   };
 
-  const handleSignOut = async () => { await signOut(); navigate("/auth"); };
+  const handleSignOut = () => guardedNavigate(async () => { await signOut(); navigate("/auth"); });
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
