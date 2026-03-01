@@ -97,8 +97,6 @@ export default function PainPreferencesCard() {
   const [painPref, setPainPref] = useState<UserPreferences["pain_preference"]>("numeric");
   const [misNote, setMisNote] = useState("");
   const [identityTags, setIdentityTags] = useState<string[]>([]);
-  const [includeDiscrimination, setIncludeDiscrimination] = useState(false);
-  const [includeEmotional, setIncludeEmotional] = useState(false);
   const [dirty, setDirty] = useState(false);
 
   // Sheet state
@@ -110,8 +108,6 @@ export default function PainPreferencesCard() {
       setPainPref(prefs.pain_preference);
       setMisNote(prefs.pain_misunderstanding_note);
       setIdentityTags(prefs.identity_tags);
-      setIncludeDiscrimination(prefs.report_sharing_defaults.includeDiscrimination);
-      setIncludeEmotional(prefs.report_sharing_defaults.includeEmotionalImpact);
     }
   }, [prefs]);
 
@@ -131,10 +127,6 @@ export default function PainPreferencesCard() {
       pain_preference: painPref,
       pain_misunderstanding_note: misNote,
       identity_tags: identityTags,
-      report_sharing_defaults: {
-        includeDiscrimination,
-        includeEmotionalImpact: includeEmotional,
-      },
     });
     setDirty(false);
   };
@@ -226,37 +218,6 @@ export default function PainPreferencesCard() {
         </div>
       </div>
 
-      {/* Sharing defaults */}
-      <div className="space-y-3">
-        <label className="text-xs font-semibold text-muted-foreground">
-          Sharing defaults for doctor reports
-        </label>
-
-        <label className="flex items-start gap-3 cursor-pointer">
-          <input
-            type="checkbox"
-            checked={includeDiscrimination}
-            onChange={(e) => { setIncludeDiscrimination(e.target.checked); setDirty(true); }}
-            className="mt-0.5 h-4 w-4 rounded border-primary accent-primary"
-          />
-          <span className="text-sm leading-snug">
-            Include notes about discrimination or being dismissed in my reports
-            <span className="block text-[11px] text-muted-foreground">You can still turn this off per report.</span>
-          </span>
-        </label>
-
-        <label className="flex items-start gap-3 cursor-pointer">
-          <input
-            type="checkbox"
-            checked={includeEmotional}
-            onChange={(e) => { setIncludeEmotional(e.target.checked); setDirty(true); }}
-            className="mt-0.5 h-4 w-4 rounded border-primary accent-primary"
-          />
-          <span className="text-sm leading-snug">
-            Include emotional and spiritual impact in my reports
-          </span>
-        </label>
-      </div>
 
       {/* Save button */}
       {dirty && (
