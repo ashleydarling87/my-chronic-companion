@@ -180,17 +180,50 @@ const IntakeChat = ({
                   <p className="text-[15px] leading-relaxed whitespace-pre-wrap">{msg.content}</p>
                 </div>
                 {!isUser && isLatest && msg.chips && msg.chips.length > 0 && (
-                  <div className="flex flex-wrap gap-1.5 mt-2 animate-slide-up">
-                    {msg.chips.map((chip) => (
+                  <div className="space-y-2 mt-2 animate-slide-up">
+                    <div className="flex flex-wrap gap-1.5">
+                      {msg.chips.map((chip) => {
+                        const isReady = chip === READY_CHIP;
+                        const isSelected = selectedChips.includes(chip);
+                        return (
+                          <button
+                            key={chip}
+                            onClick={() => {
+                              if (isReady) {
+                                onComplete(pendingIntakeData);
+                                return;
+                              }
+                              setSelectedChips((prev) =>
+                                isSelected ? prev.filter((c) => c !== chip) : [...prev, chip]
+                              );
+                            }}
+                            disabled={isLoading}
+                            className={`rounded-full border px-3 py-1.5 text-xs font-medium transition-all disabled:opacity-40 ${
+                              isReady
+                                ? "bg-primary text-primary-foreground border-primary hover:opacity-90"
+                                : isSelected
+                                ? "bg-primary/20 border-primary/50 text-foreground"
+                                : "border-primary/30 bg-primary/5 text-foreground hover:bg-primary/15 hover:border-primary/50"
+                            }`}
+                          >
+                            {chip}
+                          </button>
+                        );
+                      })}
+                    </div>
+                    {selectedChips.length > 0 && (
                       <button
-                        key={chip}
-                        onClick={() => sendMessage(chip)}
-                        disabled={isLoading}
-                        className="rounded-full border border-primary/30 bg-primary/5 px-3 py-1.5 text-xs font-medium text-foreground transition-all hover:bg-primary/15 hover:border-primary/50 disabled:opacity-40"
+                        onClick={() => {
+                          const combined = selectedChips.join(", ");
+                          setSelectedChips([]);
+                          sendMessage(combined);
+                        }}
+                        className="flex items-center gap-1.5 rounded-full bg-primary text-primary-foreground px-4 py-1.5 text-xs font-bold transition-all hover:opacity-90"
                       >
-                        {chip}
+                        <Send size={12} />
+                        Send ({selectedChips.length})
                       </button>
-                    ))}
+                    )}
                   </div>
                 )}
               </div>
