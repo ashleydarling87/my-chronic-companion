@@ -515,6 +515,7 @@ const LogPage = () => {
       </main>
 
       <BottomNav />
+      <HowToUseSheet open={showHowTo} onClose={() => setShowHowTo(false)} ctaLabel="Got it, Let's Go!" />
     </div>
   );
 };
