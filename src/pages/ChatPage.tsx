@@ -87,7 +87,7 @@ const ChatBubble = ({ message, onChipSelect, isLatest, isLoading, buddyEmoji, us
 const makeInitialMessage = (painPref?: string): DisplayMessage => {
   // Tailor the pain question to the user's preferred description style
   let painChip = "Symptoms are really bad";
-  let greeting = "Hey bestie! 💛 How are you feeling today? Tell me everything — the good, the bad, the ugh.";
+  let greeting = "Hey! 💛 How are you feeling today? Tell me everything — the good, the bad, the ugh.";
 
   switch (painPref) {
     case "numeric":
@@ -117,12 +117,6 @@ const makeInitialMessage = (painPref?: string): DisplayMessage => {
 /** Returns the "chat day" string (YYYY-MM-DD) where the day flips at 3 AM local time. */
 const getChatDay = (): string => {
   const now = new Date();
-  // If before 3 AM, it's still "yesterday's" chat day
-  if (now.getHours() < 3) {
-    const yesterday = new Date(now);
-    yesterday.setDate(yesterday.getDate() - 1);
-    return yesterday.toISOString().slice(0, 10);
-  }
   return now.toISOString().slice(0, 10);
 };
 
