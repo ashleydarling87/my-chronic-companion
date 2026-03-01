@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { Send, Mic } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import Header from "../components/Header";
 import BottomNav from "../components/BottomNav";
@@ -176,6 +177,7 @@ const saveSession = (userId: string, msgs: DisplayMessage[]) => {
 const ChatPage = () => {
   const { prefs } = useUserPreferences();
   const { user } = useAuth();
+  const navigate = useNavigate();
   const userId = user?.id || "anonymous";
   const [hasExistingEntry, setHasExistingEntry] = useState(false);
   const [messages, setMessages] = useState<DisplayMessage[]>(() => {
@@ -393,6 +395,10 @@ const ChatPage = () => {
 
   const handleSend = () => sendMessage(input);
   const handleChipSelect = (chip: string) => {
+    if (chip.toLowerCase().includes("take me to resources")) {
+      navigate("/resources");
+      return;
+    }
     setSelectedChips((prev) =>
       prev.includes(chip) ? prev.filter((c) => c !== chip) : [...prev, chip]
     );
