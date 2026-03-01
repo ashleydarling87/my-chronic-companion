@@ -17,7 +17,7 @@ serve(async (req) => {
       throw new Error("LOVABLE_API_KEY is not configured");
     }
 
-    const { messages, preferences, mode } = await req.json();
+    const { messages, preferences, mode, hasExistingEntry } = await req.json();
 
     const painPref = preferences?.pain_preference || "numeric";
     const identityTags: string[] = preferences?.identity_tags || [];
