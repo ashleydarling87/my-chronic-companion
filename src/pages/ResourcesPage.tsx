@@ -64,6 +64,9 @@ const categories = [
 
 const ResourcesPage = () => {
   const navigate = useNavigate();
+  const { prefs } = useUserPreferences();
+  const buddyName = prefs?.buddy_name || "Buddy";
+  const buddyEmoji = getBuddyEmoji(prefs?.buddy_avatar || "bear");
   const [showEncouragement, setShowEncouragement] = useState(false);
   const [showCrisis, setShowCrisis] = useState(false);
   const [showHowToUse, setShowHowToUse] = useState(false);
