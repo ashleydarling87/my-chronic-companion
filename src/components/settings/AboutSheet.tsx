@@ -59,7 +59,7 @@ const AboutSheet = ({ open, onClose, onOpenPrivacy }: Props) => {
             </button>
           )}
           <a
-            href="mailto:ashleydarling87@gmail.com?subject=CozyZebra%20Inquiry"
+            href="mailto:ashley@cozyzebra.com?subject=CozyZebra%20Inquiry"
             className="text-sm text-primary font-medium hover:underline"
           >
             Contact Us
