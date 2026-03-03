@@ -34,7 +34,7 @@ const AboutSheet = ({ open, onClose, onOpenPrivacy }: Props) => {
         </div>
 
         <p className="text-sm text-center text-muted-foreground leading-relaxed px-2 mb-6">
-          A compassionate companion for tracking and understanding your wellbeing journey — one check-in at a time.
+          Your cozy companion for tracking and understanding your wellbeing journey — one check-in at a time.
         </p>
 
         <div className="rounded-2xl border bg-card p-4 space-y-3 mb-6">
