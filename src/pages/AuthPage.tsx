@@ -80,9 +80,9 @@ const AuthPage = () => {
       <div className="w-full max-w-sm space-y-8">
         {/* Logo area */}
         <div className="text-center space-y-2">
-          <span className="text-5xl">🐻</span>
-          <h1 className="text-2xl font-extrabold text-foreground">Wellbeing Buddy</h1>
-          <p className="text-sm text-muted-foreground">Your personal health & mental wellness companion</p>
+          <span className="text-5xl">🦓</span>
+          <h1 className="text-2xl font-extrabold text-foreground">CozyZebra</h1>
+          <p className="text-sm text-muted-foreground">Your cozy companion for health & wellness</p>
         </div>
 
         {/* Warm welcome */}
