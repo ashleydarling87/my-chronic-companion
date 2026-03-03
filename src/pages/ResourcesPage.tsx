@@ -7,6 +7,8 @@ import { supabase } from "@/integrations/supabase/client";
 import EncouragementSheet from "@/components/EncouragementSheet";
 import CrisisSheet from "@/components/CrisisSheet";
 import HowToUseSheet from "@/components/HowToUseSheet";
+import { useUserPreferences } from "@/hooks/useUserPreferences";
+import { getBuddyEmoji } from "@/lib/data";
 
 const categories = [
   {
