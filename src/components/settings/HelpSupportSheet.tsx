@@ -77,7 +77,7 @@ const HelpSupportSheet = ({ open, onClose }: Props) => (
           We'd love to hear your suggestions for new features or improvements. Your feedback helps us build a better experience for everyone.
         </p>
         <Button asChild variant="outline" className="w-full gap-2">
-          <a href="mailto:ashleydarling87@gmail.com?subject=Wellbeing%20Buddy%20Feedback">
+          <a href="mailto:ashleydarling87@gmail.com?subject=CozyZebra%20Feedback">
             <Mail size={16} />
             Email Us
           </a>

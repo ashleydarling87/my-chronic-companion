@@ -33,7 +33,7 @@ const DataPrivacySheet = ({ open, onClose }: Props) => {
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = "wellbeing-buddy-export.json";
+      a.download = "cozyzebra-export.json";
       a.click();
       URL.revokeObjectURL(url);
       toast.success("Your data has been downloaded");

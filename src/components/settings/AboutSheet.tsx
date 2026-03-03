@@ -67,7 +67,7 @@ const AboutSheet = ({ open, onClose, onOpenPrivacy }: Props) => {
         </div>
 
         <div className="flex items-center justify-center gap-1.5 text-xs text-muted-foreground pb-4">
-          Made with <Heart size={12} className="text-red-500 fill-red-500" /> for your wellbeing
+          Made with <Heart size={12} className="text-red-500 fill-red-500" /> to keep you cozy
         </div>
       </SheetContent>
     </Sheet>
