@@ -1,11 +1,12 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import { ArrowLeft, ChevronRight, LogOut, Camera, Loader2, Sun, Moon, Monitor, Bell, ShieldCheck, LifeBuoy, Info, Check, Save } from "lucide-react";
+import { ArrowLeft, LogOut, Camera, Loader2, Sun, Moon, Monitor, Check, Save, ChevronDown } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "next-themes";
 import { BUDDY_AVATARS, getBuddyEmoji } from "../lib/data";
 import PainPreferencesCard from "../components/PainPreferencesCard";
 import CommunicationStyleCard from "../components/CommunicationStyleCard";
 import SymptomsCard from "../components/SymptomsCard";
+import IdentityCard from "../components/IdentityCard";
 import DeleteAccountSection from "../components/DeleteAccountSection";
 import CropSheet from "../components/CropSheet";
 import NotificationsSheet from "../components/settings/NotificationsSheet";
@@ -18,6 +19,12 @@ import type { UserPreferences, CommunicationStyle } from "@/hooks/useUserPrefere
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import {
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
@@ -27,6 +34,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { ChevronRight, Bell, ShieldCheck, LifeBuoy, Info } from "lucide-react";
 
 type SettingsSheet = "notifications" | "data-privacy" | "help" | "about" | null;
 
@@ -186,167 +194,221 @@ const ProfilePage = () => {
       </header>
 
       <main className="flex-1 overflow-y-auto px-4 py-4 pb-28">
-        <div className="mx-auto max-w-lg space-y-6">
-          {/* Profile Picture */}
-          <div className="flex flex-col items-center gap-2 animate-slide-up">
-            <button onClick={() => fileInputRef.current?.click()} disabled={uploading} className="relative group">
-              <div className="flex h-24 w-24 items-center justify-center rounded-full bg-primary/10 overflow-hidden border-2 border-primary/20">
-                {uploading ? (
-                  <Loader2 size={28} className="animate-spin text-muted-foreground" />
-                ) : profilePicUrl ? (
-                  <img src={profilePicUrl} alt="Profile" className="h-full w-full object-cover" />
-                ) : (
-                  <span className="text-4xl">{getBuddyEmoji(selectedAvatarId)}</span>
-                )}
-              </div>
-              <div className="absolute bottom-0 right-0 flex h-8 w-8 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-md transition-transform group-hover:scale-110">
-                <Camera size={14} />
-              </div>
-            </button>
-            <p className="text-xs text-muted-foreground">Tap to change photo</p>
-            <input ref={fileInputRef} type="file" accept="image/*" capture="environment" onChange={handleFileSelect} className="hidden" />
-          </div>
-
+        <div className="mx-auto max-w-lg space-y-4">
           <CropSheet open={!!cropSrc} imageSrc={cropSrc || ""} onClose={() => setCropSrc(null)} onCropComplete={handleCroppedUpload} />
 
-          {/* User Info */}
-          <section className="rounded-2xl border bg-card p-4 space-y-4 animate-slide-up">
-            <h2 className="text-sm font-bold text-muted-foreground uppercase tracking-wider">Your Info</h2>
-            <div className="space-y-1">
-              <label className="text-xs font-semibold text-muted-foreground">Name</label>
-              <input
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Your name"
-                className="w-full rounded-xl border bg-background px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary/30"
-              />
-            </div>
-            <div className="space-y-1">
-              <label className="text-xs font-semibold text-muted-foreground">Age Range</label>
-              <select
-                value={ageRange}
-                onChange={(e) => setAgeRange(e.target.value)}
-                className="w-full rounded-xl border bg-background px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary/30"
-              >
-                <option value="">Select age range</option>
-                {["17–24", "25–30", "31–36", "37–42", "43–50", "51–60", "60+"].map((r) => (
-                  <option key={r} value={r}>{r}</option>
-                ))}
-              </select>
-            </div>
-          </section>
+          <Accordion type="multiple" defaultValue={["profile-buddy"]} className="space-y-3">
+            {/* 1. Your profile & buddy */}
+            <AccordionItem value="profile-buddy" className="rounded-2xl border bg-card overflow-hidden">
+              <AccordionTrigger className="px-4 py-3.5 text-sm font-bold uppercase tracking-wider text-muted-foreground hover:no-underline">
+                Your profile & buddy
+              </AccordionTrigger>
+              <AccordionContent className="px-4">
+                <div className="space-y-5 pb-2">
+                  {/* Profile Picture */}
+                  <div className="flex flex-col items-center gap-2">
+                    <button onClick={() => fileInputRef.current?.click()} disabled={uploading} className="relative group">
+                      <div className="flex h-24 w-24 items-center justify-center rounded-full bg-primary/10 overflow-hidden border-2 border-primary/20">
+                        {uploading ? (
+                          <Loader2 size={28} className="animate-spin text-muted-foreground" />
+                        ) : profilePicUrl ? (
+                          <img src={profilePicUrl} alt="Profile" className="h-full w-full object-cover" />
+                        ) : (
+                          <span className="text-4xl">{getBuddyEmoji(selectedAvatarId)}</span>
+                        )}
+                      </div>
+                      <div className="absolute bottom-0 right-0 flex h-8 w-8 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-md transition-transform group-hover:scale-110">
+                        <Camera size={14} />
+                      </div>
+                    </button>
+                    <p className="text-xs text-muted-foreground">Tap to change photo</p>
+                    <input ref={fileInputRef} type="file" accept="image/*" capture="environment" onChange={handleFileSelect} className="hidden" />
+                  </div>
 
-          {/* Care Recipient Info */}
-          {prefs?.usage_mode === "caretaker" && (
-            <section className="rounded-2xl border bg-card p-4 space-y-4 animate-slide-up">
-              <h2 className="text-sm font-bold text-muted-foreground uppercase tracking-wider">Person You Care For</h2>
-              <div className="space-y-1">
-                <label className="text-xs font-semibold text-muted-foreground">Their Name</label>
-                <input
-                  value={careRecipientName}
-                  onChange={(e) => setCareRecipientName(e.target.value)}
-                  placeholder="e.g. Alex"
-                  className="w-full rounded-xl border bg-background px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary/30"
-                />
-              </div>
-              <div className="space-y-1">
-                <label className="text-xs font-semibold text-muted-foreground">Their Age Range</label>
-                <select
-                  value={careRecipientAgeRange}
-                  onChange={(e) => setCareRecipientAgeRange(e.target.value)}
-                  className="w-full rounded-xl border bg-background px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary/30"
-                >
-                  <option value="">Select age range</option>
-                  {["0–4", "5–9", "10–13", "14–17", "17–24", "25–30", "31–36", "37–42", "43–50", "51–60", "60+"].map((r) => (
-                    <option key={r} value={r}>{r}</option>
-                  ))}
-                </select>
-              </div>
-              <p className="text-xs text-muted-foreground">This helps your buddy ask about them by name.</p>
-            </section>
-          )}
+                  {/* Name */}
+                  <div className="space-y-1">
+                    <label className="text-xs font-semibold text-muted-foreground">Name</label>
+                    <input
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      placeholder="Your name"
+                      className="w-full rounded-xl border bg-background px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary/30"
+                    />
+                  </div>
 
-          {/* Buddy Customization */}
-          <section className="rounded-2xl border bg-card p-4 space-y-4 animate-slide-up">
-            <h2 className="text-sm font-bold text-muted-foreground uppercase tracking-wider">Customize Your Buddy</h2>
-            <div className="space-y-1">
-              <label className="text-xs font-semibold text-muted-foreground">Buddy's Name</label>
-              <input
-                value={buddyName}
-                onChange={(e) => setBuddyName(e.target.value)}
-                className="w-full rounded-xl border bg-background px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary/30"
-              />
-            </div>
-            <div className="space-y-1">
-              <label className="text-xs font-semibold text-muted-foreground">Choose Avatar</label>
-              <div className="grid grid-cols-3 gap-2 mt-1">
-                {BUDDY_AVATARS.map((av) => (
-                  <button
-                    key={av.id}
-                    onClick={() => setSelectedAvatarId(av.id)}
-                    className={`flex flex-col items-center gap-1 rounded-2xl py-3 transition-all ${
-                      selectedAvatarId === av.id
-                        ? "bg-primary/15 border-2 border-primary scale-105"
-                        : "bg-secondary hover:bg-primary/10 border border-transparent"
-                    }`}
-                  >
-                    <span className="text-2xl">{av.emoji}</span>
-                    <span className="text-xs font-medium">{av.name}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
-          </section>
+                  {/* Age Range */}
+                  <div className="space-y-1">
+                    <label className="text-xs font-semibold text-muted-foreground">Age Range</label>
+                    <select
+                      value={ageRange}
+                      onChange={(e) => setAgeRange(e.target.value)}
+                      className="w-full rounded-xl border bg-background px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary/30"
+                    >
+                      <option value="">Select age range</option>
+                      {["17–24", "25–30", "31–36", "37–42", "43–50", "51–60", "60+"].map((r) => (
+                        <option key={r} value={r}>{r}</option>
+                      ))}
+                    </select>
+                  </div>
 
-          {/* Pain & Communication Preferences */}
-          <PainPreferencesCard
-            painPref={painPref}
-            onPainPrefChange={setPainPref}
-            misNote={misNote}
-            onMisNoteChange={setMisNote}
-            identityTags={identityTags}
-            onIdentityTagsChange={setIdentityTags}
-          />
+                  {/* Care Recipient (caretaker mode) */}
+                  {prefs?.usage_mode === "caretaker" && (
+                    <>
+                      <div className="space-y-1">
+                        <label className="text-xs font-semibold text-muted-foreground">Their Name</label>
+                        <input
+                          value={careRecipientName}
+                          onChange={(e) => setCareRecipientName(e.target.value)}
+                          placeholder="e.g. Alex"
+                          className="w-full rounded-xl border bg-background px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary/30"
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <label className="text-xs font-semibold text-muted-foreground">Their Age Range</label>
+                        <select
+                          value={careRecipientAgeRange}
+                          onChange={(e) => setCareRecipientAgeRange(e.target.value)}
+                          className="w-full rounded-xl border bg-background px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary/30"
+                        >
+                          <option value="">Select age range</option>
+                          {["0–4", "5–9", "10–13", "14–17", "17–24", "25–30", "31–36", "37–42", "43–50", "51–60", "60+"].map((r) => (
+                            <option key={r} value={r}>{r}</option>
+                          ))}
+                        </select>
+                      </div>
+                    </>
+                  )}
 
-          {/* Symptoms */}
-          <SymptomsCard
-            symptoms={mySymptoms}
-            onSymptomsChange={setMySymptoms}
-          />
+                  {/* Buddy Name */}
+                  <div className="space-y-1">
+                    <label className="text-xs font-semibold text-muted-foreground">Buddy's Name</label>
+                    <input
+                      value={buddyName}
+                      onChange={(e) => setBuddyName(e.target.value)}
+                      className="w-full rounded-xl border bg-background px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary/30"
+                    />
+                  </div>
 
-          {/* Communication Style */}
-          <CommunicationStyleCard
-            style={commStyle}
-            onStyleChange={setCommStyle}
-          />
+                  {/* Buddy Avatar */}
+                  <div className="space-y-1">
+                    <label className="text-xs font-semibold text-muted-foreground">Choose Avatar</label>
+                    <div className="grid grid-cols-3 gap-2 mt-1">
+                      {BUDDY_AVATARS.map((av) => (
+                        <button
+                          key={av.id}
+                          onClick={() => setSelectedAvatarId(av.id)}
+                          className={`flex flex-col items-center gap-1 rounded-2xl py-3 transition-all ${
+                            selectedAvatarId === av.id
+                              ? "bg-primary/15 border-2 border-primary scale-105"
+                              : "bg-secondary hover:bg-primary/10 border border-transparent"
+                          }`}
+                        >
+                          <span className="text-2xl">{av.emoji}</span>
+                          <span className="text-xs font-medium">{av.name}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </AccordionContent>
+            </AccordionItem>
 
-          {/* Appearance */}
-          <section className="rounded-2xl border bg-card p-4 space-y-3 animate-slide-up">
-            <h2 className="text-sm font-bold text-muted-foreground uppercase tracking-wider">Appearance</h2>
-            <div className="grid grid-cols-3 gap-2">
-              {([
-                { value: "light", label: "Light", icon: Sun },
-                { value: "dark", label: "Dark", icon: Moon },
-                { value: "system", label: "System", icon: Monitor },
-              ] as const).map(({ value, label, icon: Icon }) => (
-                <button
-                  key={value}
-                  onClick={() => setTheme(value)}
-                  className={`flex flex-col items-center gap-1.5 rounded-xl py-3 transition-all ${
-                    theme === value
-                      ? "bg-primary/15 border-2 border-primary"
-                      : "bg-secondary hover:bg-primary/10 border border-transparent"
-                  }`}
-                >
-                  <Icon size={18} />
-                  <span className="text-xs font-semibold">{label}</span>
-                </button>
-              ))}
-            </div>
-          </section>
+            {/* 2. How you talk about pain */}
+            <AccordionItem value="pain" className="rounded-2xl border bg-card overflow-hidden">
+              <AccordionTrigger className="px-4 py-3.5 text-sm font-bold uppercase tracking-wider text-muted-foreground hover:no-underline">
+                How you talk about pain
+              </AccordionTrigger>
+              <AccordionContent className="px-4">
+                <div className="pb-2">
+                  <PainPreferencesCard
+                    painPref={painPref}
+                    onPainPrefChange={setPainPref}
+                    misNote={misNote}
+                    onMisNoteChange={setMisNote}
+                  />
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+
+            {/* 3. My symptoms */}
+            <AccordionItem value="symptoms" className="rounded-2xl border bg-card overflow-hidden">
+              <AccordionTrigger className="px-4 py-3.5 text-sm font-bold uppercase tracking-wider text-muted-foreground hover:no-underline">
+                My symptoms
+              </AccordionTrigger>
+              <AccordionContent className="px-4">
+                <div className="pb-2">
+                  <SymptomsCard
+                    symptoms={mySymptoms}
+                    onSymptomsChange={setMySymptoms}
+                  />
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+
+            {/* 4. Communication style */}
+            <AccordionItem value="communication" className="rounded-2xl border bg-card overflow-hidden">
+              <AccordionTrigger className="px-4 py-3.5 text-sm font-bold uppercase tracking-wider text-muted-foreground hover:no-underline">
+                Communication style
+              </AccordionTrigger>
+              <AccordionContent className="px-4">
+                <div className="pb-2">
+                  <CommunicationStyleCard
+                    style={commStyle}
+                    onStyleChange={setCommStyle}
+                  />
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+
+            {/* 5. Optional identity & context */}
+            <AccordionItem value="identity" className="rounded-2xl border bg-card overflow-hidden">
+              <AccordionTrigger className="px-4 py-3.5 text-sm font-bold uppercase tracking-wider text-muted-foreground hover:no-underline">
+                Optional identity & context
+              </AccordionTrigger>
+              <AccordionContent className="px-4">
+                <div className="pb-2">
+                  <IdentityCard
+                    identityTags={identityTags}
+                    onIdentityTagsChange={setIdentityTags}
+                  />
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+
+            {/* 6. Appearance */}
+            <AccordionItem value="appearance" className="rounded-2xl border bg-card overflow-hidden">
+              <AccordionTrigger className="px-4 py-3.5 text-sm font-bold uppercase tracking-wider text-muted-foreground hover:no-underline">
+                Appearance
+              </AccordionTrigger>
+              <AccordionContent className="px-4">
+                <div className="pb-2">
+                  <div className="grid grid-cols-3 gap-2">
+                    {([
+                      { value: "light", label: "Light", icon: Sun },
+                      { value: "dark", label: "Dark", icon: Moon },
+                      { value: "system", label: "System", icon: Monitor },
+                    ] as const).map(({ value, label, icon: Icon }) => (
+                      <button
+                        key={value}
+                        onClick={() => setTheme(value)}
+                        className={`flex flex-col items-center gap-1.5 rounded-xl py-3 transition-all ${
+                          theme === value
+                            ? "bg-primary/15 border-2 border-primary"
+                            : "bg-secondary hover:bg-primary/10 border border-transparent"
+                        }`}
+                      >
+                        <Icon size={18} />
+                        <span className="text-xs font-semibold">{label}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
 
           {/* Settings */}
-          <section className="rounded-2xl border bg-card divide-y animate-slide-up">
+          <section className="rounded-2xl border bg-card divide-y">
             <h2 className="text-sm font-bold text-muted-foreground uppercase tracking-wider px-4 pt-4 pb-2">Settings</h2>
             {([
               { key: "notifications" as const, label: "Notifications", icon: Bell },
@@ -382,7 +444,7 @@ const ProfilePage = () => {
         </div>
       </main>
 
-      {/* Sticky Save Button — always visible when prefs loaded */}
+      {/* Sticky Save Button */}
       {prefs && (
         <div className="fixed bottom-0 left-0 right-0 z-50 px-4 pb-4 pt-2 bg-gradient-to-t from-background via-background to-transparent">
           <div className="mx-auto max-w-lg">

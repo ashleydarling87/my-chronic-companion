@@ -69,34 +69,14 @@ const PainScalePreview = ({ type }: { type: UserPreferences["pain_preference"] }
   );
 };
 
-const IDENTITY_OPTIONS = [
-  { value: "white", label: "I'm White" },
-  { value: "black", label: "I'm Black or African American" },
-  { value: "hispanic_latino", label: "I'm Hispanic or Latino/a" },
-  { value: "asian", label: "I'm Asian" },
-  { value: "native_american", label: "I'm American Indian or Alaska Native" },
-  { value: "pacific_islander", label: "I'm Native Hawaiian or Pacific Islander" },
-  { value: "middle_eastern", label: "I'm Middle Eastern or North African" },
-  { value: "multiracial", label: "I'm Multiracial" },
-  { value: "lgbtq", label: "I'm LGBTQ+" },
-  { value: "trans_ftm", label: "I'm Trans FTM" },
-  { value: "trans_mtf", label: "I'm Trans MTF" },
-  { value: "man", label: "I'm a Man" },
-  { value: "woman", label: "I'm a Woman" },
-  { value: "gender_fluid", label: "I'm Gender Fluid" },
-  { value: "neurodivergent", label: "I'm Neurodivergent" },
-];
-
-interface Props {
+interface PainProps {
   painPref: UserPreferences["pain_preference"];
   onPainPrefChange: (v: UserPreferences["pain_preference"]) => void;
   misNote: string;
   onMisNoteChange: (v: string) => void;
-  identityTags: string[];
-  onIdentityTagsChange: (v: string[]) => void;
 }
 
-export default function PainPreferencesCard({ painPref, onPainPrefChange, misNote, onMisNoteChange, identityTags, onIdentityTagsChange }: Props) {
+export default function PainPreferencesCard({ painPref, onPainPrefChange, misNote, onMisNoteChange }: PainProps) {
   const [sheetOpen, setSheetOpen] = useState(false);
   const [previewPref, setPreviewPref] = useState<UserPreferences["pain_preference"]>("numeric");
 
@@ -110,18 +90,8 @@ export default function PainPreferencesCard({ painPref, onPainPrefChange, misNot
     setSheetOpen(false);
   };
 
-  const toggleIdentity = (tag: string) => {
-    onIdentityTagsChange(
-      identityTags.includes(tag) ? identityTags.filter((t) => t !== tag) : [...identityTags, tag]
-    );
-  };
-
   return (
-    <section className="rounded-2xl border bg-card p-4 space-y-5 animate-slide-up">
-      <h2 className="text-sm font-bold text-muted-foreground uppercase tracking-wider">
-        Pain & Communication Preferences
-      </h2>
-
+    <div className="space-y-4">
       <div className="space-y-2">
         <label className="text-xs font-semibold text-muted-foreground">Preferred way to talk about pain</label>
         <div className="grid grid-cols-2 gap-2">
@@ -153,38 +123,6 @@ export default function PainPreferencesCard({ painPref, onPainPrefChange, misNot
         />
       </div>
 
-      <div className="space-y-2">
-        <label className="text-xs font-semibold text-muted-foreground">Optional identity & context</label>
-        <div className="rounded-xl bg-destructive/10 p-3 flex gap-2 items-start">
-          <span className="text-base mt-0.5">❤️</span>
-          <p className="text-xs text-muted-foreground leading-relaxed">
-            <strong>This is completely optional.</strong> Your identity information is never shared outside this app. We ask because different folks often receive different care in healthcare, and we want to empower everyone to be their own #1 advocate. This simply helps us tailor your experience.
-          </p>
-        </div>
-        <div className="flex flex-wrap gap-2">
-          {IDENTITY_OPTIONS.map((opt) => (
-            <button
-              key={opt.value}
-              onClick={() => toggleIdentity(opt.value)}
-              className={`rounded-full border px-3 py-1.5 text-xs font-medium transition-all ${
-                identityTags.includes(opt.value)
-                  ? "border-primary bg-primary/10 text-foreground"
-                  : "bg-background text-muted-foreground hover:bg-secondary/50"
-              }`}
-            >
-              {opt.label}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <div className="rounded-xl bg-primary/10 p-3">
-        <p className="text-xs text-muted-foreground leading-relaxed">
-          🤎 <strong>Your experience matters.</strong> These preferences help Buddy understand how you communicate about pain
-          and ensure your reports reflect your story — on your terms.
-        </p>
-      </div>
-
       <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
         <SheetContent side="bottom" className="rounded-t-2xl px-5 pb-6 pt-0">
           <SheetHeader className="relative pt-5 pb-2">
@@ -210,6 +148,6 @@ export default function PainPreferencesCard({ painPref, onPainPrefChange, misNot
           </button>
         </SheetContent>
       </Sheet>
-    </section>
+    </div>
   );
 }
