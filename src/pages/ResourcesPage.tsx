@@ -95,7 +95,7 @@ const ResourcesPage = () => {
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
-      <Header title="Resources" subtitle="Curated just for you by Buddy 🐻" />
+      <Header title="Resources" subtitle={`Curated just for you by ${buddyName} ${buddyEmoji}`} />
 
       <main className="flex-1 overflow-y-auto px-4 py-4 pb-24">
         <div className="mx-auto max-w-lg">
