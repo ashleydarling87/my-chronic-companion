@@ -29,7 +29,7 @@ const AboutSheet = ({ open, onClose, onOpenPrivacy }: Props) => {
           <div className="flex h-20 w-20 items-center justify-center rounded-full bg-primary/10 border-2 border-primary/20">
             <span className="text-4xl">{emoji}</span>
           </div>
-          <h2 className="text-xl font-bold">Wellbeing Buddy</h2>
+          <h2 className="text-xl font-bold">CozyZebra</h2>
           <span className="text-xs text-muted-foreground">Version 1.0.0</span>
         </div>
 
