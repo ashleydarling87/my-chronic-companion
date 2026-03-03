@@ -7,6 +7,8 @@ import { supabase } from "@/integrations/supabase/client";
 import EncouragementSheet from "@/components/EncouragementSheet";
 import CrisisSheet from "@/components/CrisisSheet";
 import HowToUseSheet from "@/components/HowToUseSheet";
+import { useUserPreferences } from "@/hooks/useUserPreferences";
+import { getBuddyEmoji } from "@/lib/data";
 
 const categories = [
   {
@@ -62,6 +64,9 @@ const categories = [
 
 const ResourcesPage = () => {
   const navigate = useNavigate();
+  const { prefs } = useUserPreferences();
+  const buddyName = prefs?.buddy_name || "Buddy";
+  const buddyEmoji = getBuddyEmoji(prefs?.buddy_avatar || "bear");
   const [showEncouragement, setShowEncouragement] = useState(false);
   const [showCrisis, setShowCrisis] = useState(false);
   const [showHowToUse, setShowHowToUse] = useState(false);
@@ -90,14 +95,14 @@ const ResourcesPage = () => {
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
-      <Header title="Resources" subtitle="Curated just for you by Buddy 🐻" />
+      <Header title="Resources" subtitle={`Curated just for you by ${buddyName} ${buddyEmoji}`} />
 
       <main className="flex-1 overflow-y-auto px-4 py-4 pb-24">
         <div className="mx-auto max-w-lg">
           <div className="rounded-2xl bg-primary/10 p-4 mb-4 animate-slide-up">
             <p className="text-sm leading-relaxed">
-              <span className="text-xl mr-1">🐻</span>
-              Explore resources I've gathered based on our chats. Tap a category to dive in! 💛
+              <span className="text-xl mr-1">{buddyEmoji}</span>
+              Explore cozy resources I've gathered based on our chats. Tap a category to dive in! 💛
             </p>
           </div>
 
