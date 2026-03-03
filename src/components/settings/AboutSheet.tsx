@@ -40,7 +40,7 @@ const AboutSheet = ({ open, onClose, onOpenPrivacy }: Props) => {
         <div className="rounded-2xl border bg-card p-4 space-y-3 mb-6">
           <h3 className="text-sm font-bold text-muted-foreground uppercase tracking-wider">Our Mission</h3>
           <p className="text-xs text-muted-foreground leading-relaxed">
-            Wellbeing Buddy was created to give everyone a safe, private space to track how they're feeling — 
+            CozyZebra was created to give everyone a cozy, safe space to track how they're feeling — 
             physically and emotionally. Whether you're managing chronic pain, supporting a loved one, or simply 
             checking in with yourself, we're here to listen without judgment.
           </p>
