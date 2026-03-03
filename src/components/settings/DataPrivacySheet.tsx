@@ -115,8 +115,8 @@ const DataPrivacySheet = ({ open, onClose }: Props) => {
               <p className="font-semibold text-foreground mb-1">Contact</p>
               <p>
                 For privacy questions or concerns, email us at{" "}
-                <a href="mailto:ashleydarling87@gmail.com" className="text-primary underline">
-                  ashleydarling87@gmail.com
+                <a href="mailto:ashley@cozyzebra.com" className="text-primary underline">
+                  ashley@cozyzebra.com
                 </a>.
               </p>
             </div>
