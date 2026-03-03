@@ -68,13 +68,10 @@ const CommunicationStyleCard = ({ style, onStyleChange }: Props) => {
   };
 
   return (
-    <section className="rounded-2xl border bg-card p-4 space-y-4 animate-slide-up">
-      <div>
-        <h2 className="text-sm font-bold text-muted-foreground uppercase tracking-wider">Communication Style</h2>
-        <p className="text-xs text-muted-foreground mt-1">
-          Set your preferences or leave on "Auto-detect" — the AI will learn from how you chat.
-        </p>
-      </div>
+    <div className="space-y-4">
+      <p className="text-xs text-muted-foreground">
+        Set your preferences or leave on "Auto-detect" — the AI will learn from how you chat.
+      </p>
       {OPTIONS.map(({ key, label, choices }) => (
         <div key={key} className="space-y-1.5">
           <label className="text-xs font-semibold text-muted-foreground">{label}</label>
@@ -98,7 +95,7 @@ const CommunicationStyleCard = ({ style, onStyleChange }: Props) => {
           </div>
         </div>
       ))}
-    </section>
+    </div>
   );
 };
 

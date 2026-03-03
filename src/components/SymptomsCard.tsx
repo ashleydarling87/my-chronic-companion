@@ -2,6 +2,8 @@ import { useState } from "react";
 import { X, Plus, Search } from "lucide-react";
 import { SUGGESTED_SYMPTOMS } from "@/lib/data";
 
+const INITIAL_SUGGESTIONS = 10;
+
 interface Props {
   symptoms: string[];
   onSymptomsChange: (symptoms: string[]) => void;
@@ -9,6 +11,7 @@ interface Props {
 
 const SymptomsCard = ({ symptoms, onSymptomsChange }: Props) => {
   const [search, setSearch] = useState("");
+  const [showAllSuggestions, setShowAllSuggestions] = useState(false);
 
   const addSymptom = (symptom: string) => {
     const trimmed = symptom.trim();
@@ -28,15 +31,17 @@ const SymptomsCard = ({ symptoms, onSymptomsChange }: Props) => {
       (search ? s.toLowerCase().includes(search.toLowerCase()) : true)
   );
 
+  const visibleSuggestions = showAllSuggestions || search
+    ? filteredSuggestions
+    : filteredSuggestions.slice(0, INITIAL_SUGGESTIONS);
+
   const showAddCustom =
     search.trim() &&
     !SUGGESTED_SYMPTOMS.some((s) => s.toLowerCase() === search.trim().toLowerCase()) &&
     !symptoms.some((s) => s.toLowerCase() === search.trim().toLowerCase());
 
   return (
-    <section className="rounded-2xl border bg-card p-4 space-y-4 animate-slide-up">
-      <h2 className="text-sm font-bold text-muted-foreground uppercase tracking-wider">My Symptoms</h2>
-
+    <div className="space-y-4">
       {symptoms.length > 0 && (
         <div className="flex flex-wrap gap-1.5">
           {symptoms.map((s) => (
@@ -74,11 +79,11 @@ const SymptomsCard = ({ symptoms, onSymptomsChange }: Props) => {
         </button>
       )}
 
-      {filteredSuggestions.length > 0 && (
+      {visibleSuggestions.length > 0 && (
         <div className="space-y-2">
           <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Suggestions</p>
           <div className="flex flex-wrap gap-1.5">
-            {filteredSuggestions.map((s) => (
+            {visibleSuggestions.map((s) => (
               <button
                 key={s}
                 onClick={() => addSymptom(s)}
@@ -88,9 +93,17 @@ const SymptomsCard = ({ symptoms, onSymptomsChange }: Props) => {
               </button>
             ))}
           </div>
+          {!showAllSuggestions && !search && filteredSuggestions.length > INITIAL_SUGGESTIONS && (
+            <button
+              onClick={() => setShowAllSuggestions(true)}
+              className="text-xs font-semibold text-primary hover:underline"
+            >
+              Show all symptoms →
+            </button>
+          )}
         </div>
       )}
-    </section>
+    </div>
   );
 };
 
