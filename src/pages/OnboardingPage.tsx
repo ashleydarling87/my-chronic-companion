@@ -94,7 +94,7 @@ const IntakeChat = ({
     {
       id: "initial",
       role: "assistant",
-      content: `Hey! I'm ${buddyName} ${emoji} — so glad you're here! I'd love to get to know you a little before we start. What brings you to Wellbeing Buddy?`,
+      content: `Hey! I'm ${buddyName} ${emoji} — so glad you're here! I'd love to get to know you a little before we start. What brings you to CozyZebra?`,
       chips: ["Chronic pain", "Mental health", "A mix of things", "I'm not sure yet"],
       timestamp: new Date(),
     },

@@ -80,16 +80,16 @@ const AuthPage = () => {
       <div className="w-full max-w-sm space-y-8">
         {/* Logo area */}
         <div className="text-center space-y-2">
-          <span className="text-5xl">🐻</span>
-          <h1 className="text-2xl font-extrabold text-foreground">Wellbeing Buddy</h1>
-          <p className="text-sm text-muted-foreground">Your personal health & mental wellness companion</p>
+          <span className="text-5xl">🦓</span>
+          <h1 className="text-2xl font-extrabold text-foreground">CozyZebra</h1>
+          <p className="text-sm text-muted-foreground">Your cozy companion for health & wellness</p>
         </div>
 
         {/* Warm welcome */}
         <div className="flex items-start gap-2 rounded-2xl bg-primary/5 border border-primary/15 p-4">
           <Heart size={16} className="text-primary mt-0.5 shrink-0" />
           <p className="text-xs text-muted-foreground leading-relaxed">
-            We're here to help you track, understand, and advocate for your physical and mental health. 
+          A cozy, safe space to track, understand, and advocate for your physical and mental health. 
             Your data stays private and secure — always.
           </p>
         </div>
@@ -199,7 +199,7 @@ const AuthPage = () => {
 
         {/* Static disclaimer note */}
         <p className="text-[11px] text-muted-foreground/70 leading-relaxed text-center">
-          This app is not medical or mental health advice and should not be used to diagnose or treat any condition. It is a journal and logbook with resources to help you track symptoms, identify patterns, and present information to your healthcare providers clearly so you can receive the best care.
+          CozyZebra is not medical or mental health advice and should not be used to diagnose or treat any condition. It is a journal and logbook with resources to help you track symptoms, identify patterns, and present information to your healthcare providers clearly so you can receive the best care.
         </p>
       </div>
 
@@ -209,7 +209,7 @@ const AuthPage = () => {
           <SheetHeader className="text-left">
             <SheetTitle className="text-lg">Before you get started</SheetTitle>
             <SheetDescription className="text-sm leading-relaxed text-muted-foreground">
-              This app is <span className="font-semibold text-foreground">not medical or mental health advice</span> and should not be used to diagnose or treat any condition. It is a journal and logbook with resources to help you track symptoms, identify patterns, and present information to your healthcare providers in an efficient and clear way so that you can receive the best care.
+              CozyZebra is <span className="font-semibold text-foreground">not medical or mental health advice</span> and should not be used to diagnose or treat any condition. It is a cozy journal and logbook with resources to help you track symptoms, identify patterns, and present information to your healthcare providers in an efficient and clear way so that you can receive the best care.
             </SheetDescription>
           </SheetHeader>
           <button
