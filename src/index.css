@@ -6,57 +6,57 @@
 
 @layer base {
   :root {
-    --background: 30 50% 97%;
-    --foreground: 20 20% 18%;
+    --background: 37 52% 94%;
+    --foreground: 350 16% 12%;
 
-    --card: 30 40% 99%;
-    --card-foreground: 20 20% 18%;
+    --card: 0 0% 100%;
+    --card-foreground: 350 16% 12%;
 
-    --popover: 30 40% 99%;
-    --popover-foreground: 20 20% 18%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 350 16% 12%;
 
-    --primary: 12 76% 68%;
-    --primary-foreground: 0 0% 100%;
+    --primary: 11 100% 72%;
+    --primary-foreground: 356 36% 14%;
 
-    --secondary: 30 30% 92%;
-    --secondary-foreground: 20 20% 25%;
+    --secondary: 327 14% 86%;
+    --secondary-foreground: 350 16% 12%;
 
-    --muted: 30 20% 94%;
-    --muted-foreground: 20 10% 50%;
+    --muted: 327 14% 86%;
+    --muted-foreground: 350 14% 26%;
 
-    --accent: 160 40% 55%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 170 39% 51%;
+    --accent-foreground: 170 51% 14%;
 
-    --destructive: 0 72% 60%;
-    --destructive-foreground: 0 0% 100%;
+    --destructive: 351 100% 71%;
+    --destructive-foreground: 351 48% 16%;
 
-    --border: 30 20% 90%;
-    --input: 30 20% 90%;
-    --ring: 12 76% 68%;
+    --border: 327 14% 86%;
+    --input: 327 14% 86%;
+    --ring: 11 100% 72%;
 
     --radius: 1rem;
 
-    --chat-user: 12 76% 68%;
-    --chat-user-foreground: 0 0% 100%;
-    --chat-ai: 30 30% 94%;
-    --chat-ai-foreground: 20 20% 18%;
+    --chat-user: 11 100% 72%;
+    --chat-user-foreground: 356 36% 14%;
+    --chat-ai: 327 14% 86%;
+    --chat-ai-foreground: 350 16% 12%;
 
-    --energy-high: 160 50% 50%;
-    --energy-mid: 40 80% 60%;
-    --energy-low: 0 60% 60%;
+    --energy-high: 170 39% 51%;
+    --energy-mid: 39 100% 69%;
+    --energy-low: 351 100% 71%;
 
-    --pain-low: 160 50% 50%;
-    --pain-mid: 40 80% 60%;
-    --pain-high: 0 60% 60%;
+    --pain-low: 170 39% 51%;
+    --pain-mid: 39 100% 69%;
+    --pain-high: 351 100% 71%;
 
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 240 5.9% 10%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 240 4.8% 95.9%;
-    --sidebar-accent-foreground: 240 5.9% 10%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-background: 37 52% 94%;
+    --sidebar-foreground: 350 16% 12%;
+    --sidebar-primary: 11 100% 72%;
+    --sidebar-primary-foreground: 356 36% 14%;
+    --sidebar-accent: 170 39% 51%;
+    --sidebar-accent-foreground: 170 51% 14%;
+    --sidebar-border: 327 14% 86%;
+    --sidebar-ring: 11 100% 72%;
   }
 
   .dark {
