@@ -101,8 +101,8 @@ const ResourcesPage = () => {
         <div className="mx-auto max-w-lg">
           <div className="rounded-2xl bg-primary/10 p-4 mb-4 animate-slide-up">
             <p className="text-sm leading-relaxed">
-              <span className="text-xl mr-1">🐻</span>
-              Explore resources I've gathered based on our chats. Tap a category to dive in! 💛
+              <span className="text-xl mr-1">{buddyEmoji}</span>
+              Explore cozy resources I've gathered based on our chats. Tap a category to dive in! 💛
             </p>
           </div>
 
