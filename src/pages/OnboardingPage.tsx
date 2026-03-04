@@ -495,7 +495,7 @@ const OnboardingPage = () => {
                 {USAGE_MODES.map((m) => (
                   <button
                     key={m.value}
-                    onClick={() => setUsageMode(m.value)}
+                    onClick={() => { softTap(); setUsageMode(m.value); }}
                     className={`flex w-full items-center gap-3 rounded-xl px-4 py-3.5 text-left transition-all ${
                       usageMode === m.value
                         ? "bg-primary text-primary-foreground scale-[1.02]"
