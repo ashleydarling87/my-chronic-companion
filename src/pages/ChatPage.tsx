@@ -108,14 +108,14 @@ const ChatBubble = ({ message, onChipSelect, isLatest, isLoading, buddyEmoji, us
 
 const makeInitialMessage = (painPref?: string, buddyName?: string, hasExistingEntry?: boolean): DisplayMessage => {
   const hour = new Date().getHours();
-  const timeGreeting = hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
+  const timeGreeting = hour < 5 ? "Hey, night owl 🌙" : hour < 12 ? "Good morning ☀️" : hour < 17 ? "Good afternoon ☕" : hour < 20 ? "Good evening 🌅" : "Winding down? 🛏️";
 
   if (hasExistingEntry) {
     return {
       id: "initial",
       role: "assistant",
-      content: `${timeGreeting}! I see you're back 💛 Has anything changed since earlier, or is something on your mind?`,
-      chips: ["Things have changed", "I just want to talk", "Update my log", "I'm doing better now"],
+      content: `${timeGreeting} I see you're back 💛 Has anything changed, or is something on your mind?`,
+      chips: ["Things changed", "Just want to talk", "Update my log", "Doing better now"],
       timestamp: new Date(),
     };
   }
