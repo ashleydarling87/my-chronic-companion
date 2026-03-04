@@ -22,10 +22,10 @@ interface DisplayMessage {
 }
 
 const TypingIndicator = () => (
-  <div className="flex items-center gap-1 chat-bubble-ai w-fit">
-    <div className="h-2 w-2 rounded-full bg-muted-foreground animate-bounce [animation-delay:0ms]" />
-    <div className="h-2 w-2 rounded-full bg-muted-foreground animate-bounce [animation-delay:150ms]" />
-    <div className="h-2 w-2 rounded-full bg-muted-foreground animate-bounce [animation-delay:300ms]" />
+  <div className="flex items-center gap-1.5 chat-bubble-ai w-fit">
+    <div className="h-2 w-2 rounded-full bg-accent animate-typing-dot-1" />
+    <div className="h-2 w-2 rounded-full bg-accent animate-typing-dot-2" />
+    <div className="h-2 w-2 rounded-full bg-accent animate-typing-dot-3" />
   </div>
 );
 
