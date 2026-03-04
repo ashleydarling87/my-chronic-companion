@@ -660,7 +660,7 @@ const OnboardingPage = () => {
                 {(usageMode === "caretaker" ? AGE_RANGES_CARETAKER : AGE_RANGES_SELF).map((r) => (
                   <button
                     key={r}
-                    onClick={() => setAgeRange(r)}
+                    onClick={() => { softTap(); setAgeRange(r); }}
                     className={`rounded-xl px-4 py-3 text-sm font-semibold transition-all ${
                       ageRange === r
                         ? "bg-primary text-primary-foreground scale-105"
