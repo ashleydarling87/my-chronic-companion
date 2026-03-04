@@ -414,6 +414,7 @@ const LogPage = () => {
   const [loading, setLoading] = useState(true);
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const { latest: latestMH, needsWeeklyPrompt, saveScore, refetch: refetchMH } = useMentalHealthScores();
+  const { prefs } = useUserPreferences();
 
   // Show how-to sheet after onboarding
   const [showHowTo, setShowHowTo] = useState(() => {
