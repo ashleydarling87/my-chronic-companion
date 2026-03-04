@@ -527,7 +527,7 @@ const OnboardingPage = () => {
                 {DIAGNOSIS_MODES.map((mode) => (
                   <button
                     key={mode.value}
-                    onClick={() => setDiagnosisMode(mode.value)}
+                    onClick={() => { softTap(); setDiagnosisMode(mode.value); }}
                     className={`flex w-full items-center gap-3 rounded-xl px-4 py-3.5 text-left transition-all ${
                       diagnosisMode === mode.value
                         ? "bg-primary text-primary-foreground scale-[1.02]"
