@@ -10,6 +10,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { supabase } from "@/integrations/supabase/client";
 import { useUserPreferences } from "@/hooks/useUserPreferences";
 import { toast } from "sonner";
+import { getBuddyEmoji } from "@/lib/data";
 
 const TOPICS = ["All", "Pain Management", "Sleep", "Mental Health", "Mindfulness", "Nutrition", "Exercise", "Advocacy"];
 

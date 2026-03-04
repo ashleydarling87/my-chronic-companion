@@ -16,6 +16,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "
 import { cn } from "@/lib/utils";
 import { CalendarIcon } from "lucide-react";
 import { toast } from "sonner";
+import { getBuddyEmoji } from "@/lib/data";
 
 interface DiscriminationDetails {
   painNotReal: boolean;

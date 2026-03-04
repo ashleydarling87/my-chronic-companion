@@ -9,6 +9,7 @@ import BottomNav from "@/components/BottomNav";
 import { supabase } from "@/integrations/supabase/client";
 import { useUserPreferences } from "@/hooks/useUserPreferences";
 import { toast } from "sonner";
+import { getBuddyEmoji } from "@/lib/data";
 
 const CATEGORIES = ["All", "Breathing", "Body Scan", "Meditation", "Visualization", "Grounding", "Movement"];
 

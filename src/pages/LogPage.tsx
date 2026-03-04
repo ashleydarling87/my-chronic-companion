@@ -7,6 +7,7 @@ import BottomNav from "../components/BottomNav";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useUserPreferences } from "@/hooks/useUserPreferences";
+import { getBuddyEmoji } from "@/lib/data";
 import EntryEditForm from "@/components/log/EntryEditForm";
 import type { DbEntry } from "@/components/log/EntryEditForm";
 import { useMentalHealthScores } from "@/hooks/useMentalHealthScores";
