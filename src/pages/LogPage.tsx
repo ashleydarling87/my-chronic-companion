@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { format } from "date-fns";
-import { Plus, Edit2, Check, X, Loader2, ChevronDown, ChevronUp, AlertTriangle, Eye, Trash2, RefreshCw } from "lucide-react";
+import { Plus, Edit2, Check, X, Loader2, ChevronDown, ChevronUp, AlertTriangle, Eye, Trash2, RefreshCw, ChevronLeft } from "lucide-react";
+import { softTap } from "@/lib/haptics";
+import { playLogComplete } from "@/lib/sounds";
 import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 import BottomNav from "../components/BottomNav";
@@ -128,10 +130,32 @@ const PainInput = ({ preference, painLevel, setPainLevel, painVerbal, setPainVer
   return <ScoreSlider label="Pain Level" value={painLevel} onChange={setPainLevel} type="pain" />;
 };
 
+const WIZARD_STEPS = [
+  { emoji: "☕", label: "Pain" },
+  { emoji: "⚡", label: "Energy" },
+  { emoji: "😊", label: "Mood" },
+  { emoji: "🛏️", label: "Sleep" },
+  { emoji: "📝", label: "Journal" },
+];
+
+const StepDots = ({ current, total }: { current: number; total: number }) => (
+  <div className="flex items-center justify-center gap-2 py-2">
+    {Array.from({ length: total }).map((_, i) => (
+      <div
+        key={i}
+        className={`h-2 rounded-full transition-all duration-300 ${
+          i === current ? "w-6 bg-primary" : i < current ? "w-2 bg-primary/40" : "w-2 bg-muted"
+        }`}
+      />
+    ))}
+  </div>
+);
+
 const CheckInForm = ({ onClose, onSaved }: { onClose: () => void; onSaved: () => void }) => {
   const navigate = useNavigate();
   const { prefs } = useUserPreferences();
   const painPref = prefs?.pain_preference || "numeric";
+  const [step, setStep] = useState(0);
   const [painLevel, setPainLevel] = useState(5);
   const [painVerbal, setPainVerbal] = useState("moderate");
   const [energyLevel, setEnergyLevel] = useState(5);
@@ -142,6 +166,7 @@ const CheckInForm = ({ onClose, onSaved }: { onClose: () => void; onSaved: () =>
 
   const handleSubmit = async () => {
     setSubmitting(true);
+    softTap();
     try {
       const body: Record<string, unknown> = {
         raw_text: rawText,
@@ -160,6 +185,7 @@ const CheckInForm = ({ onClose, onSaved }: { onClose: () => void; onSaved: () =>
       if (error) throw error;
       if (data?.error) throw new Error(data.error);
       toast.success("Check-in saved!");
+      playLogComplete();
       onSaved();
       navigate("/summary", { state: { entry: data } });
     } catch (e: any) {
@@ -169,33 +195,102 @@ const CheckInForm = ({ onClose, onSaved }: { onClose: () => void; onSaved: () =>
     }
   };
 
+  const goNext = () => {
+    softTap();
+    if (step < WIZARD_STEPS.length - 1) setStep(step + 1);
+  };
+  const goBack = () => {
+    softTap();
+    if (step > 0) setStep(step - 1);
+  };
+
+  const currentStep = WIZARD_STEPS[step];
+
+  const renderStep = () => {
+    switch (step) {
+      case 0:
+        return (
+          <div className="space-y-4 animate-fade-in">
+            <PainInput preference={painPref} painLevel={painLevel} setPainLevel={setPainLevel} painVerbal={painVerbal} setPainVerbal={setPainVerbal} />
+          </div>
+        );
+      case 1:
+        return (
+          <div className="space-y-4 animate-fade-in">
+            <ScoreSlider label="Energy Level" value={energyLevel} onChange={setEnergyLevel} type="energy" />
+          </div>
+        );
+      case 2:
+        return (
+          <div className="space-y-4 animate-fade-in">
+            <span className="text-sm font-semibold">Mood</span>
+            <div className="flex flex-wrap gap-2">
+              {MOOD_OPTIONS.map((m) => (
+                <button key={m} onClick={() => { softTap(); setMood(m); }} className={`rounded-full px-3 py-1.5 text-xs font-semibold transition-all ${mood === m ? "bg-primary text-primary-foreground scale-105" : "bg-secondary text-secondary-foreground hover:bg-primary/10"}`}>{m}</button>
+              ))}
+            </div>
+          </div>
+        );
+      case 3:
+        return (
+          <div className="space-y-4 animate-fade-in">
+            <span className="text-sm font-semibold">Sleep (hours)</span>
+            <input type="number" min={0} max={24} step={0.5} value={sleepHours} onChange={(e) => setSleepHours(e.target.value)} className="w-full rounded-xl border bg-background px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary/30" />
+          </div>
+        );
+      case 4:
+        return (
+          <div className="space-y-4 animate-fade-in">
+            <span className="text-sm font-semibold">How are you feeling? (optional)</span>
+            <textarea value={rawText} onChange={(e) => setRawText(e.target.value)} placeholder="Tell me everything…" className="w-full rounded-xl border bg-background px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary/30 resize-none" rows={4} />
+          </div>
+        );
+      default:
+        return null;
+    }
+  };
+
   return (
-    <div className="rounded-2xl border bg-card p-4 space-y-4 animate-slide-up">
+    <div className="rounded-2xl border bg-card p-5 space-y-5 animate-slide-up">
+      {/* Header */}
       <div className="flex items-center justify-between">
-        <h2 className="text-sm font-bold">Daily Check-In</h2>
+        <div className="flex items-center gap-2">
+          {step > 0 && (
+            <button onClick={goBack} className="rounded-full p-1.5 text-muted-foreground hover:bg-secondary">
+              <ChevronLeft size={16} />
+            </button>
+          )}
+          <h2 className="text-sm font-bold">{currentStep.emoji} {currentStep.label}</h2>
+        </div>
         <button onClick={onClose} className="rounded-full p-1.5 text-muted-foreground hover:bg-secondary"><X size={16} /></button>
       </div>
-      <PainInput preference={painPref} painLevel={painLevel} setPainLevel={setPainLevel} painVerbal={painVerbal} setPainVerbal={setPainVerbal} />
-      <ScoreSlider label="Energy Level" value={energyLevel} onChange={setEnergyLevel} type="energy" />
-      <div className="space-y-1.5">
-        <span className="text-sm font-semibold">Mood</span>
-        <div className="flex flex-wrap gap-2">
-          {MOOD_OPTIONS.map((m) => (
-            <button key={m} onClick={() => setMood(m)} className={`rounded-full px-3 py-1.5 text-xs font-semibold transition-all ${mood === m ? "bg-primary text-primary-foreground scale-105" : "bg-secondary text-secondary-foreground hover:bg-primary/10"}`}>{m}</button>
-          ))}
-        </div>
+
+      <StepDots current={step} total={WIZARD_STEPS.length} />
+
+      {/* Step content */}
+      <div className="min-h-[120px]">
+        {renderStep()}
       </div>
-      <div className="space-y-1.5">
-        <span className="text-sm font-semibold">Sleep (hours)</span>
-        <input type="number" min={0} max={24} step={0.5} value={sleepHours} onChange={(e) => setSleepHours(e.target.value)} className="w-full rounded-xl border bg-background px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary/30" />
+
+      {/* Navigation */}
+      <div className="flex gap-2">
+        {step < WIZARD_STEPS.length - 1 ? (
+          <>
+            {step === 4 && (
+              <button onClick={goNext} className="flex-1 rounded-2xl border border-muted py-3 text-sm font-semibold text-muted-foreground transition-all hover:bg-secondary">
+                Skip
+              </button>
+            )}
+            <button onClick={goNext} className="flex-1 rounded-2xl bg-primary py-3 text-sm font-bold text-primary-foreground transition-all">
+              Next
+            </button>
+          </>
+        ) : (
+          <button onClick={handleSubmit} disabled={submitting} className="flex w-full items-center justify-center gap-2 rounded-2xl bg-primary py-3 text-sm font-bold text-primary-foreground transition-all disabled:opacity-50 cta-glow">
+            {submitting ? <><Loader2 size={16} className="animate-spin" />Analyzing...</> : "Submit Check-In ✨"}
+          </button>
+        )}
       </div>
-      <div className="space-y-1.5">
-        <span className="text-sm font-semibold">How are you feeling? (optional)</span>
-        <textarea value={rawText} onChange={(e) => setRawText(e.target.value)} placeholder="Tell me everything…" className="w-full rounded-xl border bg-background px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary/30 resize-none" rows={3} />
-      </div>
-      <button onClick={handleSubmit} disabled={submitting} className="flex w-full items-center justify-center gap-2 rounded-2xl bg-primary py-3 text-sm font-bold text-primary-foreground transition-all disabled:opacity-50">
-        {submitting ? <><Loader2 size={16} className="animate-spin" />Analyzing...</> : "Submit Check-In"}
-      </button>
     </div>
   );
 };

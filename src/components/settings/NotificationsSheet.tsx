@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { Bell, BellOff } from "lucide-react";
+import { Bell, BellOff, Volume2 } from "lucide-react";
+import { isSoundEnabled, setSoundEnabled } from "@/lib/sounds";
 import {
   Sheet,
   SheetContent,
@@ -121,6 +122,25 @@ const NotificationsSheet = ({ open, onClose }: Props) => {
               />
             </label>
           ))}
+
+          {/* Sound effects toggle */}
+          <label className="flex items-center justify-between rounded-xl px-1 py-3 cursor-pointer border-t border-border/50 mt-2 pt-4">
+            <div className="pr-4 flex items-center gap-2">
+              <Volume2 size={16} className="text-muted-foreground" />
+              <div>
+                <p className="text-sm font-medium">Sound effects</p>
+                <p className="text-xs text-muted-foreground">Soft chime when you complete a check-in</p>
+              </div>
+            </div>
+            <Switch
+              checked={isSoundEnabled()}
+              onCheckedChange={(v) => {
+                setSoundEnabled(v);
+                // Force re-render
+                setToggles({ ...toggles });
+              }}
+            />
+          </label>
         </div>
       </SheetContent>
     </Sheet>

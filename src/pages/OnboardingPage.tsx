@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import { softTap } from "@/lib/haptics";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useUserPreferencesContext } from "@/contexts/UserPreferencesContext";
@@ -494,7 +495,7 @@ const OnboardingPage = () => {
                 {USAGE_MODES.map((m) => (
                   <button
                     key={m.value}
-                    onClick={() => setUsageMode(m.value)}
+                    onClick={() => { softTap(); setUsageMode(m.value); }}
                     className={`flex w-full items-center gap-3 rounded-xl px-4 py-3.5 text-left transition-all ${
                       usageMode === m.value
                         ? "bg-primary text-primary-foreground scale-[1.02]"
@@ -526,7 +527,7 @@ const OnboardingPage = () => {
                 {DIAGNOSIS_MODES.map((mode) => (
                   <button
                     key={mode.value}
-                    onClick={() => setDiagnosisMode(mode.value)}
+                    onClick={() => { softTap(); setDiagnosisMode(mode.value); }}
                     className={`flex w-full items-center gap-3 rounded-xl px-4 py-3.5 text-left transition-all ${
                       diagnosisMode === mode.value
                         ? "bg-primary text-primary-foreground scale-[1.02]"
@@ -559,7 +560,7 @@ const OnboardingPage = () => {
                     {CONDITION_OPTIONS.filter((opt) => !belongSelection.includes(opt.label)).map((opt) => (
                       <button
                         key={opt.label}
-                        onClick={() => setBelongSelection((prev) => [...prev, opt.label])}
+                        onClick={() => { softTap(); setBelongSelection((prev) => [...prev, opt.label]); }}
                         className="rounded-full border border-muted bg-secondary/50 px-3 py-1.5 text-xs font-medium text-foreground transition-all hover:bg-primary/10 hover:border-primary/30"
                       >
                         {opt.emoji} {opt.label}
@@ -659,7 +660,7 @@ const OnboardingPage = () => {
                 {(usageMode === "caretaker" ? AGE_RANGES_CARETAKER : AGE_RANGES_SELF).map((r) => (
                   <button
                     key={r}
-                    onClick={() => setAgeRange(r)}
+                    onClick={() => { softTap(); setAgeRange(r); }}
                     className={`rounded-xl px-4 py-3 text-sm font-semibold transition-all ${
                       ageRange === r
                         ? "bg-primary text-primary-foreground scale-105"
@@ -687,7 +688,7 @@ const OnboardingPage = () => {
                 {PAIN_PREFS.map((p) => (
                   <button
                     key={p.value}
-                    onClick={() => setPainPref(p.value)}
+                    onClick={() => { softTap(); setPainPref(p.value); }}
                     className={`flex w-full items-center gap-3 rounded-xl px-4 py-3.5 text-left transition-all ${
                       painPref === p.value
                         ? "bg-primary text-primary-foreground scale-[1.02]"
