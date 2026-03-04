@@ -201,6 +201,7 @@ const CheckInForm = ({ onClose, onSaved }: { onClose: () => void; onSaved: () =>
 };
 
 const EntryDetailView = ({ entry, onClose, onUpdated, onDeleted }: { entry: DbEntry; onClose: () => void; onUpdated: () => void; onDeleted: () => void }) => {
+  const { prefs } = useUserPreferences();
   const [flags, setFlags] = useState(entry.share_with_doctor_flags);
   const [editing, setEditing] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
