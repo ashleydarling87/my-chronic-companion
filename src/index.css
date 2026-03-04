@@ -34,7 +34,7 @@
     --input: 327 14% 86%;
     --ring: 11 100% 72%;
 
-    --radius: 1rem;
+    --radius: 1.25rem;
 
     --chat-user: 11 100% 72%;
     --chat-user-foreground: 356 36% 14%;
@@ -125,6 +125,19 @@
     @apply bg-background text-foreground font-sans antialiased;
     font-family: 'Nunito', sans-serif;
   }
+
+  /* Subtle grain overlay for warmth */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    pointer-events: none;
+    opacity: 0.018;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    background-repeat: repeat;
+    background-size: 256px 256px;
+  }
 }
 
 @layer utilities {
@@ -148,5 +161,15 @@
 
   .score-pill {
     @apply inline-flex items-center gap-1 rounded-full px-3 py-1 text-sm font-semibold;
+  }
+
+  /* Warm CTA glow for primary action buttons */
+  .cta-glow {
+    box-shadow: 0 0 24px hsl(var(--primary) / 0.15), 0 0 8px hsl(var(--primary) / 0.08);
+  }
+
+  /* Cozy card with soft inner shadow */
+  .cozy-card {
+    box-shadow: inset 0 1px 4px hsl(var(--foreground) / 0.04), 0 1px 2px hsl(var(--foreground) / 0.02);
   }
 }

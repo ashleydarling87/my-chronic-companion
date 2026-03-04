@@ -7,6 +7,7 @@ import BottomNav from "../components/BottomNav";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useUserPreferences } from "@/hooks/useUserPreferences";
+import { getBuddyEmoji } from "@/lib/data";
 import EntryEditForm from "@/components/log/EntryEditForm";
 import type { DbEntry } from "@/components/log/EntryEditForm";
 import { useMentalHealthScores } from "@/hooks/useMentalHealthScores";
@@ -200,6 +201,7 @@ const CheckInForm = ({ onClose, onSaved }: { onClose: () => void; onSaved: () =>
 };
 
 const EntryDetailView = ({ entry, onClose, onUpdated, onDeleted }: { entry: DbEntry; onClose: () => void; onUpdated: () => void; onDeleted: () => void }) => {
+  const { prefs } = useUserPreferences();
   const [flags, setFlags] = useState(entry.share_with_doctor_flags);
   const [editing, setEditing] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
@@ -335,7 +337,7 @@ const EntryDetailView = ({ entry, onClose, onUpdated, onDeleted }: { entry: DbEn
       {/* Summary */}
       {entry.summary && (
         <div className="rounded-xl bg-primary/5 p-3">
-          <p className="text-xs text-muted-foreground leading-relaxed">🐻 {entry.summary}</p>
+          <p className="text-xs text-muted-foreground leading-relaxed">{getBuddyEmoji(prefs?.buddy_avatar || "bear")} {entry.summary}</p>
         </div>
       )}
 
@@ -413,6 +415,7 @@ const LogPage = () => {
   const [loading, setLoading] = useState(true);
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const { latest: latestMH, needsWeeklyPrompt, saveScore, refetch: refetchMH } = useMentalHealthScores();
+  const { prefs } = useUserPreferences();
 
   // Show how-to sheet after onboarding
   const [showHowTo, setShowHowTo] = useState(() => {
@@ -462,8 +465,8 @@ const LogPage = () => {
     <div className="flex min-h-screen flex-col bg-background">
       <Header title="Symptom Log" subtitle="Your daily entries" />
 
-      <main className="flex-1 overflow-y-auto px-4 py-4 pb-24">
-        <div className="mx-auto max-w-lg space-y-3">
+      <main className="flex-1 overflow-y-auto px-4 py-5 pb-24">
+        <div className="mx-auto max-w-lg space-y-4">
           {showForm ? (
             <CheckInForm onClose={() => setShowForm(false)} onSaved={fetchEntries} />
           ) : (
@@ -500,7 +503,7 @@ const LogPage = () => {
                 </div>
               ) : entries.length === 0 ? (
                 <div className="rounded-2xl bg-primary/10 p-6 text-center">
-                  <p className="text-xl mb-2">🐻</p>
+                  <p className="text-xl mb-2">{getBuddyEmoji(prefs?.buddy_avatar || "bear")}</p>
                   <p className="text-sm font-semibold">No entries yet</p>
                   <p className="text-xs text-muted-foreground mt-1">
                     Chat with Buddy or add an entry above to start tracking.

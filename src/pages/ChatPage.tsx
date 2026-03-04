@@ -22,10 +22,10 @@ interface DisplayMessage {
 }
 
 const TypingIndicator = () => (
-  <div className="flex items-center gap-1 chat-bubble-ai w-fit">
-    <div className="h-2 w-2 rounded-full bg-muted-foreground animate-bounce [animation-delay:0ms]" />
-    <div className="h-2 w-2 rounded-full bg-muted-foreground animate-bounce [animation-delay:150ms]" />
-    <div className="h-2 w-2 rounded-full bg-muted-foreground animate-bounce [animation-delay:300ms]" />
+  <div className="flex items-center gap-1.5 chat-bubble-ai w-fit">
+    <div className="h-2 w-2 rounded-full bg-accent animate-typing-dot-1" />
+    <div className="h-2 w-2 rounded-full bg-accent animate-typing-dot-2" />
+    <div className="h-2 w-2 rounded-full bg-accent animate-typing-dot-3" />
   </div>
 );
 
@@ -108,14 +108,14 @@ const ChatBubble = ({ message, onChipSelect, isLatest, isLoading, buddyEmoji, us
 
 const makeInitialMessage = (painPref?: string, buddyName?: string, hasExistingEntry?: boolean): DisplayMessage => {
   const hour = new Date().getHours();
-  const timeGreeting = hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
+  const timeGreeting = hour < 5 ? "Hey, night owl 🌙" : hour < 12 ? "Good morning ☀️" : hour < 17 ? "Good afternoon ☕" : hour < 20 ? "Good evening 🌅" : "Winding down? 🛏️";
 
   if (hasExistingEntry) {
     return {
       id: "initial",
       role: "assistant",
-      content: `${timeGreeting}! I see you're back 💛 Has anything changed since earlier, or is something on your mind?`,
-      chips: ["Things have changed", "I just want to talk", "Update my log", "I'm doing better now"],
+      content: `${timeGreeting} I see you're back 💛 Has anything changed, or is something on your mind?`,
+      chips: ["Things changed", "Just want to talk", "Update my log", "Doing better now"],
       timestamp: new Date(),
     };
   }
@@ -140,8 +140,8 @@ const makeInitialMessage = (painPref?: string, buddyName?: string, hasExistingEn
   return {
     id: "initial",
     role: "assistant",
-    content: `${timeGreeting}! Let's do a quick check-in 💛 How are you feeling right now?`,
-    chips: ["Not great today", "Pretty good actually", painChip, "I just want to vent"],
+    content: `${timeGreeting} Let's do a quick check-in 💛 How are you feeling right now?`,
+    chips: ["Not great today", "Pretty good actually", painChip, "Just want to vent"],
     timestamp: new Date(),
   };
 };
@@ -416,8 +416,8 @@ const ChatPage = () => {
       
       <Header title={`${prefs?.buddy_name || "Buddy"} ${getBuddyEmoji(prefs?.buddy_avatar || "bear")}`} subtitle="Your cozy check-in" />
 
-      <main className="flex-1 overflow-y-auto px-4 py-4 pb-36">
-        <div className="mx-auto max-w-lg space-y-3">
+      <main className="flex-1 overflow-y-auto px-4 py-5 pb-36">
+        <div className="mx-auto max-w-lg space-y-4">
           {messages.map((msg) => (
             <ChatBubble
               key={msg.id}
