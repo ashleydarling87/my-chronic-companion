@@ -335,7 +335,7 @@ const EntryDetailView = ({ entry, onClose, onUpdated, onDeleted }: { entry: DbEn
       {/* Summary */}
       {entry.summary && (
         <div className="rounded-xl bg-primary/5 p-3">
-          <p className="text-xs text-muted-foreground leading-relaxed">🐻 {entry.summary}</p>
+          <p className="text-xs text-muted-foreground leading-relaxed">{getBuddyEmoji(prefs?.buddy_avatar || "bear")} {entry.summary}</p>
         </div>
       )}
 
