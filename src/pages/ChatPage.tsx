@@ -397,6 +397,7 @@ const ChatPage = () => {
 
   const handleSend = () => sendMessage(input);
   const handleChipSelect = (chip: string) => {
+    softTap();
     if (chip.toLowerCase().includes("take me to resources")) {
       navigate("/resources");
       return;
