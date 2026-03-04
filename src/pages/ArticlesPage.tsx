@@ -79,7 +79,7 @@ const ArticlesPage = () => {
           {/* Buddy intro */}
           <div className="rounded-2xl bg-primary/10 p-4 mb-4 animate-slide-up">
             <p className="text-sm leading-relaxed">
-              <span className="text-xl mr-1">🐻</span>
+              <span className="text-xl mr-1">{getBuddyEmoji(prefs?.buddy_avatar || "bear")}</span>
               Here are some articles I found based on your health profile. Tap any to read more on the source site!
             </p>
           </div>

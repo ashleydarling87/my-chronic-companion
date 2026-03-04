@@ -171,7 +171,7 @@ const SummaryPage = () => {
           {/* Follow-up */}
           {entry.follow_up_question && (
             <section className="rounded-2xl bg-primary/10 p-4 space-y-2 animate-slide-up">
-              <h2 className="text-xs font-bold text-primary uppercase tracking-wider">🐻 Buddy asks...</h2>
+              <h2 className="text-xs font-bold text-primary uppercase tracking-wider">🦓 Buddy asks...</h2>
               <p className="text-sm font-medium leading-relaxed">{entry.follow_up_question}</p>
             </section>
           )}

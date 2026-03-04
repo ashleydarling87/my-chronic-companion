@@ -338,7 +338,7 @@ const MindfulnessPage = () => {
           {/* Buddy intro */}
           <div className="rounded-2xl bg-primary/10 p-4 mb-4 animate-slide-up">
             <p className="text-sm leading-relaxed">
-              <span className="text-xl mr-1">🐻</span>
+              <span className="text-xl mr-1">{getBuddyEmoji(prefs?.buddy_avatar || "bear")}</span>
               These exercises are tailored to you. Start with the breathing timer, or explore guided exercises below. Be gentle with yourself. 💛
             </p>
           </div>

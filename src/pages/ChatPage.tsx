@@ -416,8 +416,8 @@ const ChatPage = () => {
       
       <Header title={`${prefs?.buddy_name || "Buddy"} ${getBuddyEmoji(prefs?.buddy_avatar || "bear")}`} subtitle="Your cozy check-in" />
 
-      <main className="flex-1 overflow-y-auto px-4 py-4 pb-36">
-        <div className="mx-auto max-w-lg space-y-3">
+      <main className="flex-1 overflow-y-auto px-4 py-5 pb-36">
+        <div className="mx-auto max-w-lg space-y-4">
           {messages.map((msg) => (
             <ChatBubble
               key={msg.id}

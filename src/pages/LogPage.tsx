@@ -500,7 +500,7 @@ const LogPage = () => {
                 </div>
               ) : entries.length === 0 ? (
                 <div className="rounded-2xl bg-primary/10 p-6 text-center">
-                  <p className="text-xl mb-2">🐻</p>
+                  <p className="text-xl mb-2">{getBuddyEmoji(prefs?.buddy_avatar || "bear")}</p>
                   <p className="text-sm font-semibold">No entries yet</p>
                   <p className="text-xs text-muted-foreground mt-1">
                     Chat with Buddy or add an entry above to start tracking.
