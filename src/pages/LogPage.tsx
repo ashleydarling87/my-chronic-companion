@@ -162,6 +162,7 @@ const CheckInForm = ({ onClose, onSaved }: { onClose: () => void; onSaved: () =>
       if (error) throw error;
       if (data?.error) throw new Error(data.error);
       toast.success("Check-in saved!");
+      playLogComplete();
       onSaved();
       navigate("/summary", { state: { entry: data } });
     } catch (e: any) {
