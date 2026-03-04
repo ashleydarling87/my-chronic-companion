@@ -1,5 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { Send, Mic } from "lucide-react";
+import { softTap } from "@/lib/haptics";
+import { playLogComplete } from "@/lib/sounds";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import Header from "../components/Header";
