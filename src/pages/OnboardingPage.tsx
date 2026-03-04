@@ -560,7 +560,7 @@ const OnboardingPage = () => {
                     {CONDITION_OPTIONS.filter((opt) => !belongSelection.includes(opt.label)).map((opt) => (
                       <button
                         key={opt.label}
-                        onClick={() => setBelongSelection((prev) => [...prev, opt.label])}
+                        onClick={() => { softTap(); setBelongSelection((prev) => [...prev, opt.label]); }}
                         className="rounded-full border border-muted bg-secondary/50 px-3 py-1.5 text-xs font-medium text-foreground transition-all hover:bg-primary/10 hover:border-primary/30"
                       >
                         {opt.emoji} {opt.label}
