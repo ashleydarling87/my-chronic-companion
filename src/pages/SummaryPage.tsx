@@ -69,8 +69,8 @@ const SummaryPage = () => {
         </div>
       </header>
 
-      <main className="flex-1 overflow-y-auto px-4 py-4 pb-24">
-        <div className="mx-auto max-w-lg space-y-4">
+      <main className="flex-1 overflow-y-auto px-4 py-5 pb-24">
+        <div className="mx-auto max-w-lg space-y-5">
           {/* Emergency Alert */}
           {entry.emergency && (
             <div className="flex items-start gap-3 rounded-2xl border-2 border-destructive bg-destructive/10 p-4 animate-slide-up">

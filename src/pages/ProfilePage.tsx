@@ -455,7 +455,7 @@ const ProfilePage = () => {
                 showSaved
                   ? "bg-green-600 text-white scale-[1.02]"
                   : isDirty
-                  ? "bg-primary text-primary-foreground hover:opacity-90 active:scale-[0.98]"
+                  ? "bg-primary text-primary-foreground hover:opacity-90 active:scale-[0.98] cta-glow"
                   : "bg-muted text-muted-foreground cursor-not-allowed"
               }`}
             >

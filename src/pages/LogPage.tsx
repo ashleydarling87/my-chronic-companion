@@ -465,8 +465,8 @@ const LogPage = () => {
     <div className="flex min-h-screen flex-col bg-background">
       <Header title="Symptom Log" subtitle="Your daily entries" />
 
-      <main className="flex-1 overflow-y-auto px-4 py-4 pb-24">
-        <div className="mx-auto max-w-lg space-y-3">
+      <main className="flex-1 overflow-y-auto px-4 py-5 pb-24">
+        <div className="mx-auto max-w-lg space-y-4">
           {showForm ? (
             <CheckInForm onClose={() => setShowForm(false)} onSaved={fetchEntries} />
           ) : (
