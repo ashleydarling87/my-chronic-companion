@@ -140,8 +140,8 @@ const makeInitialMessage = (painPref?: string, buddyName?: string, hasExistingEn
   return {
     id: "initial",
     role: "assistant",
-    content: `${timeGreeting}! Let's do a quick check-in 💛 How are you feeling right now?`,
-    chips: ["Not great today", "Pretty good actually", painChip, "I just want to vent"],
+    content: `${timeGreeting} Let's do a quick check-in 💛 How are you feeling right now?`,
+    chips: ["Not great today", "Pretty good actually", painChip, "Just want to vent"],
     timestamp: new Date(),
   };
 };
