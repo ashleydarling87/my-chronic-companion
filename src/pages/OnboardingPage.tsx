@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import { softTap } from "@/lib/haptics";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useUserPreferencesContext } from "@/contexts/UserPreferencesContext";
